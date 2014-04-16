@@ -22,7 +22,7 @@ module.exports = function(config) {
             'app/scripts/directives/indicatorCriteriaTableDirective.js',
             'app/scripts/services/initialiserService.js',
             'app/scripts/services/mainService.js',
-            'app/scripts/services/owaService.js',
+            'app/scripts/services/analysisService.js',
             'test/mock/**/*.js',
             'test/spec/**/*.js'
         ],
