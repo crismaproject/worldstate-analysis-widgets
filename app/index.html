@@ -9,15 +9,14 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <!-- build:css styles/vendor.css -->
-        <!-- bower:css -->
         <link rel="stylesheet" href="bower_components/ng-table/ng-table.css" />
-        <!-- endbower -->
-        <!-- endbuild -->
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
+
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/indicatorCriteriaTableDirective.css">
         <!-- endbuild -->
+        
     </head>
     <body ng-app="eu.crismaproject.worldstateAnalysis">
         <!--[if lt IE 7]>
@@ -25,8 +24,10 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div class="container" ng-include="'views/main.html'" ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController"></div>
-
+        <div ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
+            <indicator-criteria-table worldstates='worldstates' forCriteria='true'></indicator-criteria-table>
+        </div>
+        
         <!--[if lt IE 9]>
         <script src="bower_components/es5-shim/es5-shim.js"></script>
         <script src="bower_components/json3/lib/json3.min.js"></script>
