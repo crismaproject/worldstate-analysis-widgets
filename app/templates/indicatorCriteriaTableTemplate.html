@@ -3,13 +3,17 @@
         <thead>
             <tr>
                 <th ng-repeat="column in columns" class="text-center sortable">
-                    <div>{{column.title}}</div>
-                </th>
-            </tr>
+        <div>{{column.title}}</div>
+        </th>
+        </tr>
         </thead>
         <tbody>
-            <tr data-ng-repeat="row in $data">
-                <td data-ng-repeat="col in columns">{{row[col.field].name}}</td>
+            <tr data-ng-repeat="row in $data" ng-class="getRowClass($index)" 
+                ng-style="getRowStyle($index)">
+                <td data-ng-repeat="col in columns">
+                    
+                    {{row[col.field].name}}
+                </td>
             </tr>
         </tbody>
     </table>  
