@@ -1,4 +1,4 @@
-// Generated on 2014-03-05 using generator-angular 0.7.1
+// Generated on 2014-03-18 using generator-angular 0.7.1
 'use strict';
 
 // # Globbing
@@ -8,42 +8,31 @@
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
-
-  // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
-
-  // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-  // Define the configuration for all the tasks
+  grunt.registerMultiTask('echoMessage', 'Echo message', function () {
+      grunt.log.writeln(grunt.log.wordlist([this.data], {color: 'yellow'}));
+  });
+  
   grunt.initConfig({
-
-    // Project settings
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'app',
       dist: 'dist'
     },
-
-    // Watches files for changes and runs tasks based on the changed files
     watch: {
-      js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
-        options: {
-          livereload: true
-        }
+       coffee: {
+        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
+        tasks: ['coffee:dist']
       },
-      jsTest: {
-        files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+      coffeeTest: {
+        files: ['test/spec/{,*/}*.coffee'],
+        tasks: ['coffee:test']
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
-      },
-      gruntfile: {
-        files: ['Gruntfile.js']
+        tasks: ['copy:styles', 'autoprefixer']
       },
       livereload: {
         options: {
@@ -52,12 +41,22 @@ module.exports = function (grunt) {
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
+          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
     },
-
-    // The actual grunt server settings
+    autoprefixer: {
+      options: ['last 1 version'],
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/styles/',
+          src: '{,*/}*.css',
+          dest: '.tmp/styles/'
+        }]
+      }
+    },
     connect: {
       options: {
         port: 9000,
@@ -90,25 +89,6 @@ module.exports = function (grunt) {
         }
       }
     },
-
-    // Make sure code styles are up to par and there are no obvious mistakes
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      },
-      all: [
-        '<%= yeoman.app %>/scripts/{,*/}*.js'
-      ],
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/spec/{,*/}*.js']
-      }
-    },
-
-    // Empties folders to start fresh
     clean: {
       dist: {
         files: [{
@@ -120,37 +100,58 @@ module.exports = function (grunt) {
           ]
         }]
       },
+      // cleans cdnified and test components
+      deploy: {
+          src: [
+              '<%= yeoman.dist %>/bower_components/angular',
+              '<%= yeoman.dist %>/bower_components/angular-resource',
+              '<%= yeoman.dist %>/bower_components/angular-mocks',
+              '<%= yeoman.dist %>/bower_components/angular-scenario',
+              '<%= yeoman.dist %>/bower_components/jquery',
+          ]
+      },
       server: '.tmp'
     },
-
-    // Add vendor prefixed styles
-    autoprefixer: {
+    jshint: {
       options: {
-        browsers: ['last 1 version']
+        jshintrc: '.jshintrc'
+      },
+      all: [
+        '<%= yeoman.app %>/scripts/{,*/}*.js'
+      ]
+    },
+     coffee: {
+      options: {
+        sourceMap: true,
+        sourceRoot: ''
       },
       dist: {
         files: [{
           expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
+          cwd: '<%= yeoman.app %>/scripts',
+          src: '{,*/}*.coffee',
+          dest: '.tmp/scripts',
+          ext: '.js'
+        }]
+      },
+      test: {
+        files: [{
+          expand: true,
+          cwd: 'test/spec',
+          src: '{,*/}*.coffee',
+          dest: '.tmp/spec',
+          ext: '.js'
         }]
       }
     },
-
-    // Automatically inject Bower components into the app
-    'bower-install': {
-      app: {
-        html: '<%= yeoman.app %>/index.html',
-        ignorePath: '<%= yeoman.app %>/'
+     // not used since Uglify task does concat,
+    // but still available if needed
+    concat: {
+      dist: {
+          src: '<%= yeoman.app %>/scripts/**/*.js',
+          dest: '<%= yeoman.dist %>/scripts/worldstate-analysis-widget.js'
       }
     },
-
-
-
-
-
-    // Renames files for browser caching purposes
     rev: {
       dist: {
         files: {
@@ -163,33 +164,25 @@ module.exports = function (grunt) {
         }
       }
     },
-
-    // Reads HTML for usemin blocks to enable smart builds that automatically
-    // concat, minify and revision files. Creates configurations in memory so
-    // additional tasks can operate on them
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
         dest: '<%= yeoman.dist %>'
       }
     },
-
-    // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>']
+        dirs: ['<%= yeoman.dist %>']
       }
     },
-
-    // The following *-min tasks produce minified files in the dist folder
     imagemin: {
       dist: {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          src: '{,*/}*.{png,jpg,jpeg}',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -204,46 +197,63 @@ module.exports = function (grunt) {
         }]
       }
     },
+    cssmin: {
+      // By default, your `index.html` <!-- Usemin Block --> will take care of
+      // minification. This option is pre-configured if you do not wish to use
+      // Usemin blocks.
+      // dist: {
+      //   files: {
+      //     '<%= yeoman.dist %>/styles/main.css': [
+      //       '.tmp/styles/{,*/}*.css',
+      //       '<%= yeoman.app %>/styles/{,*/}*.css'
+      //     ]
+      //   }
+      // }
+    },
     htmlmin: {
-      dist: {
+            dist: {
         options: {
+          /*removeCommentsFromCDATA: true,
+          // https://github.com/yeoman/grunt-usemin/issues/44
+          //collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          removeAttributeQuotes: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
+          removeOptionalTags: true*/
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>',
+          src: ['*.html', 'views/*.html'],
+          dest: '<%= yeoman.dist %>'
+        }]
+      },
+      deploy: {
+        options: {
+          removeComments: true,
+          removeCommentsFromCDATA: true,
+          // https://github.com/yeoman/grunt-usemin/issues/44
           collapseWhitespace: true,
           collapseBooleanAttributes: true,
-          removeCommentsFromCDATA: true,
+          removeAttributeQuotes: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
           removeOptionalTags: true
         },
         files: [{
           expand: true,
           cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/{,*/}*.html'],
+          src: ['*.html', 'views/*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
     },
-
-    // Allow the use of non-minsafe AngularJS files. Automatically makes it
-    // minsafe compatible so Uglify does not destroy the ng references
-    ngmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/concat/scripts',
-          src: '*.js',
-          dest: '.tmp/concat/scripts'
-        }]
-      }
-    },
-
-    // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
-
-    // Copies remaining files to places other tasks can use
+    // Put files not handled in other tasks here
     copy: {
-      dist: {
+       dist: {
         files: [{
           expand: true,
           dot: true,
@@ -252,17 +262,17 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
-            '*.html',
-            'views/{,*/}*.html',
             'bower_components/**/*',
-            'images/{,*/}*.{webp}',
-            'fonts/*'
+            'images/{,*/}*.{gif,webp}',
+            'styles/fonts/*'
           ]
         }, {
           expand: true,
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
+          src: [
+            'generated/*'
+          ]
         }]
       },
       styles: {
@@ -270,59 +280,116 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
-      }
+      },
     },
-
-    // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
+        'coffee:dist',
         'copy:styles'
       ],
       test: [
+        'coffee',
         'copy:styles'
       ],
       dist: [
+        'coffee',
         'copy:styles',
         'imagemin',
-        'svgmin'
+        'svgmin',
+        'htmlmin:dist'
       ]
     },
-
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css',
-    //         '<%= yeoman.app %>/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
-    // Test settings
     karma: {
       unit: {
         configFile: 'karma.conf.js',
         singleRun: true
       }
+    },
+    cdnify: {
+      dist: {
+        html: ['<%= yeoman.dist %>/*.html']
+      }
+    },
+    ngmin: {
+     dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.dist %>/scripts',
+          src: '*.js',
+          dest: '<%= yeoman.dist %>/scripts'
+        }]
+      }
+    }/*,
+    uglify: {
+      dist: {
+        files: {
+          '<%= yeoman.dist %>/scripts/scripts.js': [
+            '<%= yeoman.dist %>/scripts/scripts.js'
+          ]
+        }
+      }
+    }*/,
+    ngtemplates: {
+        dist: {
+            options: {
+                module: 'eu.crismaproject.worldstateAnalysis.directives',
+                htmlmin:  '<%= htmlmin.deploy %>',
+                usemin: 'scripts/worldstate-analysis-widget.min.js'
+            },
+            cwd: '<%= yeoman.app %>',
+            src: 'templates/**.html',
+            dest: '<%= yeoman.dist %>/scripts/worldstate-analysis-widget.min.js'
+        },
+        deploy: {
+            options: {
+                module: 'eu.crismaproject.worldstateAnalysis.directives'
+            },
+            cwd: '<%= yeoman.app %>',
+            src: 'templates/**.html',
+            dest: '<%= yeoman.dist %>/scripts/worldstate-analysis-widget-tpl.js'
+        }
+    },
+    // we do this since the grunt-google-cdn plugin is stale, quick and dirty
+    replace: {
+        cdnify: {
+            src: ['<%= yeoman.dist %>/index.html'],
+            dest: ['<%= yeoman.dist %>/index.html'],
+            replacements: [
+                {from: 'bower_components/bootstrap/dist/css/bootstrap.css', to: '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'},
+                {from: 'bower_components/bootstrap/dist/js/bootstrap.js', to: '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'},
+                {from: 'bower_components/angular/angular.js', to: '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.min.js'},
+                {from: 'bower_components/angular-resource/angular-resource.js', to: '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js'},
+                {from: 'bower_components/jquery/dist/jquery.js', to: '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'},
+                {from: 'bower_components/jquery-ui/ui/jquery-ui.js', to: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js'},
+                // mixed opinion on this topic (replace bower dep with min on dist creation), but no solution
+                {from: 'bower_components/angular-commons/dist/scripts/angular-commons.js', to: 'bower_components/angular-commons/dist/scripts/angular-commons.min.js'}
+            ]
+        },
+        // we would like to use uglify but its dead code removal won't find the debug statements as they don't use a 
+        // global var but an injected one, maybe reconsider debug config in the future
+        debugCode: {
+            // this is the concatenated file
+            src: ['.tmp/concat/scripts/worldstate-analysis-widget.min.js'],
+            dest: ['.tmp/concat/scripts/worldstate-analysis-widget.min.js'],
+            replacements: [
+                // unfortunately we cannot simply match opening { and count other opening { and then match the last closing one
+                // if this is needed some time in the future, we have to match everything and process the text in a to-function
+                // 
+                {from: /if\s*\(\s*DEBUG\s*\)\s*\{\s*console\s*\.\s*log\s*\(\s*('|").*\1??\s*\)\s*;?\s*\}/g, to: ''}
+            ]
+            
+        }
+    },
+    echoMessage: {
+        message: 'REMEMBER TO UPDATE REPLACE AND CLEAN TASKS IF BOWER DEPS ARE CHANGED!'
+    },
+    concat_css: {
+        all: {
+            src: ['<%= yeoman.app %>/styles/**/*.css'],
+            dest: '<%= yeoman.dist %>/styles/worldstate-analysis-widget.css'
+        }
     }
   });
-
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
@@ -331,7 +398,6 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'bower-install',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
@@ -349,28 +415,35 @@ module.exports = function (grunt) {
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    'karma'
+//    'karma'
   ]);
 
   grunt.registerTask('build', [
     'clean:dist',
-    'bower-install',
     'useminPrepare',
+    'concat',
+    'ngtemplates:dist',
     'concurrent:dist',
     'autoprefixer',
     'concat',
-    'ngmin',
     'copy:dist',
     'cdnify',
+    'replace:cdnify',
+    'clean:deploy',
+    'ngmin',
     'cssmin',
+    'concat_css',
+    'replace:debugCode',
     'uglify',
-    'rev',
+//    'rev',
     'usemin',
-    'htmlmin'
+    'htmlmin:deploy',
+    'ngtemplates:deploy',
+    'echoMessage'
   ]);
 
   grunt.registerTask('default', [
-    'newer:jshint',
+    'jshint',
     'test',
     'build'
   ]);
