@@ -174,48 +174,9 @@ angular.module(
                 return publicApi;
             };
 
-            worldstateUtils = function () {
-                var publicApi;
-
-                publicApi = {};
-
-                publicApi.stripIccData = function (worldstates, forCriteria) {
-                    var data, dataVector, i, iccdata, j, k, worldstate;
-
-                    dataVector = [];
-                    for (i = 0; i < worldstates.length; ++i) {
-                        worldstate = worldstates[i];
-                        iccdata = worldstate.iccdata;
-                        data = null;
-                        for (j = 0; j < iccdata.length && !data; ++j) {
-                            for (k = 0; k < iccdata[j].categories.length && !data; ++k) {
-                                if (forCriteria && 'Criteria' === iccdata[j].categories[k].key) {
-                                    data = iccdata[j];
-                                } else if (!forCriteria && 'Indicators' === iccdata[j].categories[k].key) {
-                                    data = iccdata[j];
-                                }
-                            }
-                        }
-
-                        if (!data) {
-                            throw 'worldstate without proper icc data:' + worldstate;
-                        }
-                        
-                        dataVector.push({
-                            name: worldstate.name,
-                            data: JSON.parse(data.actualaccessinfo)
-                        });
-                    }
-                    
-                    return dataVector;
-                };
-
-                return publicApi;
-            };
 
             return {
                 getOwa: owa,
-                getWorldstateUtils: worldstateUtils
             };
         }
     ]

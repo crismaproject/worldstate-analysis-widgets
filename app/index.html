@@ -16,7 +16,7 @@
         <!-- build:css(.tmp) styles/worldstate-analysis-widget.min.css -->
         <link rel="stylesheet" href="styles/indicatorCriteriaTableDirective.css">
         <!-- endbuild -->
-        
+
     </head>
     <body ng-app="eu.crismaproject.worldstateAnalysis">
         <!--[if lt IE 7]>
@@ -27,7 +27,7 @@
         <div ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
             <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
         </div>
-        
+
         <!--[if lt IE 9]>
         <script src="bower_components/es5-shim/es5-shim.js"></script>
         <script src="bower_components/json3/lib/json3.min.js"></script>
@@ -36,8 +36,9 @@
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/ng-table/ng-table.js"></script>
+        <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
 
-         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
+        <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/initialiserController.js"></script>
         <script src="scripts/controllers/mainController.js"></script>
@@ -48,5 +49,21 @@
         <script src="scripts/services/mainService.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <!-- endbuild -->
+
+        <!-- demo only -->
+        <script>
+            angular.module('eu.crismaproject.worldstateAnalysis').config(
+                [
+                    '$provide',
+                    function ($provide) {
+                        'use strict';
+
+                        $provide.constant('DEBUG', 'true');
+                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                    }
+                ]
+                );
+        </script>
     </body>
 </html>

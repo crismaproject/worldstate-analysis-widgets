@@ -1,6 +1,7 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
     [
-        'ngTable'
+        'ngTable',
+        'de.cismet.crisma.ICMM.Worldstates'
     ]
 );

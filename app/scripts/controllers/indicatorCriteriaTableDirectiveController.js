@@ -5,9 +5,9 @@ angular.module(
     [
         '$scope',
         '$filter',
-        'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
+        'de.cismet.crisma.ICMM.Worldstates',
         'ngTableParams',
-        function ($scope, $filter, analysisService, NgTableParams) {
+        function ($scope, $filter, Worldstates, NgTableParams) {
             'use strict';
             var getOrderedProperties = function (obj) {
                 var p, keys;
@@ -22,7 +22,7 @@ angular.module(
             },
                 updateTable = function () {
                     var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val,
-                        dataVector = analysisService.getWorldstateUtils().stripIccData($scope.worldstates, $scope.forCriteria);
+                        dataVector = Worldstates.utils.stripIccData($scope.worldstates, $scope.forCriteria);
                     $scope.rows = [];
                     $scope.columns = [{
                             title: $scope.forCriteria ? 'Criteria' : 'Indicators',
