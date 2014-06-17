@@ -4,6 +4,7 @@ angular.module(
     [
         'eu.crismaproject.worldstateAnalysis.controllers',
         'eu.crismaproject.worldstateAnalysis.directives',
-        'eu.crismaproject.worldstateAnalysis.services'
+        'eu.crismaproject.worldstateAnalysis.services',
+        'de.cismet.crisma.widgets.worldstateTreeWidget',
     ]
-);
+    );

@@ -111,13 +111,13 @@ angular.module(
                 updateTable();
             }
 
-            $scope.$watch('worldstates', function (newVal, oldVal) {
-                if (newVal !== oldVal) {
+            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
                     updateTable();
                 }
             });
             $scope.$watch('forCriteria', function (newVal, oldVal) {
-                if (newVal !== oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
                     updateTable();
                 }
             });

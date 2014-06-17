@@ -13,6 +13,9 @@
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
 
+        <link rel="stylesheet" href="bower_components/dynatree/dist/skin/ui.dynatree.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="bower_components/crisma-worldstate-tree-widget-angular/dist/styles/crisma-worldstate-tree-widget-angular.css">
+
         <!-- build:css(.tmp) styles/worldstate-analysis-widget.min.css -->
         <link rel="stylesheet" href="styles/indicatorCriteriaTableDirective.css">
         <!-- endbuild -->
@@ -24,8 +27,13 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
-            <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
+        <div class="row" ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
+            <div class="col-lg-4" style="min-height: 400px">
+                <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" ></catalogue-tree>
+            </div>
+            <div class="col-lg-8">
+                <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
+            </div>
         </div>
 
         <!--[if lt IE 9]>
@@ -33,10 +41,16 @@
         <script src="bower_components/json3/lib/json3.min.js"></script>
         <![endif]-->
 
+        <script src="bower_components/jquery/jquery.js"></script>
+        <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+        <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/ng-table/ng-table.js"></script>
+        <script src="bower_components/angular-commons/dist/scripts/angular-commons.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
+        <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
+        <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
 
         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>

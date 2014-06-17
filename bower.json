@@ -8,10 +8,12 @@
     "angular-resource": "1.2.7",
     "ng-table": "~0.3.1",
     "bootstrap": "~3.1.1",
-    "icmm_js": "v0.2.0"
+    "icmm_js": "v0.1.0",
+    "crisma-worldstate-tree-widget-angular": "0.2.1"
   },
   "devDependencies": {
     "angular-mocks": "1.2.7",
-    "angular-scenario": "1.2.7"
+    "angular-scenario": "1.2.7",
+    "angular-commons": "~0.2.0"
   }
 }
