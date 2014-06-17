@@ -2,13 +2,13 @@
     <table data-ng-table="tableParams" show-filter="true" class="table ng-table-responsive">
         <thead>
             <tr>
-                <th ng-repeat="column in columns" class="text-center sortable">
-        <div>{{column.title}}</div>
-        </th>
+                <th ng-repeat="column in columns" class="text-left">
+                    {{column.title}}
+                </th>
         </tr>
         </thead>
         <tbody>
-            <tr data-ng-repeat="row in $data" ng-class="getRowClass($index)" 
+            <tr data-ng-repeat="row in $data" ng-class="{'info':isGroupRow(row)}" 
                 ng-style="getRowStyle($index)">
                 <td data-ng-repeat="col in columns">
                     

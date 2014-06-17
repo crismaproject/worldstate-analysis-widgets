@@ -99,11 +99,6 @@ angular.module(
                 return row.f2 === null;
             };
             
-            $scope.getRowClass = function (index) {
-                var row = $scope.rows[index];
-                return $scope.isGroupRow(row) ? 'info' : '';
-            };
-            
             $scope.getRowStyle= function (index) {
                 var row = $scope.rows[index],
                     groupRowStyle={
