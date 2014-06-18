@@ -10,7 +10,6 @@ angular.module(
         function ($scope, Nodes, Worldstates) {
             'use strict';
             $scope.activeItem = {};
-//            $scope.isWorldstateIcon = false;
             $scope.treeOptions = {
                 checkboxClass: 'glyphicon glyphicon-unchecked',
                 folderIconClosed: 'icon-folder-close.png',
@@ -19,27 +18,27 @@ angular.module(
                 imagePath: 'bower_components/crisma-worldstate-tree-widget-angular/dist/images/',
                 multiSelection: true
             };
-
             // every time the treeSelection changes, we need to determine the
             // corresponding worldstates to the selected nodes. 
             $scope.treeSelection = [];
-//            $scope.worldstates = [];
-            $scope.$watchCollection("treeSelection", function (newVal, oldVal) {
-                var i, wsId, wsNode, wsArr=[];
-
+            $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
+                var i, wsId, wsNode, wsArr = [];
                 if (newVal !== oldVal) {
                     //clear the old worldstate array
-                    if (!$scope.worldstates) {
-                        $scope.worldstates = [];
-                    } else {
+                    if ($scope.treeSelection.length <= 0) {
                         $scope.worldstates.splice(0, $scope.worldstates.length);
                     }
                     for (i = 0; i < $scope.treeSelection.length; i++) {
                         wsNode = $scope.treeSelection[i].objectKey;
                         wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-                        Worldstates.get({'wsId': wsId},function (worldstate){
+                        Worldstates.get({'wsId': wsId}, function (worldstate) {
                             wsArr.push(worldstate);
-                            if(wsArr.length === $scope.treeSelection.length){
+                            if (wsArr.length === $scope.treeSelection.length) {
+                                if (!$scope.worldstates) {
+                                    $scope.worldstates = [];
+                                } else {
+                                    $scope.worldstates.splice(0, $scope.worldstates.length);
+                                }
                                 $scope.worldstates = wsArr;
                             }
                         });
@@ -47,7 +46,6 @@ angular.module(
 
                 }
             });
-
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query();
         }

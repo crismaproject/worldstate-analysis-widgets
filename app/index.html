@@ -27,12 +27,16 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div class="row" ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
-            <div class="col-lg-4" style="min-height: 400px">
-                <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" ></catalogue-tree>
-            </div>
-            <div class="col-lg-8">
-                <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
+        <div class="container" ng-controller="eu.crismaproject.worldstateAnalysis.controllers.MainController">
+            <div class="row">
+                <div class="col-lg-4" style="min-height: 400px">
+                    <div ng-class="row">
+                        <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" ></catalogue-tree>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
+                </div>
             </div>
         </div>
 
