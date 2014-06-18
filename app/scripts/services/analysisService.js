@@ -6,7 +6,7 @@ angular.module(
         function () {
             'use strict';
 
-            var owa, worldstateUtils;
+            var owa;
 
             owa = function () {
                 var checkVector, checkVectorRange, epsilon, equals, eFactor, publicApi, self;

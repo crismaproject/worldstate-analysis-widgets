@@ -1,5 +1,5 @@
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.directives', 
+    'eu.crismaproject.worldstateAnalysis.directives',
     [
         'ngTable'
     ]

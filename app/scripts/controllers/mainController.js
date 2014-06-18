@@ -22,7 +22,18 @@ angular.module(
             // corresponding worldstates to the selected nodes. 
             $scope.treeSelection = [];
             $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
-                var i, wsId, wsNode, wsArr = [];
+                var i, wsId, wsNode, wsArr = [],
+                worldstateCallback = function (worldstate) {
+                    wsArr.push(worldstate);
+                    if (wsArr.length === $scope.treeSelection.length) {
+                        if (!$scope.worldstates) {
+                            $scope.worldstates = [];
+                        } else {
+                            $scope.worldstates.splice(0, $scope.worldstates.length);
+                        }
+                        $scope.worldstates = wsArr;
+                    }
+                };
                 if (newVal !== oldVal) {
                     //clear the old worldstate array
                     if ($scope.treeSelection.length <= 0) {
@@ -31,17 +42,7 @@ angular.module(
                     for (i = 0; i < $scope.treeSelection.length; i++) {
                         wsNode = $scope.treeSelection[i].objectKey;
                         wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-                        Worldstates.get({'wsId': wsId}, function (worldstate) {
-                            wsArr.push(worldstate);
-                            if (wsArr.length === $scope.treeSelection.length) {
-                                if (!$scope.worldstates) {
-                                    $scope.worldstates = [];
-                                } else {
-                                    $scope.worldstates.splice(0, $scope.worldstates.length);
-                                }
-                                $scope.worldstates = wsArr;
-                            }
-                        });
+                        Worldstates.get({'wsId': wsId}, worldstateCallback);
                     }
 
                 }
