@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
     [
         '$scope',
@@ -26,10 +26,10 @@ angular.module(
                     if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
                         $scope.rows = [];
                         $scope.columns = [{
-                                title: $scope.forCriteria ? 'Criteria' : 'Indicators',
-                                field: 'f1',
-                                visible: true
-                            }];
+                            title: $scope.forCriteria ? 'Criteria' : 'Indicators',
+                            field: 'f1',
+                            visible: true
+                        }];
                         j = 0;
                         iccData = dataVector[0].data;
                         keys_outer = getOrderedProperties(iccData);
@@ -125,4 +125,4 @@ angular.module(
             });
         }
     ]
-    );
+);

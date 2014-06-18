@@ -1,5 +1,8 @@
 <div id="indicatorCriteriaTable">
-    <table  ng-hide="worldstates.length <= 0" data-ng-table="tableParams" class="table">
+    <div ng-hide="worldstates.length > 0" class="alert alert-warning">
+        No worldstate
+    </div>
+    <table ng-hide="worldstates.length <= 0" data-ng-table="tableParams" class="table" template-pagination="nopager">
         <thead>
             <tr>
                 <th ng-repeat="column in columns" class="text-left">
@@ -11,7 +14,7 @@
             <tr data-ng-repeat="row in $data" ng-class="{'info':isGroupRow(row)}" 
                 ng-style="getRowStyle($index)">
                 <td data-ng-repeat="col in columns">
-
+                    <img ng-if="isGroupRow(row) || detailIcons" ng-src="{{row[col.field].icon}}"/>
                     {{row[col.field].name}}
                 </td>
             </tr>

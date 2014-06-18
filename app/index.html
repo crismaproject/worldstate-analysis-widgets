@@ -35,7 +35,17 @@
                     </div>
                 </div>
                 <div class="col-lg-8">
-                    <indicator-criteria-table worldstates='worldstates' for-criteria='false'></indicator-criteria-table>
+                    <div class="row">
+                        <label>
+                            <input ng-model="forCriteria" type="checkbox"> Criteria
+                        </label>
+                        <label>
+                            <input ng-model="detailIcons" type="checkbox"> Detail Icons
+                        </label>
+                    </div>
+                    <div class="row">
+                        <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' for-criteria='forCriteria'></indicator-criteria-table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,18 +80,18 @@
 
         <!-- demo only -->
         <script>
-            angular.module('eu.crismaproject.worldstateAnalysis').config(
-                [
-                    '$provide',
-                    function ($provide) {
-                        'use strict';
+                            angular.module('eu.crismaproject.worldstateAnalysis').config(
+                                [
+                                    '$provide',
+                                    function ($provide) {
+                                        'use strict';
 
-                        $provide.constant('DEBUG', 'true');
-                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                    }
-                ]
-                );
+                                        $provide.constant('DEBUG', 'true');
+                                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                    }
+                                ]
+                                );
         </script>
     </body>
 </html>

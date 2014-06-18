@@ -12,9 +12,9 @@ angular.module(
             $scope.activeItem = {};
             $scope.treeOptions = {
                 checkboxClass: 'glyphicon glyphicon-unchecked',
-                folderIconClosed: 'icon-folder-close.png',
-                folderIconOpen: 'icon-folder-open.png',
-                leafIcon: 'icon-file.png',
+                folderIconClosed: 'icon-world.png',
+                folderIconOpen: 'icon-world.png',
+                leafIcon: 'icon-world.png',
                 imagePath: 'bower_components/crisma-worldstate-tree-widget-angular/dist/images/',
                 multiSelection: true
             };

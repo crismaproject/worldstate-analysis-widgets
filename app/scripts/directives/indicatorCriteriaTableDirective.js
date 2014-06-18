@@ -10,7 +10,8 @@ angular.module(
 
             scope = {
                 worldstates: '=',
-                forCriteria: '='
+                forCriteria: '=',
+                detailIcons: '@'
             };
 
             return {
