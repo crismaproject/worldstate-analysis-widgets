@@ -9,9 +9,8 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'ngTableParams',
         function ($scope, $filter, WorldstateService, NgTableParams) {
-
             'use strict';
-;            var getOrderedProperties = function (obj) {
+            var getOrderedProperties = function (obj) {
                 var p, keys;
                 keys = [];
                 for (p in obj) {
@@ -115,7 +114,7 @@ angular.module(
                 return $scope.isGroupRow(row) ? groupRowStyle : '';
             };
 
-            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
+            $scope.$watchCollection('worldstates', function () {
                 if ($scope.worldstates) {
                     updateTable();
                 }
