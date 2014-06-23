@@ -1,20 +1,9 @@
 'use strict';
 
-describe('AnalysisServiceTest', function() {
+describe('AnalysisService Test Suite', function () {
     var analysisService, ws, ws2, ws3;
-
-    // load the controller's module
-    beforeEach(module('eu.crismaproject.worldstateAnalysis.services'));
-    beforeEach(inject(
-            [
-                'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
-                function(as) {
-                    analysisService = as;
-                }
-            ]
-            ));
-
-    ws = [{
+    
+     ws = [{
             '$self': '/CRISMA.worldstates/1',
             'id': 1,
             'name': 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1',
@@ -745,38 +734,50 @@ describe('AnalysisServiceTest', function() {
         }
     ];
 
-    it('worldstateutils', function() {
-        var vec;
+    beforeEach(function () {
+        module('eu.crismaproject.worldstateAnalysis.services');
+    });
 
-        vec = analysisService.getWorldstateUtils().stripIccData(ws);
-        expect(vec).toEqual([{
-                name: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1',
-                data: {tobe: 'done'}
-            }]);
+    beforeEach(inject([
+        'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
+        function (as) {
+            analysisService = as;
+        }
+    ]));
 
-        vec = analysisService.getWorldstateUtils().stripIccData(ws2, false);
-        expect(vec).toEqual([{
-                name: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1',
-                data: {tobe: 'done'}
-            },
-            {
-                name: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 2',
-                data: {tobe: 'done1'}
-            }]);
+    it('should be defined', function () {
+        expect(analysisService).toBeDefined();
+    });
 
-        vec = analysisService.getWorldstateUtils().stripIccData(ws2, true);
-        expect(vec).toEqual([{
-                name: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1',
-                data: {tobe: 'done3'}
-            },
-            {
-                name: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 2',
-                data: {tobe: 'done2'}
-            }]);
+    describe('Test OWA utils', function () {
 
-        vec = analysisService.getWorldstateUtils().stripIccData(ws3, false);
-        expect(vec.length).toBe(2);
-        expect(vec[0].name).toEqual('Ski-Weltmeisterschaften Garmisch-Partenkirchen 1');
-        expect(vec[1].name).toEqual('Ski-Weltmeisterschaften Garmisch-Partenkirchen 2');
+        it('should return OWA u', function () {
+            analysisService.getOwa().
+            expect(true).toBe(true);
+        });
+
+        it('should calculate dispersion', function () {
+            expect(true).toBe(true);
+        });
+
+        it('should calculate lLSWeights', function () {
+            expect(true).toBe(true);
+        });
+
+        it('should calculate hLSWeights', function () {
+            expect(true).toBe(true);
+        });
+
+        it('should calculate meanWeights', function () {
+            expect(true).toBe(true);
+        });
+
+        it('should order args', function () {
+            expect(true).toBe(true);
+        });
+
+        it('should order aggregate LS', function () {
+            expect(true).toBe(true);
+        });
     });
 });
