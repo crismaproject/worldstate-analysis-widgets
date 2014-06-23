@@ -1,8 +1,12 @@
 // only for testing/demo
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
-    'eu.crismaproject.worldstateAnalysis.controllers.MainController',
+   'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
+    [
+        'de.cismet.crisma.ICMM.Worldstates',
+        'de.cismet.cids.rest.collidngNames.Nodes'
+    ]
+).controller(
+    'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
         'de.cismet.collidingNameService.Nodes',
@@ -48,7 +52,9 @@ angular.module(
                 }
             });
             // Retrieve the top level nodes from the icmm api
-            $scope.treeNodes = Nodes.query();
+            $scope.treeNodes = Nodes.query(function(data){
+                console.log(data);
+            });
         }
     ]
     );
