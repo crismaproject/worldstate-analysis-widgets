@@ -2,7 +2,7 @@
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
         No worldstate
     </div>
-    <table ng-hide="worldstates.length <= 0" data-ng-table="tableParams" class="table" template-pagination="nopager">
+    <table ng-hide="worldstates.length <= 0" data-ng-table="tableParams" class="table" template-pagination="templates/nopager.html">
         <thead>
             <tr>
                 <th ng-repeat="column in columns" class="text-left">
