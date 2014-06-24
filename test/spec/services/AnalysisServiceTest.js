@@ -2,8 +2,8 @@
 
 describe('AnalysisService Test Suite', function () {
     var analysisService, ws, ws2, ws3;
-    
-     ws = [{
+
+    ws = [{
             '$self': '/CRISMA.worldstates/1',
             'id': 1,
             'name': 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1',
@@ -750,34 +750,80 @@ describe('AnalysisService Test Suite', function () {
     });
 
     describe('Test OWA utils', function () {
-
-        it('should return OWA u', function () {
-            analysisService.getOwa().
-            expect(true).toBe(true);
+        var owa;
+        beforeEach(function () {
+            owa = analysisService.getOwa();
         });
 
-        it('should calculate dispersion', function () {
-            expect(true).toBe(true);
+        it('should return OWA utilties', function () {
+            expect(owa).toBeDefined();
         });
 
-        it('should calculate lLSWeights', function () {
-            expect(true).toBe(true);
+        it('should calculate a mean weights correctly', function () {
+            var mw1, mw10, sumReduce, sum, i;
+            sumReduce = function (prevVal, currval) {
+                return prevVal + currval;
+            };
+
+            expect(function () {
+                return owa.meanWeights(0);
+            }).toThrow();
+
+            mw1 = owa.meanWeights(1);
+            for (i = 0; i < mw1.length; i++) {
+                expect(mw1[i]).toBe(1 / 1);
+            }
+            sum = mw1.reduce(sumReduce, 0);
+            expect(sum).toBeCloseTo(sum, 7);
+
+            mw10 = owa.meanWeights(10);
+            for (i = 0; i < mw10.length; i++) {
+                expect(mw10[i]).toBe(1 / 10);
+            }
+            sum = mw1.reduce(sumReduce, 0);
+            expect(sum).toBeCloseTo(sum, 7);
+
         });
 
-        it('should calculate hLSWeights', function () {
-            expect(true).toBe(true);
+        it('should calculate a orness of 0.5 for a mean vector', function () {
+            var meanVector = owa.meanWeights(10);
+            
+            expect(owa.orness(meanVector)).toBe(0.5);
         });
 
-        it('should calculate meanWeights', function () {
-            expect(true).toBe(true);
+        it('should have a orness of 1 for the full orness vector', function () {
+            var fullOrness1 = [1], fullOrness2 = [1,0],
+            fullOrness5 = [1,0,0,0,0],noFullOrness1 = [0,1,0,0,0],
+            noFullOrness2 = [0,0,0,0,1];
+            
+            expect(function(){
+                return owa.orness([]);
+            }).toThrow();
+            expect(owa.orness([1])).toBeNaN();
+            expect(owa.orness(fullOrness2)).toBe(1);
+            expect(owa.orness(fullOrness5)).toBe(1);
+            expect(owa.orness(noFullOrness1)).not.toBe(1);
+            expect(owa.orness(noFullOrness2)).not.toBe(1);
+            
         });
 
-        it('should order args', function () {
-            expect(true).toBe(true);
+        it('should have a andness of 1 for the full andness vector', function () {
+            var fullAnd2=[0,1], fullAnd5=[0,0,0,0,1],
+            noFullAnd1=[0,0,0,1,0], noFullAnd2=[0,0,1,0,0];
+            
+            expect(1-owa.orness(fullAnd2)).toBe(1);
+            expect(1-owa.orness(fullAnd5)).toBe(1);
+            expect(1-owa.orness(noFullAnd1)).not.toBe(1);
+            expect(1-owa.orness(noFullAnd2)).not.toBe(1);
+            
+        });
+        
+        it('should have a orness of 0 for the full andness vector', function () {
+            var fullAnd2=[0,1], fullAnd5=[0,0,0,0,1];
+            
+            expect(owa.orness(fullAnd2)).toBe(0);
+            expect(owa.orness(fullAnd5)).toBe(0);
         });
 
-        it('should order aggregate LS', function () {
-            expect(true).toBe(true);
-        });
     });
 });
