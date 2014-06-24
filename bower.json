@@ -8,7 +8,7 @@
     "angular-resource": "1.2.7",
     "ng-table": "0.3.3",
     "bootstrap": "~3.1.1",
-    "icmm_js": "v0.1.0",
+    "icmm_js": "v0.1.1",
     "crisma-worldstate-tree-widget-angular": "0.2.1"
   },
   "devDependencies": {
