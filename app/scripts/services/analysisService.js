@@ -1,7 +1,7 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.services',
     []
-).factory(
+    ).factory(
     'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
     [
         function () {
@@ -9,7 +9,7 @@ angular.module(
 
             var owa;
 
-            owa = function () {
+            owa = (function () {
                 var checkVector, checkVectorRange, epsilon, equals, eFactor, publicApi, self;
 
                 // default tolerance
@@ -87,7 +87,7 @@ angular.module(
 
                     sum = 0;
                     for (i = 1; i <= criteriaCount; ++i) {
-                        sum = sum  + (Math.pow(i, Math.E));
+                        sum = sum + (Math.pow(i, Math.E));
                     }
 
                     weights = [];
@@ -165,7 +165,7 @@ angular.module(
 
                     ordered = owa.orderedArgs(crit);
                     res = 0;
-                    for (i  = 0; i < ordered.length; ++i) {
+                    for (i = 0; i < ordered.length; ++i) {
                         res += ordered[i] * weights[i];
                     }
 
@@ -173,12 +173,14 @@ angular.module(
                 };
 
                 return publicApi;
-            };
+            })();
 
 
             return {
-                getOwa: owa
+                getOwa: function () {
+                    return owa;
+                }
             };
         }
     ]
-);
+    );
