@@ -1,6 +1,6 @@
 {
     "name": "worldstate-analysis-widgets",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": [
         "dist/scripts/worldstate-analysis-widget.js",
         "dist/scripts/worldstate-analysis-widget-tpl.js"
