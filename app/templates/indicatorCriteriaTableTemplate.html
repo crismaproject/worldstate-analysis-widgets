@@ -1,11 +1,11 @@
 <div id="indicatorCriteriaTable">
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
-        No worldstate
+        <strong>Warning: </strong>There are no worldstates selected.
     </div>
     <table ng-hide="worldstates.length <= 0" data-ng-table="tableParams" class="table" template-pagination="templates/nopager.html">
         <thead>
             <tr>
-                <th ng-repeat="column in columns" class="text-left">
+                <th ng-repeat="column in columns" class="text-left" ng-style="getCellStyle($index)">
                     {{column.title}}
                 </th>
             </tr>
@@ -13,7 +13,7 @@
         <tbody>
             <tr data-ng-repeat="row in $data" ng-class="{'info':isGroupRow(row)}" 
                 ng-style="getRowStyle($index)">
-                <td data-ng-repeat="col in columns">
+                <td data-ng-repeat="col in columns" ng-style="getCellStyle($index)">
                     <img ng-if="isGroupRow(row) || detailIcons" ng-src="{{row[col.field].icon}}"/>
                     {{row[col.field].name}}
                 </td>

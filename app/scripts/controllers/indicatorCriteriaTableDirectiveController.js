@@ -113,6 +113,13 @@ angular.module(
                     };
                 return $scope.isGroupRow(row) ? groupRowStyle : '';
             };
+            
+            $scope.getCellStyle = function(index){
+                var dataCellStyle = {
+                    'text-align':'right'
+                };
+                return index > 0 ? dataCellStyle : '';
+            };
 
             $scope.$watchCollection('worldstates', function () {
                 if ($scope.worldstates) {
