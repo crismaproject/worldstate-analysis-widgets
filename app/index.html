@@ -46,6 +46,12 @@
                     <div class="row">
                         <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' for-criteria='forCriteria'></indicator-criteria-table>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-12" criteria-radar worldstates="worldstates">
+                            
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,29 +71,34 @@
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
+        <script src="bower_components/d3/d3.js"></script>
+        <script src="bower_components/radar-chart-d3/src/radar-chart.js"></script>
+        <!--<script src="bower_components/radar-chart-d3/src/radar-chart-custom.js"></script>-->
 
         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/mainController.js"></script>
         <script src="scripts/controllers/indicatorCriteriaTableDirectiveController.js"></script>
         <script src="scripts/directives/indicatorCriteriaTableDirective.js"></script>
+        <!--<script src="scripts/directives/criteriaRadarChartDirectiveController.js"></script>-->
+        <script src="scripts/directives/criteriaRadarChartDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->
         <script>
-                            angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                [
-                                    '$provide',
-                                    function ($provide) {
-                                        'use strict';
+                                angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                    [
+                                        '$provide',
+                                        function ($provide) {
+                                            'use strict';
 
-                                        $provide.constant('DEBUG', 'true');
-                                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                    }
-                                ]
-                                );
+                                            $provide.constant('DEBUG', 'true');
+                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                        }
+                                    ]
+                                    );
         </script>
     </body>
 </html>
