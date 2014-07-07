@@ -8,26 +8,8 @@ angular.module(
         function (WorldstateService, $timeout) {
             'use strict';
 
-            var scope, defaultCfg, legendSize;
+            var scope;
 
-            defaultCfg = {
-                radius: 5,
-                w: 500,
-                h: 500,
-                factor: 1,
-                factorLegend: .85,
-                levels: 3,
-                maxValue: 0,
-                radians: 2 * Math.PI,
-                opacityArea: 0.5,
-                ToRight: 5,
-                TranslateX: 80,
-                TranslateY: 30,
-                ExtraWidthX: 100,
-                ExtraWidthY: 100,
-                color: d3.scale.category10()
-            };
-            legendSize = 0.25;
             scope = {
                 worldstates: '=',
                 selector: '@'
@@ -36,8 +18,6 @@ angular.module(
             return {
                 scope: scope,
                 restrict: 'A',
-//                templateUrl: 'templates/indicatorCriteriaTableTemplate.html',
-//                controller: 'eu.crismaproject.worldstateAnalysis.controllers.criteriaRadarChartDirectiveController',
                 link: function (scope, elem) {
                     var dataVector, convertToChartDataStructure, chartData,
                         LegendOptions = [];
@@ -78,18 +58,18 @@ angular.module(
                                 elem.empty();
                                 elem[0].empty;
                                 chartData = convertToChartDataStructure(dataVector);
-                                var mycfg = {
+                                var cfg = {
                                     w: elem.width(),
                                     h: elem.width(),
-                                    maxValue: 0.6,
+                                    maxValue: 100,
                                     levels: 4,
-                                }
+                                };
 
                                 var divNode = d3.select(elem[0]).append('div')
                                     .attr('style', 'display:block;margin: 0 auto;')
 //                                    .attr('heigth', '100%')
                                     .node();
-                                RadarChart.draw(divNode, chartData, mycfg);
+                                RadarChart.draw(divNode, chartData, cfg);
                                 var legendSvg = d3.select(elem[0])
                                     .append('div')
                                     .append('svg')
@@ -110,7 +90,7 @@ angular.module(
                                 var legendContainer = legendSvg.append("g")
                                     .attr("class", "legend")
                                     .attr("height", 5)
-                                    .attr("width", 50 - 10)
+                                    .attr("width", 50)
 //                                    .attr('transform', 'translate(0,20)')
                                     ;
                                 //Create colour squares
