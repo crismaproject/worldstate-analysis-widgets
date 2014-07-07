@@ -27,7 +27,7 @@ angular.module(
                 ExtraWidthY: 100,
                 color: d3.scale.category10()
             };
-            legendSize=0.25;
+            legendSize = 0.25;
             scope = {
                 worldstates: '=',
                 selector: '@'
@@ -46,7 +46,7 @@ angular.module(
                         var i, criteriaData, groupName, group, criteriaProp,
                             criteria, result, dataItem;
                         var result = [];
-                        LegendOptions=[];
+                        LegendOptions = [];
                         for (i = 0; i < criteriaVector.length; i++) {
                             dataItem = [];
                             criteriaData = criteriaVector[i].data;
@@ -79,53 +79,53 @@ angular.module(
                                 elem[0].empty;
                                 chartData = convertToChartDataStructure(dataVector);
                                 var mycfg = {
-                                    w: elem.width()-(elem.width()*legendSize),
-                                    h: elem.width()-(elem.width()*legendSize),
+                                    w: elem.width() - (elem.width() * legendSize),
+                                    h: elem.width() - (elem.width() * legendSize),
                                     maxValue: 0.6,
                                     levels: 4,
                                 }
-                                
+
                                 var divNode = d3.select(elem[0]).append('div')
 //                                    .attr('class','col-lg-6')
-                                    .attr('style','float:left')
-                                    .attr('width','100%')
-                                    .attr('heigth','100%')
+//                                    .attr('style','float:left')
+                                    .attr('width', '100%')
+                                    .attr('heigth', '100%')
 //                                    .attr('viewBox','0 0 100 100')
                                     .node();
                                 RadarChart.draw(divNode, chartData, mycfg);
                                 var svg = d3.select(elem[0])
 //                                    .select('svg')
                                     .append('div')
-                                    .attr('style','float:left')
+//                                    .attr('style','float:left')
                                     .append('svg')
-                                    .attr("width",(w*legendSize))
-                                    .attr("height", (w*legendSize))
-                                    .attr('x', mycfg.w)
-
+                                    .attr("width", (w))
+                                    .attr("height", (w))
+//                                    .attr('x', mycfg.w)
+//                                    
                                 //Create the title for the legend
-                                var text = svg.append("text")
-                                    .attr("class", "title")
-//                                    .attr('transform', 'translate(90,0)')
-                                    .attr("x", 10)
-                                    .attr("y", 10)
-                                    .attr("font-size", "12px")
-                                    .attr("fill", "#404040")
-                                    .text("Worldstates");
+//                                var text = svg.append("text")
+//                                    .attr("class", "title")
+////                                    .attr('transform', 'translate(90,0)')
+//                                    .attr("x", 10)
+//                                    .attr("y", 10)
+//                                    .attr("font-size", "12px")
+//                                    .attr("fill", "#404040")
+//                                    .text("Worldstates");
 
                                 //Initiate Legend	
-                                var legend = svg.append("g")
+                                var legendContainer = svg.append("g")
                                     .attr("class", "legend")
-                                    .attr("height", w-10)
-                                    .attr("width", w-10)
-                                    .attr('transform', 'translate(0,20)')
+                                    .attr("height", w - 10)
+                                    .attr("width", w - 10)
+//                                    .attr('transform', 'translate(0,20)')
                                     ;
                                 //Create colour squares
-                                legend.selectAll('rect')
+                                var rects = legendContainer.selectAll('rect')
                                     .data(LegendOptions)
                                     .enter()
                                     .append("rect")
-                                    .attr("x", 15)
-                                    .attr("y", function (d, i) {
+                                    .attr("y", 15)
+                                    .attr("x", function (d, i) {
                                         return i * 20;
                                     })
                                     .attr("width", 10)
@@ -135,20 +135,58 @@ angular.module(
                                     })
                                     ;
                                 //Create text next to squares
-                                legend.selectAll('text')
+                                var labels = legendContainer.selectAll('text')
                                     .data(LegendOptions)
                                     .enter()
                                     .append("text")
-                                    .attr("x", 35)
-                                    .attr("y", function (d, i) {
-                                        return i * 20 + 9;
+                                    .attr("y", 24)
+                                    .attr("x", function (d, i) {
+                                        return i * 30 + 15;
                                     })
                                     .attr("font-size", "11px")
                                     .attr("fill", "#737373")
                                     .text(function (d) {
                                         return d;
-                                    })
-                                    ;
+                                    });
+
+//                               
+                                var xOff = [0];
+                                var yOff = 0;
+                                var xCorr = 0;
+                                labels.attr('transform', function (data, i) {
+                                    var width = d3.select(this).node().getBBox().width;
+                                    var oldXOff = xOff.reduce(function (prev, curr) {
+                                        return prev + curr;
+                                    });
+                                    xOff.push(width);
+                                    if (oldXOff + width -xCorr> w) {
+                                        yOff += 20;
+                                        xCorr = oldXOff + i * 30;
+                                    }
+                                    var off = oldXOff - xCorr;
+                                    var res = 'translate(' + off + ',' + yOff + ')';
+                                    return res;
+                                });
+
+                                yOff = 0;
+                                xCorr = 0;
+                                rects.attr('transform', function (data, i) {
+                                    var off = xOff.reduce(function (prev, curr, index) {
+                                        if (index - 1 < i) {
+                                            return prev + curr;
+                                        } else {
+                                            return prev;
+                                        }
+
+                                    });
+                                    if (off + xOff[i]-xCorr > w) {
+                                        yOff += 20;
+                                        xCorr = off + i * 30;
+                                    }
+                                    off = off -xCorr;
+                                    off = off + i * 10;
+                                    return 'translate(' + off + ','+yOff+')';
+                                });
                             }
                         }
 
