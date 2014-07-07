@@ -79,28 +79,22 @@ angular.module(
                                 elem[0].empty;
                                 chartData = convertToChartDataStructure(dataVector);
                                 var mycfg = {
-                                    w: elem.width() - (elem.width() * legendSize),
-                                    h: elem.width() - (elem.width() * legendSize),
+                                    w: elem.width(),
+                                    h: elem.width(),
                                     maxValue: 0.6,
                                     levels: 4,
                                 }
 
                                 var divNode = d3.select(elem[0]).append('div')
-//                                    .attr('class','col-lg-6')
-//                                    .attr('style','float:left')
-                                    .attr('width', '100%')
-                                    .attr('heigth', '100%')
-//                                    .attr('viewBox','0 0 100 100')
+                                    .attr('style', 'display:block;margin: 0 auto;')
+//                                    .attr('heigth', '100%')
                                     .node();
                                 RadarChart.draw(divNode, chartData, mycfg);
-                                var svg = d3.select(elem[0])
-//                                    .select('svg')
+                                var legendSvg = d3.select(elem[0])
                                     .append('div')
-//                                    .attr('style','float:left')
                                     .append('svg')
-                                    .attr("width", (w))
-                                    .attr("height", (w))
-//                                    .attr('x', mycfg.w)
+                                    .attr("width", w)
+                                    .attr("height",5);
 //                                    
                                 //Create the title for the legend
 //                                var text = svg.append("text")
@@ -113,10 +107,10 @@ angular.module(
 //                                    .text("Worldstates");
 
                                 //Initiate Legend	
-                                var legendContainer = svg.append("g")
+                                var legendContainer = legendSvg.append("g")
                                     .attr("class", "legend")
-                                    .attr("height", w - 10)
-                                    .attr("width", w - 10)
+                                    .attr("height", 5)
+                                    .attr("width", 50 - 10)
 //                                    .attr('transform', 'translate(0,20)')
                                     ;
                                 //Create colour squares
@@ -149,7 +143,8 @@ angular.module(
                                         return d;
                                     });
 
-//                               
+//                              we need to adjust the position of the legend
+//                              labels and break the line if necessary
                                 var xOff = [0];
                                 var yOff = 0;
                                 var xCorr = 0;
@@ -187,6 +182,11 @@ angular.module(
                                     off = off + i * 10;
                                     return 'translate(' + off + ','+yOff+')';
                                 });
+                                
+                                //set the size of the legend containers correctly
+                                legendSvg.attr('height', yOff+50);
+                                legendContainer.attr('height', yOff+50);
+                                
                             }
                         }
 
