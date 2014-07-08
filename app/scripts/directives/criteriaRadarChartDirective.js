@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.directives'
-).directive(
+    ).directive(
     'criteriaRadar',
     [
         'de.cismet.crisma.ICMM.Worldstates',
@@ -124,14 +124,14 @@ angular.module(
                         });
 
                         yOff = 0;
-                        var breakIndex = 0;
+                        breakIndex = 0;
                         rects.attr('transform', function (data, i) {
                             var sumLabelWidth = labelWidthHistory.reduce(function (prev, curr, index) {
                                 if (index < i && index >= breakIndex) {
                                     return prev + curr;
                                 }
                                 return prev;
-                            },0);
+                            }, 0);
                             var sumRectWidth = (i - breakIndex) * 15;
                             var margin = (i - breakIndex) * 20;
                             var offset = sumLabelWidth + sumRectWidth + margin;
@@ -148,7 +148,7 @@ angular.module(
                         legendContainer.attr('height', yOff + 50);
 
                         //center the legend horizontally
-                        legendContainer.attr('transform', function (data, i) {
+                        legendContainer.attr('transform', function () {
                             var legendWidth = d3.select(this).node().getBBox().width;
                             var off = (cfg.w - legendWidth) / 2;
                             off = off < 0 ? 0 : off;
@@ -158,27 +158,24 @@ angular.module(
                     };
 
                     scope.$watchCollection('localModel()', function (newVal, oldVal) {
-                        if (newVal !== oldVal) {
-                            // remove everything from the element...
-                            elem.removeData();
-                            elem.empty();
-                            if (scope.localModel() && scope.localModel().length > 0) {
-                                // we are only interest in criteria data
-                                dataVector = WorldstateService.utils.stripIccData(scope.localModel(), true);
-                                chartData = convertToChartDataStructure(dataVector);
+                        // remove everything from the element...
+                        elem.removeData();
+                        elem.empty();
+                        if (scope.localModel() && scope.localModel().length > 0) {
+                            // we are only interest in criteria data
+                            dataVector = WorldstateService.utils.stripIccData(scope.localModel(), true);
+                            chartData = convertToChartDataStructure(dataVector);
 
-                                var divNode = d3.select(elem[0]).append('div')
-                                    .attr('style', 'display:block;margin: 0 auto;')
-                                    .node();
+                            var divNode = d3.select(elem[0]).append('div')
+                                .attr('style', 'display:block;margin: 0 auto;')
+                                .node();
 
-                                RadarChart.draw(divNode, chartData, cfg);
-                                drawLegend();
-                            }
+                            RadarChart.draw(divNode, chartData, cfg);
+                            drawLegend();
                         }
-
                     });
                 }
             };
         }
     ]
-);
+    );
