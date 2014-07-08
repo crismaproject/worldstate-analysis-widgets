@@ -9,7 +9,7 @@ angular.module(
 
             var scope;
             scope = {
-                worldstates: '='
+                localModel: '&worldstates'
             };
 
             return {
@@ -40,8 +40,8 @@ angular.module(
                                     group = criteriaData[groupName];
                                     for (criteriaProp in group) {
                                         if (group.hasOwnProperty(criteriaProp) &&
-                                                criteriaProp !== 'displayName' &&
-                                                criteriaProp !== 'iconResource') {
+                                            criteriaProp !== 'displayName' &&
+                                            criteriaProp !== 'iconResource') {
                                             criteria = group[criteriaProp];
                                             dataItem.push({
                                                 axis: criteria.displayName,
@@ -63,16 +63,6 @@ angular.module(
                             .append('svg')
                             .attr('width', cfg.w)
                             .attr('height', 5);
-//                                    
-                        //Create the title for the legend
-//                                var text = svg.append("text")
-//                                    .attr("class", "title")
-////                                    .attr('transform', 'translate(90,0)')
-//                                    .attr("x", 10)
-//                                    .attr("y", 10)
-//                                    .attr("font-size", "12px")
-//                                    .attr("fill", "#404040")
-//                                    .text("Worldstates");
 
                         //Initiate Legend
                         var legendContainer = legendSvg.append('g')
@@ -86,81 +76,95 @@ angular.module(
                             .enter()
                             .append('rect')
                             .attr('y', 15)
-                            .attr('x', function (d, i) {
-                                return i * 20;
-                            })
+                            .attr('x', 0)
                             .attr('width', 10)
                             .attr('height', 10)
                             .style('fill', function (d, i) {
                                 return colorscale(i);
-                            })
-                            ;
+                            });
+
                         //Create text next to squares
                         var labels = legendContainer.selectAll('text')
                             .data(LegendOptions)
                             .enter()
                             .append('text')
                             .attr('y', 24)
-                            .attr('x', function (d, i) {
-                                return i * 30 + 15;
-                            })
+                            .attr('x', 0)
                             .attr('font-size', '11px')
                             .attr('fill', '#737373')
                             .text(function (d) {
                                 return d;
                             });
 
-//                      we need to adjust the position of the legend
-//                     labels and break the line if necessary
-                        var xOff = [0];
+//                      we need to adjust the position of the legend labels
+//                      and break the line if necessary
+                        var labelWidthHistory = [];
+                        var labelWidth = [];
+                        var breakIndex = 0;
                         var yOff = 0;
-                        var xCorr = 0;
                         labels.attr('transform', function (data, i) {
                             var width = d3.select(this).node().getBBox().width;
-                            var oldXOff = xOff.reduce(function (prev, curr) {
+                            var sumLabelWidth = labelWidth.reduce(function (prev, curr) {
                                 return prev + curr;
-                            });
-                            xOff.push(width);
-                            if (oldXOff + width - xCorr > cfg.w) {
+                            }, 0);
+
+                            labelWidth.push(width);
+                            labelWidthHistory.push(width);
+                            var sumRectWidth = (i - breakIndex + 1) * 15;
+                            var margin = (i - breakIndex) * 20;
+                            var offset = sumLabelWidth + sumRectWidth + margin;
+
+                            if (offset + width > cfg.w) {
                                 yOff += 20;
-                                xCorr = oldXOff + i * 30;
+                                breakIndex = i;
+                                labelWidth = [width];
+                                offset = 15;
                             }
-                            var off = oldXOff - xCorr;
-                            var res = 'translate(' + off + ',' + yOff + ')';
-                            return res;
+                            return 'translate(' + offset + ',' + yOff + ')';
                         });
 
                         yOff = 0;
-                        xCorr = 0;
+                        var breakIndex = 0;
                         rects.attr('transform', function (data, i) {
-                            var off = xOff.reduce(function (prev, curr, index) {
-                                if (index - 1 < i) {
+                            var sumLabelWidth = labelWidthHistory.reduce(function (prev, curr, index) {
+                                if (index < i && index >= breakIndex) {
                                     return prev + curr;
                                 }
                                 return prev;
-                            });
-                            if (off + xOff[i] - xCorr > cfg.w) {
+                            },0);
+                            var sumRectWidth = (i - breakIndex) * 15;
+                            var margin = (i - breakIndex) * 20;
+                            var offset = sumLabelWidth + sumRectWidth + margin;
+                            if (offset + labelWidthHistory[i] > cfg.w) {
                                 yOff += 20;
-                                xCorr = off + i * 30;
+                                breakIndex = i;
+                                offset = 0;
                             }
-                            off = off - xCorr;
-                            off = off + i * 10;
-                            return 'translate(' + off + ',' + yOff + ')';
+                            return 'translate(' + offset + ',' + yOff + ')';
                         });
 
                         //set the size of the legend containers correctly
                         legendSvg.attr('height', yOff + 50);
                         legendContainer.attr('height', yOff + 50);
+
+                        //center the legend horizontally
+                        legendContainer.attr('transform', function (data, i) {
+                            var legendWidth = d3.select(this).node().getBBox().width;
+                            var off = (cfg.w - legendWidth) / 2;
+                            off = off < 0 ? 0 : off;
+                            return 'translate(' + off + ',' + '0)';
+                        });
+
                     };
 
-                    scope.$watch('worldstates', function (newVal, oldVal) {
+                    scope.$watchCollection('localModel()', function (newVal, oldVal) {
                         if (newVal !== oldVal) {
-                            if (scope.worldstates && scope.worldstates.length > 0) {
+                            // remove everything from the element...
+                            elem.removeData();
+                            elem.empty();
+                            if (scope.localModel() && scope.localModel().length > 0) {
                                 // we are only interest in criteria data
-                                dataVector = WorldstateService.utils.stripIccData(scope.worldstates, true);
-                                // remove everything from the element...
-                                elem.removeData();
-                                elem.empty();
+                                dataVector = WorldstateService.utils.stripIccData(scope.localModel(), true);
                                 chartData = convertToChartDataStructure(dataVector);
 
                                 var divNode = d3.select(elem[0]).append('div')
