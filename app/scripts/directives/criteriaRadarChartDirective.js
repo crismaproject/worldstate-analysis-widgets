@@ -161,7 +161,6 @@ angular.module(
                                 // remove everything from the element...
                                 elem.removeData();
                                 elem.empty();
-                                elem[0].empty();
                                 chartData = convertToChartDataStructure(dataVector);
 
                                 var divNode = d3.select(elem[0]).append('div')

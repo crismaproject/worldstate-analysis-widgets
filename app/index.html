@@ -36,6 +36,10 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="row">
+                        <div class="col-lg-6" criteria-radar worldstates="worldstates">
+                        </div>
+                    </div>
+                    <div class="row">
                         <label>
                             <input ng-model="forCriteria" type="checkbox"> Criteria
                         </label>
@@ -45,12 +49,6 @@
                     </div>
                     <div class="row">
                         <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' for-criteria='forCriteria'></indicator-criteria-table>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12" criteria-radar worldstates="worldstates">
-                            
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -87,18 +85,18 @@
 
         <!-- demo only -->
         <script>
-                                angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                    [
-                                        '$provide',
-                                        function ($provide) {
-                                            'use strict';
+                            angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                [
+                                    '$provide',
+                                    function ($provide) {
+                                        'use strict';
 
-                                            $provide.constant('DEBUG', 'true');
-                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                        }
-                                    ]
-                                    );
+                                        $provide.constant('DEBUG', 'true');
+                                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                    }
+                                ]
+                                );
         </script>
     </body>
 </html>
