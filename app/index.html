@@ -36,6 +36,10 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="row">
+                        <div class="col-lg-6" criteria-radar worldstates="worldstates">
+                        </div>
+                    </div>
+                    <div class="row">
                         <label>
                             <input ng-model="forCriteria" type="checkbox"> Criteria
                         </label>
@@ -65,12 +69,17 @@
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
+        <script src="bower_components/d3/d3.js"></script>
+        <script src="bower_components/radar-chart-d3/src/radar-chart.js"></script>
+        <!--<script src="bower_components/radar-chart-d3/src/radar-chart-custom.js"></script>-->
 
         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/mainController.js"></script>
         <script src="scripts/controllers/indicatorCriteriaTableDirectiveController.js"></script>
         <script src="scripts/directives/indicatorCriteriaTableDirective.js"></script>
+        <!--<script src="scripts/directives/criteriaRadarChartDirectiveController.js"></script>-->
+        <script src="scripts/directives/criteriaRadarChartDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <!-- endbuild -->
 

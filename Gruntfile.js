@@ -148,7 +148,7 @@ module.exports = function (grunt) {
     // but still available if needed
     concat: {
       dist: {
-          src: '<%= yeoman.app %>/scripts/**/*.js',
+          src: ['<%= yeoman.app %>/scripts/directives/indicatorCriteriaTableDirective.js','<%= yeoman.app %>/scripts/**/*.js'],
           dest: '<%= yeoman.dist %>/scripts/worldstate-analysis-widget.js'
       }
     },
