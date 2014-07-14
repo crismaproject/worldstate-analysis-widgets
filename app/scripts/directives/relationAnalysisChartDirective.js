@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.directives'
-    ).directive(
+).directive(
     'relationAnalysisChart',
     [
         'de.cismet.crisma.ICMM.Worldstates',
@@ -16,12 +16,9 @@ angular.module(
             return {
                 scope: scope,
                 restrict: 'E',
-                link:function(scope,elem){
-                    console.log("elem width: "+elem.width())
-                },
                 templateUrl: 'templates/relationAnalysisChartTemplate.html',
                 controller: 'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController'
             };
         }
     ]
-    );
+);

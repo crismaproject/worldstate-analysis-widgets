@@ -1,31 +1,33 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        '$timeout',
-        function ($scope, WorldstateService, $timeout) {
-            var createChartData, getDataValueForAxis, iccDataHasScaleItems,
+        function ($scope, WorldstateService) {
+            'use strict';
+
+            var createChartData, getDataValueForAxis,
                 watchCallback;
+
             createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
 
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
-                    valueX = Math.random() * 1000 // getDataValueForAxis(xAxis, iccItem);
-                    valueY = Math.random() * 1000 //getDataValueForAxis(yAxis, iccItem);
+                    valueX = getDataValueForAxis(xAxis, iccItem); // Math.random() * 1000;
+                    valueY =  getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
                     if (firstValueX === 0) {
                         firstValueX = valueX;
                     }
                     data.push({
                         key: iccData[i].name,
                         values: [{
-                                x: valueX,
-                                y: valueY,
-                            }]
+                            x: valueX,
+                            y: valueY
+                        }]
                     });
                 }
 
@@ -33,7 +35,7 @@ angular.module(
             };
 
             getDataValueForAxis = function (axis, iccObject) {
-                var i, axisProp, iccItem, iccGroup, iccGroupProp;
+                var axisProp, iccItem, iccGroup, iccProp, iccGroupProp;
                 if (!(axis && axis.name)) {
                     return null;
                 }
@@ -42,7 +44,7 @@ angular.module(
                 for (iccGroupProp in iccItem) {
                     if (iccItem.hasOwnProperty(iccGroupProp)) {
                         iccGroup = iccItem[iccGroupProp];
-                        for (var iccProp in iccGroup) {
+                        for (iccProp in iccGroup) {
                             if (iccGroup.hasOwnProperty(iccProp)) {
                                 if (iccGroup[iccProp].displayName === axisProp) {
                                     return iccGroup[iccProp].value;
@@ -54,9 +56,6 @@ angular.module(
                 return null;
             };
 
-            iccDataHasScaleItems = function (axis, data) {
-                return getDataValueForAxis(axis, data[0]) !== null;
-            };
 
             $scope.getXAxisLabel = function () {
                 var res = '';
@@ -73,50 +72,23 @@ angular.module(
                 }
                 return res;
             };
+
             $scope.zScale = d3.scale.linear();
+
             $scope.yAxisTickFormatFunction = function () {
                 return function (d) {
-                    return d3.round(d, 2)
+                    return d3.round(d, 2);
                 };
             };
 
-            $scope.xAxis;
-            $scope.yAxis;
-            getAxisProperties = function (iccData) {
-                var group, i, axesGroup, res = [];
-                if (iccData && iccData.length > 0) {
-                    var worldstateIccData = iccData[0].data;
-                    for (group in worldstateIccData) {
-                        axesGroup = worldstateIccData[group];
-                        res.push({
-                            name: axesGroup.displayName,
-                            icon: axesGroup.iconResource,
-                            isGroup: true
-                        });
-                        for (var prop in axesGroup) {
-                            if (axesGroup.hasOwnProperty(prop)) {
-                                if (prop !== 'displayName' && prop !== 'iconResource') {
-                                    res.push({
-                                        name: axesGroup[prop].displayName,
-                                        icon: axesGroup[prop].iconResource,
-                                        isGroup: false
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-                return res;
-            };
-            
             $scope.$watch('worldstates()', function () {
                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates(), $scope.forCriteria);
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
                         if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                            $scope.yAxis.name.indexOf('Select') === -1
-                            ) {
+                                $scope.yAxis.name.indexOf('Select') === -1
+                                ) {
                             $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                         }
                     }
@@ -126,8 +98,8 @@ angular.module(
             watchCallback = function () {
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                        $scope.yAxis.name.indexOf('Select') === -1
-                        ) {
+                            $scope.yAxis.name.indexOf('Select') === -1
+                            ) {
                         $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                     }
                 }
@@ -138,6 +110,6 @@ angular.module(
             $scope.$watch('yAxis', watchCallback);
         }
     ]
-    );
+);
 
 

@@ -1,10 +1,12 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaAxisChooserDirectiveController',
     [
         '$scope',
         function ($scope) {
+            'use strict';
+
             var getAxisProperties, xAxis, defaultAxis;
             xAxis = $scope.isXAxis === 'true';
             defaultAxis = {
@@ -15,20 +17,22 @@ angular.module(
                 if (iccData) {
                     var worldstateIccData = iccData.data;
                     for (group in worldstateIccData) {
-                        axesGroup = worldstateIccData[group];
-                        res.push({
-                            name: axesGroup.displayName,
-                            icon: axesGroup.iconResource,
-                            isGroup: true
-                        });
-                        for (prop in axesGroup) {
-                            if (axesGroup.hasOwnProperty(prop)) {
-                                if (prop !== 'displayName' && prop !== 'iconResource') {
-                                    res.push({
-                                        name: axesGroup[prop].displayName,
-                                        icon: axesGroup[prop].iconResource,
-                                        isGroup: false
-                                    });
+                        if (worldstateIccData.hasOwnProperty(group)) {
+                            axesGroup = worldstateIccData[group];
+                            res.push({
+                                name: axesGroup.displayName,
+                                icon: axesGroup.iconResource,
+                                isGroup: true
+                            });
+                            for (prop in axesGroup) {
+                                if (axesGroup.hasOwnProperty(prop)) {
+                                    if (prop !== 'displayName' && prop !== 'iconResource') {
+                                        res.push({
+                                            name: axesGroup[prop].displayName,
+                                            icon: axesGroup[prop].iconResource,
+                                            isGroup: false
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -58,6 +62,6 @@ angular.module(
             });
         }
     ]
-    );
+);
 
 
