@@ -26,12 +26,14 @@
     "bootstrap": "~3.1.1",
     "icmm_js": "v0.1.1",
     "crisma-worldstate-tree-widget-angular": "0.2.1",
-    "d3":"~3.4.9",
-    "radar-chart-d3": "*"
+    "d3": "~3.4.9",
+    "radar-chart-d3": "*",
+    "angularjs-nvd3-directives": "~0.0.7"
   },
   "devDependencies": {
     "angular-mocks": "1.2.7",
     "angular-scenario": "1.2.7",
-    "angular-commons": "~0.2.0"
+    "angular-commons": "~0.2.0",
+    "nvd3": "~1.1.15-beta"
   }
 }
