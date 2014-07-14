@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
     [
         '$scope',
@@ -13,7 +13,7 @@ angular.module(
 
             createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
-                
+
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
@@ -27,9 +27,9 @@ angular.module(
                     data.push({
                         key: (i + 1) + '. ' + iccData[i].name,
                         values: [{
-                                x: valueX,
-                                y: valueY
-                            }]
+                            x: valueX,
+                            y: valueY
+                        }]
                     });
                 }
 
@@ -88,39 +88,38 @@ angular.module(
                     return d3.round(d, 2);
                 };
             };
-            
-            dataChangedWatchCallback = function(){
-                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
+
+            dataChangedWatchCallback = function () {
+                if ($scope.worldstates() && $scope.worldstates().length > 0) {
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates(), $scope.forCriteria);
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
                         if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                            $scope.yAxis.name.indexOf('Select') === -1
-                            ) {
+                                $scope.yAxis.name.indexOf('Select') === -1
+                                ) {
                             $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                         }
                     }
                 }
             };
-            
+
             axisWatchCallback = function () {
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                        $scope.yAxis.name.indexOf('Select') === -1
-                        ) {
+                            $scope.yAxis.name.indexOf('Select') === -1
+                            ) {
                         $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                     }
                 }
             };
 
             $scope.$watch('xAxis', axisWatchCallback);
-
             $scope.$watch('yAxis', axisWatchCallback);
-            
-            $scope.$watch('forCriteria',dataChangedWatchCallback);
+
+            $scope.$watch('forCriteria', dataChangedWatchCallback);
             $scope.$watch('worldstates()', dataChangedWatchCallback);
         }
     ]
-    );
+);
 
 
