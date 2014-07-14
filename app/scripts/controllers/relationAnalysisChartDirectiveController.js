@@ -13,17 +13,19 @@ angular.module(
 
             createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
-
+                
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
-                    valueX = getDataValueForAxis(xAxis, iccItem); // Math.random() * 1000;
-                    valueY = getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
+//                    valueX = getDataValueForAxis(xAxis, iccItem); // 
+//                    valueY = getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
+                    valueX = Math.random() * 500 + 200;
+                    valueY = Math.random() * 500 + 200;
                     if (firstValueX === 0) {
                         firstValueX = valueX;
                     }
                     data.push({
-                        key: iccData[i].name,
+                        key: (i + 1) + '. ' + iccData[i].name,
                         values: [{
                                 x: valueX,
                                 y: valueY

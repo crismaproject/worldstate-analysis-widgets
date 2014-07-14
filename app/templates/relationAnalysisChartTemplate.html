@@ -15,12 +15,10 @@
         <!--chart-->
         <div class="col-lg-12" nvd3-scatter-chart
              data="chartdata"
-             id="exampleId"
              showLegend="true"
              interactive="true"
              tooltips="true"
-             sizerange="[300,300]"
-             nodata="No Worldstate selected"
+             sizerange="[80,80]"
              zscale="zScale"
              showDistX="true"
              showDistY="true"
@@ -29,8 +27,8 @@
              margin='{left:90,top:0,bottom:50,right:50}'
              yAxisTickFormat="yAxisTickFormatFunction()"
              xAxisTickFormat="xAxisTickFormatFunction()"
+             height="{{chartHeight}}"
              >
-            <!--sizedomain="[300,300]"-->
             <svg></svg>
         </div>
     </div>
