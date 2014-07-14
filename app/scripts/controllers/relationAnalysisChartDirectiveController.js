@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
     [
         '$scope',
@@ -18,16 +18,16 @@ angular.module(
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
                     valueX = getDataValueForAxis(xAxis, iccItem); // Math.random() * 1000;
-                    valueY =  getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
+                    valueY = getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
                     if (firstValueX === 0) {
                         firstValueX = valueX;
                     }
                     data.push({
                         key: iccData[i].name,
                         values: [{
-                            x: valueX,
-                            y: valueY
-                        }]
+                                x: valueX,
+                                y: valueY
+                            }]
                     });
                 }
 
@@ -81,14 +81,20 @@ angular.module(
                 };
             };
 
+            $scope.xAxisTickFormatFunction = function () {
+                return function (d) {
+                    return d3.round(d, 2);
+                };
+            };
+
             $scope.$watch('worldstates()', function () {
                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates(), $scope.forCriteria);
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
                         if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                                $scope.yAxis.name.indexOf('Select') === -1
-                                ) {
+                            $scope.yAxis.name.indexOf('Select') === -1
+                            ) {
                             $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                         }
                     }
@@ -98,8 +104,8 @@ angular.module(
             watchCallback = function () {
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                            $scope.yAxis.name.indexOf('Select') === -1
-                            ) {
+                        $scope.yAxis.name.indexOf('Select') === -1
+                        ) {
                         $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                     }
                 }
@@ -110,6 +116,6 @@ angular.module(
             $scope.$watch('yAxis', watchCallback);
         }
     ]
-);
+    );
 
 

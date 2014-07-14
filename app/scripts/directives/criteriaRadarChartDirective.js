@@ -173,7 +173,7 @@ angular.module(
                             .node();
 
                         RadarChart.draw(divNode, chartData, cfg);
-                        drawLegend(elem);
+                        drawLegend(elem, cfg);
                     }
                 });
             };
