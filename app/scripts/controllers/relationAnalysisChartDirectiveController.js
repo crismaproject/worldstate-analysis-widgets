@@ -8,8 +8,8 @@ angular.module(
         function ($scope, WorldstateService) {
             'use strict';
 
-            var createChartData, getDataValueForAxis,
-                watchCallback;
+            var createChartData, getDataValueForAxis, dataChangedWatchCallback,
+                axisWatchCallback;
 
             createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
@@ -17,10 +17,10 @@ angular.module(
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
-//                    valueX = getDataValueForAxis(xAxis, iccItem); // 
-//                    valueY = getDataValueForAxis(yAxis, iccItem);//getDataValueForAxis(yAxis, iccItem);Math.random() * 1000;
-                    valueX = Math.random() * 500 + 200;
-                    valueY = Math.random() * 500 + 200;
+                    valueX = getDataValueForAxis(xAxis, iccItem);
+                    valueY = getDataValueForAxis(yAxis, iccItem);
+//                    valueX = Math.random() * 500 + 200;
+//                    valueY = Math.random() * 500 + 200;
                     if (firstValueX === 0) {
                         firstValueX = valueX;
                     }
@@ -88,9 +88,9 @@ angular.module(
                     return d3.round(d, 2);
                 };
             };
-
-            $scope.$watch('worldstates()', function () {
-                if ($scope.worldstates() && $scope.worldstates().length > 0) {
+            
+            dataChangedWatchCallback = function(){
+                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates(), $scope.forCriteria);
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
@@ -101,9 +101,9 @@ angular.module(
                         }
                     }
                 }
-            });
-
-            watchCallback = function () {
+            };
+            
+            axisWatchCallback = function () {
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
                         $scope.yAxis.name.indexOf('Select') === -1
@@ -113,9 +113,12 @@ angular.module(
                 }
             };
 
-            $scope.$watch('xAxis', watchCallback);
+            $scope.$watch('xAxis', axisWatchCallback);
 
-            $scope.$watch('yAxis', watchCallback);
+            $scope.$watch('yAxis', axisWatchCallback);
+            
+            $scope.$watch('forCriteria',dataChangedWatchCallback);
+            $scope.$watch('worldstates()', dataChangedWatchCallback);
         }
     ]
     );
