@@ -8,20 +8,18 @@ angular.module(
         function ($scope, WorldstateService) {
             'use strict';
 
-            var createChartData, getDataValueForAxis, dataChangedWatchCallback,
-                axisWatchCallback, controller;
-            controller = this;
-            
+            var controller = this;
+
             this.createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
-                if(!iccData || !xAxis || !yAxis){
-                    throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):'+iccData+' , '+xAxis+' , '+yAxis;
+                if (!iccData || !xAxis || !yAxis) {
+                    throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):' + iccData + ' , ' + xAxis + ' , ' + yAxis;
                 }
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
-                    if(!iccItem){
-                        throw 'Invalid icc object '+iccItem;
+                    if (!iccItem) {
+                        throw 'Invalid icc object ' + iccItem;
                     }
                     valueX = controller.getDataValueForAxis(xAxis, iccItem);
                     valueY = controller.getDataValueForAxis(yAxis, iccItem);
