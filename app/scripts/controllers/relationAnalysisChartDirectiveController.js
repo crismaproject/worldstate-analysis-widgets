@@ -9,16 +9,22 @@ angular.module(
             'use strict';
 
             var createChartData, getDataValueForAxis, dataChangedWatchCallback,
-                axisWatchCallback;
-
-            createChartData = function (iccData, xAxis, yAxis) {
+                axisWatchCallback, controller;
+            controller = this;
+            
+            this.createChartData = function (iccData, xAxis, yAxis) {
                 var i, iccItem, valueX, valueY, data = [];
-
+                if(!iccData || !xAxis || !yAxis){
+                    throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):'+iccData+' , '+xAxis+' , '+yAxis;
+                }
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[0];
-                    valueX = getDataValueForAxis(xAxis, iccItem);
-                    valueY = getDataValueForAxis(yAxis, iccItem);
+                    if(!iccItem){
+                        throw 'Invalid icc object '+iccItem;
+                    }
+                    valueX = controller.getDataValueForAxis(xAxis, iccItem);
+                    valueY = controller.getDataValueForAxis(yAxis, iccItem);
 //                    valueX = Math.random() * 500 + 200;
 //                    valueY = Math.random() * 500 + 200;
                     if (firstValueX === 0) {
@@ -36,7 +42,7 @@ angular.module(
                 return data;
             };
 
-            getDataValueForAxis = function (axis, iccObject) {
+            this.getDataValueForAxis = function (axis, iccObject) {
                 var axisProp, iccItem, iccGroup, iccProp, iccGroupProp;
                 if (!(axis && axis.name)) {
                     return null;
@@ -48,7 +54,9 @@ angular.module(
                         iccGroup = iccItem[iccGroupProp];
                         for (iccProp in iccGroup) {
                             if (iccGroup.hasOwnProperty(iccProp)) {
+                                console.log(iccGroup[iccProp]);
                                 if (iccGroup[iccProp].displayName === axisProp) {
+                                    console.log("found the value for "+axisProp+ " it is: "+iccGroup[iccProp].value)
                                     return iccGroup[iccProp].value;
                                 }
                             }
@@ -89,7 +97,7 @@ angular.module(
                 };
             };
 
-            dataChangedWatchCallback = function () {
+            this.dataChangedWatchCallback = function () {
                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates(), $scope.forCriteria);
                     $scope.iccObject = $scope.iccData[0];
@@ -97,27 +105,27 @@ angular.module(
                         if ($scope.xAxis.name.indexOf('Select') === -1 &&
                                 $scope.yAxis.name.indexOf('Select') === -1
                                 ) {
-                            $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
+                            $scope.chartdata = controller.createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                         }
                     }
                 }
             };
 
-            axisWatchCallback = function () {
+            this.axisWatchCallback = function () {
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
                             $scope.yAxis.name.indexOf('Select') === -1
                             ) {
-                        $scope.chartdata = createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
+                        $scope.chartdata = controller.createChartData($scope.iccData, $scope.xAxis, $scope.yAxis);
                     }
                 }
             };
 
-            $scope.$watch('xAxis', axisWatchCallback);
-            $scope.$watch('yAxis', axisWatchCallback);
+            $scope.$watch('xAxis', this.axisWatchCallback);
+            $scope.$watch('yAxis', this.axisWatchCallback);
 
-            $scope.$watch('forCriteria', dataChangedWatchCallback);
-            $scope.$watch('worldstates()', dataChangedWatchCallback);
+            $scope.$watch('forCriteria', this.dataChangedWatchCallback);
+            $scope.$watch('worldstates()', this.dataChangedWatchCallback);
         }
     ]
 );
