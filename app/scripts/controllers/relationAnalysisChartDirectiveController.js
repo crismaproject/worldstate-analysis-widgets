@@ -54,9 +54,7 @@ angular.module(
                         iccGroup = iccItem[iccGroupProp];
                         for (iccProp in iccGroup) {
                             if (iccGroup.hasOwnProperty(iccProp)) {
-                                console.log(iccGroup[iccProp]);
                                 if (iccGroup[iccProp].displayName === axisProp) {
-                                    console.log("found the value for "+axisProp+ " it is: "+iccGroup[iccProp].value)
                                     return iccGroup[iccProp].value;
                                 }
                             }

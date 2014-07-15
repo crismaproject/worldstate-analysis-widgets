@@ -52,9 +52,7 @@ angular.module(
                 }
             });
             // Retrieve the top level nodes from the icmm api
-            $scope.treeNodes = Nodes.query(function(data){
-                console.log(data);
-            });
+            $scope.treeNodes = Nodes.query();
         }
     ]
     );
