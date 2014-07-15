@@ -26,7 +26,7 @@
     "bootstrap": "~3.1.1",
     "icmm_js": "v0.1.1",
     "crisma-worldstate-tree-widget-angular": "0.2.1",
-    "d3": "~3.4.9",
+    "d3": "3.3.6",
     "radar-chart-d3": "*",
     "angularjs-nvd3-directives": "~0.0.7"
   },
