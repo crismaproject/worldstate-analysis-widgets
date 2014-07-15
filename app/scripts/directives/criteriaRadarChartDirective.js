@@ -7,43 +7,12 @@ angular.module(
         function (WorldstateService) {
             'use strict';
 
-            var scope, linkFunction, legendItems,
-                convertToChartDataStructure, drawLegend;
+            var scope, linkFunction, drawLegend;
             scope = {
                 localModel: '&worldstates'
             };
-            legendItems = [];
-            convertToChartDataStructure = function (criteriaVector) {
-                var i, criteriaData, groupName, group, criteriaProp,
-                    criteria, result, dataItem;
-                result = [];
-                legendItems = [];
-                for (i = 0; i < criteriaVector.length; i++) {
-                    dataItem = [];
-                    criteriaData = criteriaVector[i].data;
-                    legendItems.push(criteriaVector[i].name);
-                    for (groupName in criteriaData) {
-                        if (criteriaData.hasOwnProperty(groupName)) {
-                            group = criteriaData[groupName];
-                            for (criteriaProp in group) {
-                                if (group.hasOwnProperty(criteriaProp) &&
-                                        criteriaProp !== 'displayName' &&
-                                        criteriaProp !== 'iconResource') {
-                                    criteria = group[criteriaProp];
-                                    dataItem.push({
-                                        axis: criteria.displayName,
-                                        value: criteria.value
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    result.push(dataItem);
-                }
-                return result;
-            };
 
-            drawLegend = function (elem, chartConfig) {
+            drawLegend = function (elem, chartConfig, legendItems) {
                 var colorscale, legendSvg, legendContainer, rects,
                     labelWidthHistory, labels, labelWidth, breakIndex, yOff;
                 colorscale = d3.scale.category10();
@@ -150,15 +119,16 @@ angular.module(
             };
 
             linkFunction = function (scope, elem) {
-                var dataVector,  chartData, cfg;
+                var dataVector, cfg, width,chartDataModel;
                 //we want the chart to adjust to the size of the element it is placed in
+                width = elem.width ? elem.width() : 200;
                 cfg = {
-                    w: elem.width(),
-                    h: elem.width(),
+                    w: width,
+                    h: width,
                     maxValue: 100,
                     levels: 4
                 };
-
+                
                 scope.$watchCollection('localModel()', function () {
                     // remove everything from the element...
                     elem.removeData();
@@ -166,14 +136,16 @@ angular.module(
                     if (scope.localModel() && scope.localModel().length > 0) {
                         // we are only interest in criteria data
                         dataVector = WorldstateService.utils.stripIccData(scope.localModel(), true);
-                        chartData = convertToChartDataStructure(dataVector);
+                        chartDataModel = scope.convertToChartDataStructure(dataVector);
+                        scope.chartData = chartDataModel[0];
+                        scope.legendItems=chartDataModel[1];
 
                         var divNode = d3.select(elem[0]).append('div')
                             .attr('style', 'display:block;margin: 0 auto;')
                             .node();
 
-                        RadarChart.draw(divNode, chartData, cfg);
-                        drawLegend(elem, cfg);
+                        RadarChart.draw(divNode, scope.chartData, cfg);
+                        drawLegend(elem, cfg,scope.legendItems);
                     }
                 });
             };
@@ -181,7 +153,8 @@ angular.module(
             return {
                 scope: scope,
                 restrict: 'A',
-                link: linkFunction
+                link: linkFunction,
+                controller: 'eu.crismaproject.worldstateAnalysis.controllers.CriteriaRadarChartDirectiveController'
             };
         }
     ]
