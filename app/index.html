@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
 
         <link rel="stylesheet" href="bower_components/dynatree/dist/skin/ui.dynatree.css">
+        <link rel="stylesheet" href="bower_components/nvd3/nv.d3.css">
         <link rel="stylesheet" type="text/css" media="screen" href="bower_components/crisma-worldstate-tree-widget-angular/dist/styles/crisma-worldstate-tree-widget-angular.css">
 
         <!-- build:css(.tmp) styles/worldstate-analysis-widget.min.css -->
@@ -36,10 +37,7 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="row">
-                        <div class="col-lg-6" criteria-radar worldstates="worldstates">
-                        </div>
-                    </div>
-                    <div class="row">
+                        <hr>
                         <label>
                             <input ng-model="forCriteria" type="checkbox"> Criteria
                         </label>
@@ -48,7 +46,21 @@
                         </label>
                     </div>
                     <div class="row">
+                        <h1>Indicator / Criteria Table </h1>
                         <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' for-criteria='forCriteria'></indicator-criteria-table>
+                    </div>
+                    <div class="row">
+                        <h1>Worldstate Scatter Plot</h1>
+                        <hr>
+                        <div class="col-lg-12">
+                            <relation-analysis-chart style="padding-left:50px" height="350" for-criteria='forCriteria' worldstates="worldstates"></relation-analysis-chart>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h1>Worldstate Radar Chart</h1>
+                        <hr>
+                        <div class="col-lg-6" criteria-radar worldstates="worldstates">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,10 +70,10 @@
         <script src="bower_components/es5-shim/es5-shim.js"></script>
         <script src="bower_components/json3/lib/json3.min.js"></script>
         <![endif]-->
-
         <script src="bower_components/jquery/jquery.js"></script>
         <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
         <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/ng-table/ng-table.js"></script>
@@ -71,7 +83,8 @@
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
         <script src="bower_components/d3/d3.js"></script>
         <script src="bower_components/radar-chart-d3/src/radar-chart.js"></script>
-        <!--<script src="bower_components/radar-chart-d3/src/radar-chart-custom.js"></script>-->
+        <script src="bower_components/nvd3/nv.d3.js"></script>
+        <script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
 
         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>
@@ -80,23 +93,27 @@
         <script src="scripts/directives/indicatorCriteriaTableDirective.js"></script>
         <!--<script src="scripts/directives/criteriaRadarChartDirectiveController.js"></script>-->
         <script src="scripts/directives/criteriaRadarChartDirective.js"></script>
+        <script src="scripts/controllers/indicatorCriteriaAxisChooserDirectiveController.js"></script>
+        <script src="scripts/directives/indicatorCriteriaAxisChooserDirective.js"></script>
+        <script src="scripts/controllers/relationAnalysisChartDirectiveController.js"></script>
+        <script src="scripts/directives/relationAnalysisChartDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->
         <script>
-                            angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                [
-                                    '$provide',
-                                    function ($provide) {
-                                        'use strict';
+                                    angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                        [
+                                            '$provide',
+                                            function ($provide) {
+                                                'use strict';
 
-                                        $provide.constant('DEBUG', 'true');
-                                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                    }
-                                ]
-                                );
+                                                $provide.constant('DEBUG', 'true');
+                                                $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                                $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                            }
+                                        ]
+                                        );
         </script>
     </body>
 </html>

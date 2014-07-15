@@ -1,6 +1,8 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
-    []
+    [
+        'nvd3ChartDirectives'
+    ]
 ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
     [
