@@ -95,7 +95,7 @@ angular.module(
                     sumRectWidth = (i - breakIndex) * 15;
                     margin = (i - breakIndex) * 20;
                     offset = sumLabelWidth + sumRectWidth + margin;
-                    if (offset + labelWidthHistory[i] > chartConfig.w) {
+                    if (offset + labelWidthHistory[i] + 15 > chartConfig.w) {
                         yOff += 20;
                         breakIndex = i;
                         offset = 0;
