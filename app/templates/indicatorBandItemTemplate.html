@@ -1,0 +1,25 @@
+<div id="popover-parent" class="progress-bar table-display" 
+     aria-valuemin="0" aria-valuemax="100"
+     aria-valunow="{{getPercent()}}"
+     ng-style="intervalWidth()"
+     ng-class="getColorClass()"
+     ng-click="togglePopover($event)"
+     style="cursor: pointer;"
+     >
+    <div class="closeIcon vCenter" ng-if="!lowerBoundary && !upperBoundary"><i ng-click="del(previousInterval);$event.stopPropagation()" ng-hide="first" class="glyphicon glyphicon-remove"></i></div>
+    <div ng-hide="getPercent()<=10" class="vCenter progress-labels" id="popover-target" style="width:100%">
+
+        <span ng-if="lowerBoundary">0%</span>
+        <span ng-if="upperBoundary">100%</span>
+        <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.criteriaValue||'0' | number}}% - {{interval.criteriaValue | number}}% </span>
+        <br/> 
+        <span ng-if="lowerBoundary"><=</span>
+        <span ng-if="upperBoundary">>=</span>
+        <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.indicatorValue||'0' | number}} -</span>
+        <span>{{interval.indicatorValue | number}}</span>
+    </div>
+    <div class="vCenter" ng-hide="getPercent()>10">
+        <i class="glyphicon glyphicon-info-sign " style="color:black" data-placement="top" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip"></i>
+    </div>
+    <div  class="closeIcon vCenter" ng-if="!lowerBoundary && !upperBoundary" ><i ng-click="del(interval);$event.stopPropagation()" ng-hide="last" class="glyphicon glyphicon-remove"></i></div>
+</div>
