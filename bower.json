@@ -28,7 +28,8 @@
     "crisma-worldstate-tree-widget-angular": "0.2.1",
     "d3": "3.3.6",
     "radar-chart-d3": "*",
-    "angularjs-nvd3-directives": "~0.0.7"
+    "angularjs-nvd3-directives": "~0.0.7",
+    "angular-strap": "~2.0.3"
   },
   "devDependencies": {
     "angular-mocks": "1.2.7",
