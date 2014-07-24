@@ -8,9 +8,7 @@ angular.module(
 
             var scope;
             scope = {
-                worldstates: '&',
-                chartHeight: '@height',
-                forCriteria: '='
+                criteriaFunction:'=?'
             };
 
             return {

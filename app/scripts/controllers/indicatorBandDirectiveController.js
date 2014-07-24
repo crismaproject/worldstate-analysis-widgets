@@ -6,42 +6,31 @@ angular.module(
         '$scope',
         function ($scope) {
             'use strict';
-            var dataModel, colorClasses, criteriaSortFunction;
-            dataModel = {
+            var initData, colorClasses, criteriaSortFunction, initDataModel;
+            initData = {
                 lowerBoundary: {
                     criteriaValue: 0,
-                    indicatorValue: 100
+                    indicatorValue: 0
                 },
                 upperBoundary: {
                     criteriaValue: 100,
                     indicatorValue: 0
                 },
-                intervals: [
-//                    {
-//                        criteriaValue: 25,
-//                        indicatorValue: 75
-//                    },
-//                    {
-//                        criteriaValue: 50,
-//                        indicatorValue: 50
-//                    },
-//                    {
-//                        criteriaValue: 75,
-//                        indicatorValue: 25
-//                    }
-                ]
+                intervals: []
             };
-
             colorClasses = ['color-b', 'color-c', 'color-d', 'color-e', 'color-f', 'color-g',
                 'color-h'];
 
             criteriaSortFunction = function (intervalA, intervalB) {
                 return intervalA.criteriaValue - intervalB.criteriaValue;
             };
+            if (!$scope.criteriaFunction) {
+                $scope.criteriaFunction = initData;
+            }
+            $scope.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
+            $scope.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
+            $scope.intervals = $scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction);
 
-            $scope.lowerBoundary = dataModel.lowerBoundary;
-            $scope.upperBoundary = dataModel.upperBoundary;
-            $scope.intervals = dataModel.intervals.sort(criteriaSortFunction);
 
             $scope.getIntervalColor = function (interval) {
                 var total = $scope.intervals.length;
@@ -179,7 +168,7 @@ angular.module(
                 $scope.intervals.push(newInterval);
                 $scope.intervals.sort(criteriaSortFunction);
             };
-            
+
             $scope.getIntervalWidth = function (interval, previousInterval) {
                 var sumBefore = 0;
                 if (previousInterval) {
