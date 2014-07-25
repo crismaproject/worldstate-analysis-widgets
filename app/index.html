@@ -37,7 +37,6 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="row">
-                        <hr>
                         <label>
                             <input ng-model="forCriteria" type="checkbox"> Criteria
                         </label>
@@ -47,6 +46,7 @@
                     </div>
                     <div class="row">
                         <h1>Indicator / Criteria Table </h1>
+                        <hr>
                         <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' for-criteria='forCriteria'></indicator-criteria-table>
                     </div>
                     <div class="row">
@@ -64,6 +64,11 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                                <criteria-function-manager indicators="indicatorVector"></criteria-function-manager>
+                                <!--                <criteria-function indicators="indicatorVector" criteria-functions="critFuncs">
+                                                </criteria-function>-->
+            </div>
         </div>
 
         <!--[if lt IE 9]>
@@ -77,6 +82,9 @@
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/ng-table/ng-table.js"></script>
+        <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+        <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+        <script src="bower_components/angular-local-storage/angular-local-storage.js"></script>
         <script src="bower_components/angular-commons/dist/scripts/angular-commons.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
@@ -97,6 +105,11 @@
         <script src="scripts/directives/indicatorCriteriaAxisChooserDirective.js"></script>
         <script src="scripts/controllers/relationAnalysisChartDirectiveController.js"></script>
         <script src="scripts/directives/relationAnalysisChartDirective.js"></script>
+        <script src="scripts/controllers/indicatorBandDirectiveController.js"></script>
+        <script src="scripts/controllers/indicatorBandItemDirectiveController.js"></script>
+        <script src="scripts/directives/indicatorBandDirective.js"></script>
+        <script src="scripts/controllers/criteriaFunctionManagerDirectiveController.js"></script>
+        <script src="scripts/directives/criteriaFunctionManagerDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <!-- endbuild -->
 
@@ -107,13 +120,11 @@
                                             '$provide',
                                             function ($provide) {
                                                 'use strict';
-
                                                 $provide.constant('DEBUG', 'true');
                                                 $provide.constant('CRISMA_DOMAIN', 'CRISMA');
                                                 $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
                                             }
                                         ]
-                                        );
-        </script>
+                                        );</script>
     </body>
 </html>

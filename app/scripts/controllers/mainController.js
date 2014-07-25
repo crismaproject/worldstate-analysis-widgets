@@ -1,11 +1,11 @@
 // only for testing/demo
 angular.module(
-   'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
+    'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
     [
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes'
     ]
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
@@ -27,17 +27,17 @@ angular.module(
             $scope.treeSelection = [];
             $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
                 var i, wsId, wsNode, wsArr = [],
-                worldstateCallback = function (worldstate) {
-                    wsArr.push(worldstate);
-                    if (wsArr.length === $scope.treeSelection.length) {
-                        if (!$scope.worldstates) {
-                            $scope.worldstates = [];
-                        } else {
-                            $scope.worldstates.splice(0, $scope.worldstates.length);
+                    worldstateCallback = function (worldstate) {
+                        wsArr.push(worldstate);
+                        if (wsArr.length === $scope.treeSelection.length) {
+                            if (!$scope.worldstates) {
+                                $scope.worldstates = [];
+                            } else {
+                                $scope.worldstates.splice(0, $scope.worldstates.length);
+                            }
+                            $scope.worldstates = wsArr;
                         }
-                        $scope.worldstates = wsArr;
-                    }
-                };
+                    };
                 if (newVal !== oldVal) {
                     //clear the old worldstate array
                     if ($scope.treeSelection.length <= 0) {
@@ -48,11 +48,27 @@ angular.module(
                         wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
                         Worldstates.get({'wsId': wsId}, worldstateCallback);
                     }
-
                 }
             });
+
+            $scope.indicatorVector = [];
             // Retrieve the top level nodes from the icmm api
-            $scope.treeNodes = Nodes.query();
+            $scope.treeNodes = Nodes.query(function () {
+                var wsId, wsNode, ws, iccObject, indicatorGroup;
+                wsNode = $scope.treeNodes[0].objectKey;
+                wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
+                ws = Worldstates.get({'wsId': wsId}, function () {
+                    iccObject = Worldstates.utils.stripIccData([ws], false)[0];
+                    for (indicatorGroup in iccObject.data) {
+                        var group = iccObject.data[indicatorGroup];
+                        for (var indicatorProp in group) {
+                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                $scope.indicatorVector.push(group[indicatorProp]);
+                            }
+                        }
+                    }
+                });
+            });
         }
     ]
     );
