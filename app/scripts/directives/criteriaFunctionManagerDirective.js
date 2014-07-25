@@ -1,7 +1,22 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+angular.module(
+    'eu.crismaproject.worldstateAnalysis.directives'
+).directive(
+    'criteriaFunctionManager',
+    [
+        function () {
+            'use strict';
 
+            var scope;
+            scope = {
+                indicators:'=',
+            };
 
+            return {
+                scope: scope,
+                restrict: 'E',
+                templateUrl: 'templates/criteriaFunctionManagerTemplate.html',
+                controller: 'eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController',
+            };
+        }
+    ]
+);

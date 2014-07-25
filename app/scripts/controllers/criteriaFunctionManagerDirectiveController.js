@@ -1,21 +1,64 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
     ).controller(
-    'eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionDirectiveController',
+    'eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController',
     [
         '$scope',
-        function ($scope) {
+        'localStorageService',
+        function ($scope,localStorageService) {
             'use strict';
-            $scope.criteriaFunctions = [];
-            $scope.$watch('indicators', function () {
 
-                console.log('foobar');
-                $scope.criteriaFunctions.splice(0,$scope.criteriaFunctions.length);
-                for (var i = 0; i < $scope.indicators.length; i++) {
-                   
-                    $scope.criteriaFunctions.push($scope.indicators[i].criteriaFunction);
+            $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
+            $scope.editable = [];
+            $scope.currentIntervalFunctions = [];
+            $scope.selectedCriteriaFunctionIndex = -1;
+            $scope.tooltipDelete = 'Delete the selected criteria function';
+            $scope.tooltipAdd = 'Create a new criteria function';
+            $scope.tooltipSave = 'Save all criteria functions';
+
+            $scope.addCriteriaFunction = function () {
+                var i, criteriaFunctions = [];
+                for (i = 0; i < $scope.indicators.length; i++) {
+                    criteriaFunctions.push({
+                        lowerBoundary: {
+                            criteriaValue: 0,
+                            indicatorValue: 0
+                        },
+                        upperBoundary: {
+                            criteriaValue: 100,
+                            indicatorValue: 0
+                        },
+                        intervals: []
+                    });
                 }
-            }, true);
+                $scope.criteriaFunctionSet.push({
+                    name: 'Criteria function ' + ($scope.criteriaFunctionSet.length + 1),
+                    criteriaFunctions: criteriaFunctions
+                });
+                $scope.editable.push(false);
+            };
+
+            $scope.removeCriteriaFunction = function () {
+                $scope.criteriaFunctionSet.splice($scope.selectedCriteriaFunctionIndex, 1);
+            };
+
+            $scope.isActiveItem = function (index) {
+                if ($scope.selectedCriteriaFunctionIndex === index) {
+                    return 'list-group-item-info';
+                } else {
+                    return '';
+                }
+            };
+
+            $scope.setSelectedCriteriaFunction = function (index) {
+                $scope.selectedCriteriaFunctionIndex = index;
+                $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
+            };
+            
+            $scope.saveCriteriaFunctions = function(){
+                localStorageService.add('criteriaFunctionSet',$scope.criteriaFunctionSet);
+            };
+
         }
     ]
     );
