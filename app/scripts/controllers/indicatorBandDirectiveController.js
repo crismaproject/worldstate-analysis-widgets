@@ -1,12 +1,12 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
     [
         '$scope',
         function ($scope) {
             'use strict';
-            var initData, colorClasses, criteriaSortFunction, initDataModel;
+            var initData, criteriaSortFunction;
             initData = {
                 lowerBoundary: {
                     criteriaValue: 0,
@@ -18,8 +18,6 @@ angular.module(
                 },
                 intervals: []
             };
-            colorClasses = ['color-b', 'color-c', 'color-d', 'color-e', 'color-f', 'color-g',
-                'color-h'];
 
             criteriaSortFunction = function (intervalA, intervalB) {
                 return intervalA.criteriaValue - intervalB.criteriaValue;
@@ -43,86 +41,86 @@ angular.module(
 
 
             $scope.getIntervalColor = function (interval) {
-                var total = $scope.criteriaFunction.intervals.length;
+                var tmpInterval, i, total = $scope.criteriaFunction.intervals.length;
 
                 var index = -1;
                 if (interval) {
-                    for (var i = 0; i < total; i++) {
-                        var foo = $scope.criteriaFunction.intervals[i];
-                        if (foo.criteriaValue === interval.criteriaValue) {
+                    for (i = 0; i < total; i++) {
+                        tmpInterval = $scope.criteriaFunction.intervals[i];
+                        if (tmpInterval.criteriaValue === interval.criteriaValue) {
                             index = i;
                             break;
                         }
                     }
                 }
                 var c;
-                if (total == 0) {
+                if (total === 0) {
 //                c = E_ORANGE_SHERBERT;
                     c = 'color-e';
-                } else if (total == 1) {
-                    if (index == 0) {
+                } else if (total === 1) {
+                    if (index === 0) {
 //                    c = D_AFFINITY;
                         c = 'color-d';
                     } else {
 //                    c = G_JAYANTHI;
                         c = 'color-g';
                     }
-                } else if (total == 2) {
-                    if (index == 0) {
+                } else if (total === 2) {
+                    if (index === 0) {
 //                    c = C_FEELING_ORANGE;
                         c = 'color-c';
-                    } else if (index == 1) {
+                    } else if (index === 1) {
 //                    c = F_PEACE_BABY_YELLOW;
                         c = 'color-f';
                     } else {
 //                    c = H_HONEY_DO;
                         c = 'color-h';
                     }
-                } else if (total == 3) {
-                    if (index == 0) {
+                } else if (total === 3) {
+                    if (index === 0) {
 //                    c = C_FEELING_ORANGE;
                         c = 'color-c';
-                    } else if (index == 1) {
+                    } else if (index === 1) {
 //                    c = E_ORANGE_SHERBERT;
                         c = 'color-e';
-                    } else if (index == 2) {
+                    } else if (index === 2) {
 //                    c = F_PEACE_BABY_YELLOW;
                         c = 'color-f';
                     } else {
 //                    c = H_HONEY_DO;
                         c = 'color-h';
                     }
-                } else if (total == 4) {
-                    if (index == 0) {
+                } else if (total === 4) {
+                    if (index === 0) {
 //                    c = C_FEELING_ORANGE;
                         c = 'color-c';
-                    } else if (index == 1) {
+                    } else if (index === 1) {
 //                    c = D_AFFINITY;
                         c = 'color-d';
-                    } else if (index == 2) {
+                    } else if (index === 2) {
 //                    c = F_PEACE_BABY_YELLOW;
                         c = 'color-f';
-                    } else if (index == 3) {
+                    } else if (index === 3) {
 //                    c = G_JAYANTHI;
                         c = 'color-g';
                     } else {
 //                    c = H_HONEY_DO;
                         c = 'color-h';
                     }
-                } else if (total == 5) {
-                    if (index == 0) {
+                } else if (total === 5) {
+                    if (index === 0) {
 //                    c = C_FEELING_ORANGE;
                         c = 'color-c';
-                    } else if (index == 1) {
+                    } else if (index === 1) {
 //                    c = D_AFFINITY;
                         c = 'color-d';
-                    } else if (index == 2) {
+                    } else if (index === 2) {
 //                    c = F_PEACE_BABY_YELLOW;
                         c = 'color-f';
-                    } else if (index == 3) {
+                    } else if (index === 3) {
 //                    c = G_JAYANTHI;
                         c = 'color-g';
-                    } else if (index == 4) {
+                    } else if (index === 4) {
 //                    c = H_HONEY_DO;
                         c = 'color-h';
                     } else {
@@ -130,22 +128,22 @@ angular.module(
                         c = 'color-i';
                     }
                 } else {
-                    if (index == 0) {
+                    if (index === 0) {
 //                    c = C_FEELING_ORANGE;
                         c = 'color-c';
-                    } else if (index == 1) {
+                    } else if (index === 1) {
 //                    c = D_AFFINITY;
                         c = 'color-d';
-                    } else if (index == 2) {
+                    } else if (index === 2) {
 //                    c = E_ORANGE_SHERBERT;
                         c = 'color-e';
-                    } else if (index == 3) {
+                    } else if (index === 3) {
 //                    c = F_PEACE_BABY_YELLOW;
                         c = 'color-f';
-                    } else if (index == 4) {
+                    } else if (index === 4) {
 //                    c = G_JAYANTHI;
                         c = 'color-';
-                    } else if (index == 5) {
+                    } else if (index === 5) {
 //                    c = H_HONEY_DO;
                         c = 'color-h';
                     } else {
@@ -195,6 +193,6 @@ angular.module(
             };
         }
     ]
-    );
+);
 
 

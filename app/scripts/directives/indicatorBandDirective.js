@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.directives'
-    ).directive(
+).directive(
     'indicatorBand',
     [
         function () {
@@ -8,18 +8,18 @@ angular.module(
 
             var scope;
             scope = {
-                criteriaFunction:'=?'
+                criteriaFunction:  '=?'
             };
 
             return {
                 scope: scope,
                 restrict: 'E',
                 templateUrl: 'templates/indicatorBandTemplate.html',
-                controller: 'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
+                controller: 'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController'
             };
         }
     ]
-    ).directive(
+).directive(
     'indicatorBandItem',
     [
         '$popover',
@@ -47,13 +47,13 @@ angular.module(
                     var popover = $popover(elem.find('#popover-target'), {
                         scope: scope,
                         title: attrs.title || 'Create a new interval',
-                        template: "templates/indicatorBandPopoverTemplate.html",
-                        contentTemplate: "templates/indicatorBandPopoverContentTemplate.html",
+                        template: 'templates/indicatorBandPopoverTemplate.html',
+                        contentTemplate: 'templates/indicatorBandPopoverContentTemplate.html',
                         placement: 'bottom',
-                        trigger: 'manual',
+                        trigger: 'manual'
                     });
 
-                    scope.togglePopover = function (event) {
+                    scope.togglePopover = function () {
                         popover.$promise.then(popover.toggle);
                     };
 
@@ -64,4 +64,4 @@ angular.module(
             };
         }
     ]
-    );
+);

@@ -1,14 +1,12 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandItemDirectiveController',
     [
         '$scope',
         '$filter',
         function ($scope, $filter) {
             'use strict';
-            var colorClasses = ['color-b', 'color-c', 'color-d', 'color-e', 'color-f', 'color-g',
-                'color-h', 'color-i'];
             $scope.getCriteriaSuggestion = function () {
                 var criteriaSuggestion;
                 if (!$scope.interval || $scope.upperBoundary) {
@@ -44,7 +42,7 @@ angular.module(
                 }
                 if ($scope.interval && $scope.interval.criteriaValue) {
 //                    return  Math.floor(($scope.interval.criteriaValue - sumBefore))
-                    return  ($scope.interval.criteriaValue - sumBefore)
+                    return ($scope.interval.criteriaValue - sumBefore);
                 }
                 return (100 - sumBefore);
             };
@@ -90,23 +88,23 @@ angular.module(
                 } else {
                     title += ($scope.previousInterval.criteriaValue || '0') + '% -' + $scope.interval.criteriaValue + '%';
                 }
-                title += 'Indicator Values: '
+                title += 'Indicator Values: ';
                 if ($scope.lowerBoundary) {
-                    title += '<= ' + ($scope.interval? $scope.interval.indicatorValue|| 0 : 0);
+                    title += '<= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else if ($scope.upperBoundary) {
-                    title += '>= ' + ($scope.interval? $scope.interval.indicatorValue|| 0 : 0);
+                    title += '>= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else {
-                    title += ($scope.interval? $scope.interval.indicatorValue|| 0 : 0) + '- ' + $scope.interval.indicatorValue;
+                    title += ($scope.interval ? $scope.interval.indicatorValue || 0 : 0) + '- ' + $scope.interval.indicatorValue;
                 }
                 return title;
             };
 
             $scope.tooltip = {
-                "title": $scope.getTooltipTitle(),
-                "checked": false
+                title: $scope.getTooltipTitle(),
+                checked: false
             };
         }
     ]
-    );
+);
 
 
