@@ -24,21 +24,31 @@ angular.module(
             criteriaSortFunction = function (intervalA, intervalB) {
                 return intervalA.criteriaValue - intervalB.criteriaValue;
             };
+
             if (!$scope.criteriaFunction) {
                 $scope.criteriaFunction = initData;
             }
-            $scope.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
-            $scope.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
-            $scope.intervals = $scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction);
+
+            $scope.criteriaFunction.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
+            $scope.criteriaFunction.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
+            $scope.criteriaFunction.intervals = $scope.criteriaFunction.intervals ? ($scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction)) : initData.intervals.sort(criteriaSortFunction);
+
+            $scope.$watch('criteriaFunction', function () {
+                if ($scope.criteriaFunction) {
+                    $scope.criteriaFunction.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
+                    $scope.criteriaFunction.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
+                    $scope.criteriaFunction.intervals = $scope.criteriaFunction.intervals ? ($scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction)) : initData.intervals.sort(criteriaSortFunction);
+                }
+            });
 
 
             $scope.getIntervalColor = function (interval) {
-                var total = $scope.intervals.length;
+                var total = $scope.criteriaFunction.intervals.length;
 
                 var index = -1;
                 if (interval) {
                     for (var i = 0; i < total; i++) {
-                        var foo = $scope.intervals[i];
+                        var foo = $scope.criteriaFunction.intervals[i];
                         if (foo.criteriaValue === interval.criteriaValue) {
                             index = i;
                             break;
@@ -148,16 +158,16 @@ angular.module(
             };
 
             $scope.deleteInterval = function (interval) {
-                var index = $scope.intervals.indexOf(interval);
-                $scope.intervals.splice(index, 1);
+                var index = $scope.criteriaFunction.intervals.indexOf(interval);
+                $scope.criteriaFunction.intervals.splice(index, 1);
             };
 
             $scope.updateLowerBoundary = function (criteriaVal, indicatorVal) {
-                $scope.lowerBoundary.indicatorValue = indicatorVal;
+                $scope.criteriaFunction.lowerBoundary.indicatorValue = indicatorVal;
             };
 
             $scope.updateUpperBoundary = function (criteriaVal, indicatorVal) {
-                $scope.upperBoundary.indicatorValue = indicatorVal;
+                $scope.criteriaFunction.upperBoundary.indicatorValue = indicatorVal;
             };
 
             $scope.createInterval = function (criteriaVal, indicatorVal) {
@@ -165,8 +175,8 @@ angular.module(
                     criteriaValue: criteriaVal,
                     indicatorValue: indicatorVal
                 };
-                $scope.intervals.push(newInterval);
-                $scope.intervals.sort(criteriaSortFunction);
+                $scope.criteriaFunction.intervals.push(newInterval);
+                $scope.criteriaFunction.intervals.sort(criteriaSortFunction);
             };
 
             $scope.getIntervalWidth = function (interval, previousInterval) {

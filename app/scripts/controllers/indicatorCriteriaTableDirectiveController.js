@@ -1,7 +1,8 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
     [
-        'nvd3ChartDirectives'
+        'nvd3ChartDirectives',
+        'LocalStorageModule'
     ]
 ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',

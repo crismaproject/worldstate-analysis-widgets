@@ -28,10 +28,10 @@ angular.module(
             });
 
             $scope.minWidth = 80;
-
+            var indicatorVal = $scope.interval ? $scope.interval.indicatorValue || 0 : 0;
             $scope.popOverItem = {
                 criteriaValue: $scope.getCriteriaSuggestion(),
-                indicatorValue: $filter('number')($scope.interval.indicatorValue) || 0
+                indicatorValue: $filter('number')(indicatorVal)
             };
 
             $scope.getPercent = function () {
@@ -92,11 +92,11 @@ angular.module(
                 }
                 title += 'Indicator Values: '
                 if ($scope.lowerBoundary) {
-                    title += '<= ' + $scope.interval.indicatorValue;
+                    title += '<= ' + ($scope.interval? $scope.interval.indicatorValue|| 0 : 0);
                 } else if ($scope.upperBoundary) {
-                    title += '>= ' + $scope.interval.indicatorValue;
+                    title += '>= ' + ($scope.interval? $scope.interval.indicatorValue|| 0 : 0);
                 } else {
-                    title += ($scope.previousInterval.indicatorValue || '0') + '- ' + $scope.interval.indicatorValue;
+                    title += ($scope.interval? $scope.interval.indicatorValue|| 0 : 0) + '- ' + $scope.interval.indicatorValue;
                 }
                 return title;
             };

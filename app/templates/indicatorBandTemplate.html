@@ -82,7 +82,7 @@
                 <div class="progress">
                     <indicator-band-item 
                         class="color-a"
-                        interval="lowerBoundary" 
+                        interval="criteriaFunction.lowerBoundary" 
                         lower-boundary="true"
                         on-interval-changed="updateLowerBoundary(criteriaValue,indicatorValue)"
                         title="Criteria / Indicator values">
@@ -93,9 +93,9 @@
                 <div class="row">
                     <div class="progress">
                         <indicator-band-item 
-                            ng-repeat="interval in intervals"
+                            ng-repeat="interval in criteriaFunction.intervals"
                             interval="interval"
-                            previous-interval="$first ? lowerBoundary : intervals[$index-1]"
+                            previous-interval="$first ? criteriaFunction.lowerBoundary : criteriaFunction.intervals[$index-1]"
                             first="$first"
                             delete-interval="deleteInterval(interval)"
                             on-interval-changed="createInterval(criteriaValue,indicatorValue)"
@@ -103,11 +103,11 @@
                             >
                         </indicator-band-item>
                         <indicator-band-item 
-                            interval="upperBoundary" 
-                            previous-interval="intervals[intervals.length-1] || lowerBoundary"
+                            interval="criteriaFunction.upperBoundary" 
+                            previous-interval="criteriaFunction.intervals[criteriaFunction.intervals.length-1] || criteriaFunction.lowerBoundary"
                             delete-interval="deleteInterval(interval)"
                             last="true"
-                            first="intervals.length<=0"
+                            first="criteriaFunction.intervals.length<=0"
                             on-interval-changed="createInterval(criteriaValue,indicatorValue)"
                             get-color="getIntervalColor()"
                             >
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="marker" ng-style="getIntervalWidth(interval, intervals[$index - 1])" ng-repeat="interval in intervals">
+                    <div class="marker" ng-style="getIntervalWidth(interval, criteriaFunction.intervals[$index - 1])" ng-repeat="interval in criteriaFunction.intervals">
                         <span class="glyphicon glyphicon-chevron-up" style="width:16px;float:right;margin-right: -8px;"></span>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
             <div class="col-lg-2"  style="padding-left:5px;width: 12.5%">
                 <div class="progress">
                     <indicator-band-item 
-                        interval="upperBoundary" 
+                        interval="criteriaFunction.upperBoundary" 
                         upper-boundary="true"
                         on-interval-changed="updateUpperBoundary(criteriaValue,indicatorValue)"
                         title="Criteria / Indicator values">
