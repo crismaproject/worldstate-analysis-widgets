@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandItemDirectiveController',
     [
         '$scope',
@@ -14,7 +14,7 @@ angular.module(
             };
 
             $scope.actualHeightExceeded = false;
-            $scope.$watch($scope.getElementDimensions, function (newValue, oldValue) {
+            $scope.$watch($scope.getElementDimensions, function () {
                 $timeout(function () {
                     if (angular.element($element.children()[0]).height() > angular.element($element.parent()).height()) {
                         $scope.actualHeightExceeded = true;
@@ -109,10 +109,9 @@ angular.module(
             $scope.tooltip = {
                 title: $scope.getTooltipTitle(),
                 checked: false
-            }
-            ;
+            };
         }
     ]
-    );
+);
 
 
