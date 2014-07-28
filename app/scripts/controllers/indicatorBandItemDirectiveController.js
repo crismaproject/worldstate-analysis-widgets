@@ -1,12 +1,28 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandItemDirectiveController',
     [
         '$scope',
         '$filter',
-        function ($scope, $filter) {
+        '$element',
+        '$timeout',
+        function ($scope, $filter, $element, $timeout) {
             'use strict';
+            $scope.getElementDimensions = function () {
+                return {h: $element.height()};
+            };
+
+            $scope.actualHeightExceeded = false;
+            $scope.$watch($scope.getElementDimensions, function (newValue, oldValue) {
+                $timeout(function () {
+                    if (angular.element($element.children()[0]).height() > angular.element($element.parent()).height()) {
+                        $scope.actualHeightExceeded = true;
+                    }
+                });
+            }, true);
+
+
             $scope.getCriteriaSuggestion = function () {
                 var criteriaSuggestion;
                 if (!$scope.interval || $scope.upperBoundary) {
@@ -20,18 +36,15 @@ angular.module(
                 }
                 return criteriaSuggestion;
             };
-
             $scope.$on('tooltip.show.before', function () {
                 $scope.popOverItem.criteriaValue = $scope.getCriteriaSuggestion();
             });
-
             $scope.minWidth = 80;
             var indicatorVal = $scope.interval ? $scope.interval.indicatorValue || 0 : 0;
             $scope.popOverItem = {
                 criteriaValue: $scope.getCriteriaSuggestion(),
                 indicatorValue: $filter('number')(indicatorVal)
             };
-
             $scope.getPercent = function () {
                 var sumBefore = 0;
                 if ($scope.lowerBoundary || $scope.upperBoundary) {
@@ -46,14 +59,12 @@ angular.module(
                 }
                 return (100 - sumBefore);
             };
-
             $scope.intervalWidth = function () {
                 var percentage = $scope.getPercent();
                 return {
                     width: percentage + '%'
                 };
             };
-
             $scope.getColorClass = function () {
                 if ($scope.lowerBoundary) {
                     return 'color-a';
@@ -63,11 +74,9 @@ angular.module(
                 }
                 return $scope.getColor({interval: $scope.interval});
             };
-
             $scope.del = function (interval) {
                 $scope.deleteInterval({interval: interval});
             };
-
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
                     criteriaValue: $scope.popOverItem.criteriaValue,
@@ -77,7 +86,6 @@ angular.module(
                 //this is necessary to avoid poping up the poover for the new created interval
                 event.stopPropagation();
             };
-
             $scope.getTooltipTitle = function () {
                 var title = '';
                 title += 'Criteria: ';
@@ -98,13 +106,13 @@ angular.module(
                 }
                 return title;
             };
-
             $scope.tooltip = {
                 title: $scope.getTooltipTitle(),
                 checked: false
-            };
+            }
+            ;
         }
     ]
-);
+    );
 
 
