@@ -5,7 +5,7 @@
 .table-display{
     display: table;
 }
-.marker{
+.intervalMarker{
     min-height: 16px;
     margin-top: -20px;
     display: inline-block;
