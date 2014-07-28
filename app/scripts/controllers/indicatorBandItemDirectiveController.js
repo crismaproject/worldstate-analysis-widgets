@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandItemDirectiveController',
     [
         '$scope',
@@ -10,16 +10,21 @@ angular.module(
         function ($scope, $filter, $element, $timeout) {
             'use strict';
             $scope.getElementDimensions = function () {
-                return {h: $element.height()};
+                return {h: $element.height(), w: $element.width()};
             };
 
             $scope.actualHeightExceeded = false;
-            $scope.$watch($scope.getElementDimensions, function () {
-                $timeout(function () {
-                    if (angular.element($element.children()[0]).height() > angular.element($element.parent()).height()) {
-                        $scope.actualHeightExceeded = true;
-                    }
-                });
+            $scope.$watch($scope.getElementDimensions, function (newVal, oldVal) {
+                if (newVal.h !== oldVal.h) {
+
+                    $timeout(function () {
+                        if (angular.element($element.children()[0]).height() > angular.element($element.parent()).height()) {
+                            $scope.actualHeightExceeded = true;
+                        }
+                    });
+                } else if (newVal.w !== oldVal.w && newVal.w > oldVal.w) {
+                    $scope.actualHeightExceeded = false;
+                }
             }, true);
 
 
@@ -76,6 +81,7 @@ angular.module(
             };
             $scope.del = function (interval) {
                 $scope.deleteInterval({interval: interval});
+                $scope.actualHeightExceeded = !$scope.actualHeightExceeded;
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
@@ -112,6 +118,6 @@ angular.module(
             };
         }
     ]
-);
+    );
 
 
