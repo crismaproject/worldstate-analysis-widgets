@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
     [
         '$scope',
@@ -168,6 +168,12 @@ angular.module(
                 $scope.criteriaFunction.upperBoundary.indicatorValue = indicatorVal;
             };
 
+            $scope.$on('band-item-removed', function (args) {
+                if (args.targetScope !== $scope) {
+                    $scope.$broadcast('band-item-removed', true);
+                }
+            });
+
             $scope.createInterval = function (criteriaVal, indicatorVal) {
                 var newInterval = {
                     criteriaValue: criteriaVal,
@@ -175,6 +181,7 @@ angular.module(
                 };
                 $scope.criteriaFunction.intervals.push(newInterval);
                 $scope.criteriaFunction.intervals.sort(criteriaSortFunction);
+                $scope.$broadcast('band-item-added');
             };
 
             $scope.getIntervalWidth = function (interval, previousInterval) {
@@ -193,6 +200,6 @@ angular.module(
             };
         }
     ]
-);
+    );
 
 

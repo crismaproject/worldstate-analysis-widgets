@@ -9,24 +9,38 @@ angular.module(
         '$timeout',
         function ($scope, $filter, $element, $timeout) {
             'use strict';
-            $scope.getElementDimensions = function () {
-                return {h: $element.height(), w: $element.width()};
-            };
-
             $scope.actualHeightExceeded = false;
-            $scope.$watch($scope.getElementDimensions, function (newVal, oldVal) {
-                if (newVal.h !== oldVal.h) {
-
-                    $timeout(function () {
-                        if (angular.element($element.children()[0]).height() > angular.element($element.parent()).height()) {
-                            $scope.actualHeightExceeded = true;
+            $scope.getElementHeight = function () {
+                return $element.height();
+            };
+            $scope.getElementWidth = function () {
+                return $element.width();
+            };
+            $scope.checkActualHeight = function () {
+                $timeout(function () {
+                    var childElem = $scope.lowerBoundary || $scope.upperBoundary ? $element.children()[0] : $element.children()[1];
+                    if (angular.element(childElem).height() > angular.element($element.parent()).height()) {
+                        $scope.actualHeightExceeded = true;
+                    } else {
+                        if ($scope.actualHeightExceeded) {
+                            $timeout(function () {
+                                $scope.checkActualHeight();
+                            });
                         }
-                    });
-                } else if (newVal.w !== oldVal.w && newVal.w > oldVal.w) {
-                    $scope.actualHeightExceeded = false;
-                }
-            }, true);
+                        $scope.actualHeightExceeded = false;
+                    }
+                },500);
+            };
+            $scope.actualHeightExceeded = false;
+            $scope.checkActualHeight();
 
+            $scope.$on('band-item-added', function () {
+                $scope.checkActualHeight();
+            });
+
+            $scope.$on('band-item-removed', function () {
+                $scope.checkActualHeight();
+            });
 
             $scope.getCriteriaSuggestion = function () {
                 var criteriaSuggestion;
@@ -81,7 +95,7 @@ angular.module(
             };
             $scope.del = function (interval) {
                 $scope.deleteInterval({interval: interval});
-                $scope.actualHeightExceeded = !$scope.actualHeightExceeded;
+                $scope.$emit('band-item-removed');
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
