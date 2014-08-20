@@ -4,11 +4,8 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController',
     [
         '$scope',
-        'localStorageService',
-        function ($scope,localStorageService) {
+        function ($scope) {
             'use strict';
-
-            $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
             $scope.editable = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedCriteriaFunctionIndex = -1;
@@ -66,10 +63,17 @@ angular.module(
                 $scope.selectedCriteriaFunctionIndex = index;
                 $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
             };
-            
-            $scope.saveCriteriaFunctions = function(){
-                localStorageService.add('criteriaFunctionSet',$scope.criteriaFunctionSet);
-            };
+
+//            $scope.saveCriteriaFunctions = function () {
+//                var i, critFunc;
+//                for (i = 0; i < $scope.criteriaFunctions.length; i++) {
+//                    critFunc = $scope.criteriaFunctions[i];
+//                    if (critFunc.name === $scope.currentCriteriaFunction.name) {
+//                        $scope.criteriaFunctions[i] = $scope.currentCriteriaFunction;
+//                        break;
+//                    }
+//                }
+//            };
 
         }
     ]
