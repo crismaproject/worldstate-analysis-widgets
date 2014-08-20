@@ -2,16 +2,27 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
     [
         'de.cismet.crisma.ICMM.Worldstates',
-        'de.cismet.cids.rest.collidngNames.Nodes'
+        'de.cismet.cids.rest.collidngNames.Nodes',
+        'LocalStorageModule'
     ]
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
         'de.cismet.collidingNameService.Nodes',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Nodes, Worldstates) {
+        'localStorageService',
+        function ($scope, Nodes, Worldstates, localStorageService) {
             'use strict';
+            $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
+            $scope.persistCriteriaFunctions = function () {
+                localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSet);
+            };
+            $scope.$watch('criteriaFunctionSet', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    console.log('received changes in criteria function');
+                }
+            }, true);
             $scope.activeItem = {};
             $scope.treeOptions = {
                 checkboxClass: 'glyphicon glyphicon-unchecked',
@@ -75,4 +86,4 @@ angular.module(
             });
         }
     ]
-);
+    );
