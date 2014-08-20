@@ -3,34 +3,61 @@
         <div class="col-lg-3">
             <div class="row">
                 <div class="btn-group" style="margin-bottom: 10px;">
-                    <button class="btn btn-default " 
-                            data-placement="top" data-type="info" data-delay="500" data-animation="am-fade-and-scale" bs-tooltip="tooltipAdd"
-                            ng-click="addCriteriaFunction()">
-                        <i class="glyphicon glyphicon-plus-sign"></i>
-                    </button>
-                    <button class="btn btn-default "
-                            data-placement="top" data-type="info" data-delay="500" data-animation="am-fade-and-scale" bs-tooltip="tooltipDelete"
-                            ng-click="removeCriteriaFunction()">
-                        <i class="glyphicon glyphicon-minus-sign"></i>
-                    </button>
-                    <button class="btn btn-default " 
-                            data-placement="top" data-type="info" data-delay="500" data-animation="am-fade-and-scale" bs-tooltip="tooltipSave"
-                            ng-click="saveCriteriaFunctions()">
-                        <i class="glyphicon glyphicon-floppy-disk"></i>
-                    </button>
+
                 </div>
             </div>
             <div class="row">
                 <div class="list-group">
-                    <a class="list-group-item active">Criteria Functions </a> 
+                    <a class="list-group-item active">
+                        Criteria Functions 
+                        <i data-placement="top" 
+                           data-type="info" 
+                           data-delay="500" 
+                           data-container="body"
+                           data-animation="am-fade-and-scale" 
+                           bs-tooltip="tooltipSave.title"
+                           ng-click="addCriteriaFunction()" class="pull-right glyphicon glyphicon-plus-sign"></i>
+                    </a>
                     <a class="list-group-item" 
                        ng-click="setSelectedCriteriaFunction($index)"
                        ng-class="isActiveItem($index)" 
                        ng-repeat="cf in criteriaFunctionSet">
                         <span ng-hide="editable[$index]">{{cf.name}}</span>
                         <input style ="color:black;" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
-                        <i ng-hide="editable[$index]" ng-click="editable[$index] = true" class="pull-right glyphicon glyphicon-pencil"></i>
-                        <i ng-hide="!editable[$index]" ng-click="editable[$index] = false" class="pull-right glyphicon glyphicon-ok"></i>
+                        <div class="pull-right" ng-hide="$index!==selectedCriteriaFunctionIndex">
+
+                            <i ng-hide="editable[$index]" 
+                               data-placement="top" data-type="info" 
+                               data-delay="500" 
+                               data-animation="am-fade-and-scale" 
+                               data-container="body"
+                               bs-tooltip="tooltipRename.title"
+                               ng-click="editable[$index] = true" 
+                               style="margin-right: 10px;"
+                               class="glyphicon glyphicon-pencil"></i>
+                            <i ng-hide="!editable[$index]"
+                               data-placement="top" 
+                               data-type="info" 
+                               data-delay="500" 
+                               data-animation="am-fade-and-scale" 
+                               data-container="body"
+                               bs-tooltip="tooltipRenameDone.title"
+                               ng-click="editable[$index] = false"
+                               style="margin-right: 10px;"
+                               class="glyphicon glyphicon-ok"></i>
+<!--                            <i data-placement="bottom" data-type="info" data-delay="500" data-animation="am-fade-and-scale" bs-tooltip="tooltipSave.title"
+                               ng-click="saveCriteriaFunctions()"
+                               style="margin-right: 10px;"
+                               class="glyphicon glyphicon-floppy-disk"></i>-->
+                            <i data-placement="top" 
+                               data-type="info" 
+                               data-delay="500" 
+                               data-animation="am-fade-and-scale" 
+                               bs-tooltip="tooltipSave.title"
+                               data-container="body"
+                               ng-click="removeCriteriaFunction()"
+                               class="glyphicon glyphicon-minus-sign"></i>
+                        </div>
                     </a>
                 </div>
             </div>

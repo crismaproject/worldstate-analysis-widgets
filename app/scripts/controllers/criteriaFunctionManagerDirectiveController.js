@@ -12,9 +12,21 @@ angular.module(
             $scope.editable = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedCriteriaFunctionIndex = -1;
-            $scope.tooltipDelete = 'Delete the selected criteria function';
-            $scope.tooltipAdd = 'Create a new criteria function';
-            $scope.tooltipSave = 'Save all criteria functions';
+            $scope.tooltipDelete = {
+                title: 'Delete this criteria function'
+            };
+            $scope.tooltipAdd = {
+                title: 'Create a new criteria function'
+            };
+            $scope.tooltipSave = {
+                title: 'Save changes'
+            };
+            $scope.tooltipRename = {
+                title: 'Rename criteria function'
+            };
+            $scope.tooltipRenameDone = {
+                title: 'Done'
+            };
 
             $scope.addCriteriaFunction = function () {
                 var i, criteriaFunctions = [];
