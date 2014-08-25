@@ -29,7 +29,7 @@ angular.module(
                         }
                         $scope.actualHeightExceeded = false;
                     }
-                },500);
+                }, 500);
             };
             $scope.actualHeightExceeded = false;
             $scope.checkActualHeight();
@@ -46,6 +46,8 @@ angular.module(
                 var criteriaSuggestion;
                 if (!$scope.interval || $scope.upperBoundary) {
                     criteriaSuggestion = 100;
+                } else if ($scope.lowerBoundary) {
+                    criteriaSuggestion = 0;
                 } else {
                     if (!$scope.previousInterval) {
                         criteriaSuggestion = ($scope.interval.criteriaValue) / 2;
