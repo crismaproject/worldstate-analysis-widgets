@@ -160,17 +160,19 @@ angular.module(
                 $scope.criteriaFunction.intervals.splice(index, 1);
             };
 
-            $scope.updateLowerBoundary = function (criteriaVal, indicatorVal) {
+            $scope.updateLowerBoundary = function (indicatorVal) {
                 $scope.criteriaFunction.lowerBoundary.indicatorValue = indicatorVal;
             };
 
-            $scope.updateUpperBoundary = function (criteriaVal, indicatorVal) {
+            $scope.updateUpperBoundary = function (indicatorVal) {
                 $scope.criteriaFunction.upperBoundary.indicatorValue = indicatorVal;
             };
 
-            $scope.$on('band-item-removed', function (args) {
+            $scope.$on('band-item-removed', function (args, interval) {
                 if (args.targetScope !== $scope) {
-                    $scope.$broadcast('band-item-removed', true);
+                    $scope.$broadcast('band-item-removed');
+                } else {
+                    $scope.deleteInterval(interval);
                 }
             });
 

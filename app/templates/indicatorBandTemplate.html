@@ -7,7 +7,7 @@
                         class="color-a"
                         interval="criteriaFunction.lowerBoundary" 
                         lower-boundary="true"
-                        on-interval-changed="updateLowerBoundary(criteriaValue,indicatorValue)"
+                        on-interval-changed="updateLowerBoundary(indicatorValue)"
                         title="Criteria / Indicator values">
                     </indicator-band-item>
                 </div>
@@ -28,7 +28,6 @@
                         <indicator-band-item 
                             interval="criteriaFunction.upperBoundary" 
                             previous-interval="criteriaFunction.intervals[criteriaFunction.intervals.length-1] || criteriaFunction.lowerBoundary"
-                            delete-interval="deleteInterval(interval)"
                             last="true"
                             first="criteriaFunction.intervals.length<=0"
                             on-interval-changed="createInterval(criteriaValue,indicatorValue)"
@@ -48,7 +47,7 @@
                     <indicator-band-item 
                         interval="criteriaFunction.upperBoundary" 
                         upper-boundary="true"
-                        on-interval-changed="updateUpperBoundary(criteriaValue,indicatorValue)"
+                        on-interval-changed="updateUpperBoundary(indicatorValue)"
                         title="Criteria / Indicator values">
                     </indicator-band-item>
                 </div>
