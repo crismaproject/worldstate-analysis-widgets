@@ -30,14 +30,13 @@ angular.module(
             $scope.criteriaFunction.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
             $scope.criteriaFunction.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
             $scope.criteriaFunction.intervals = $scope.criteriaFunction.intervals ? ($scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction)) : initData.intervals.sort(criteriaSortFunction);
-
             $scope.$watch('criteriaFunction', function () {
                 if ($scope.criteriaFunction) {
                     $scope.criteriaFunction.lowerBoundary = $scope.criteriaFunction.lowerBoundary || initData.lowerBoundary;
                     $scope.criteriaFunction.upperBoundary = $scope.criteriaFunction.upperBoundary || initData.upperBoundary;
                     $scope.criteriaFunction.intervals = $scope.criteriaFunction.intervals ? ($scope.criteriaFunction.intervals.sort(criteriaSortFunction) || initData.intervals.sort(criteriaSortFunction)) : initData.intervals.sort(criteriaSortFunction);
                 }
-            });
+            }, true);
 
 
             $scope.getIntervalColor = function (interval) {
@@ -186,6 +185,7 @@ angular.module(
                 $scope.$broadcast('band-item-added');
             };
 
+            // needed to place the interval marker at the rigth position
             $scope.getIntervalWidth = function (interval, previousInterval) {
                 var sumBefore = 0;
                 if (previousInterval) {
