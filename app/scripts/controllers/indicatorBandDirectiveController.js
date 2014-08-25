@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
     [
         '$scope',
@@ -202,6 +202,6 @@ angular.module(
             };
         }
     ]
-    );
+);
 
 
