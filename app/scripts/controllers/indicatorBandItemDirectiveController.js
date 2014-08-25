@@ -102,8 +102,7 @@ angular.module(
                 return $scope.getColor({interval: $scope.interval});
             };
             $scope.del = function (interval) {
-                $scope.deleteInterval({interval: interval});
-                $scope.$emit('band-item-removed');
+                $scope.$emit('band-item-removed', interval);
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
