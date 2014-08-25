@@ -33,7 +33,6 @@ angular.module(
                 last: '=',
                 lowerBoundary: '@',
                 upperBoundary: '@',
-                deleteInterval: '&',
                 onIntervalChanged: '&',
                 getColor: '&'
             };
