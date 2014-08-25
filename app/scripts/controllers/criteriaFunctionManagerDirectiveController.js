@@ -64,17 +64,6 @@ angular.module(
                 $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
             };
 
-//            $scope.saveCriteriaFunctions = function () {
-//                var i, critFunc;
-//                for (i = 0; i < $scope.criteriaFunctions.length; i++) {
-//                    critFunc = $scope.criteriaFunctions[i];
-//                    if (critFunc.name === $scope.currentCriteriaFunction.name) {
-//                        $scope.criteriaFunctions[i] = $scope.currentCriteriaFunction;
-//                        break;
-//                    }
-//                }
-//            };
-
         }
     ]
     );
