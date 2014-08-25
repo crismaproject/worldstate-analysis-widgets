@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandItemDirectiveController',
     [
         '$scope',
@@ -126,12 +126,15 @@ angular.module(
                 }
                 return title;
             };
-            $scope.tooltip = {
-                title: $scope.getTooltipTitle(),
-                checked: false
-            };
+            if ($scope.previousInterval && $scope.interval) {
+
+                $scope.tooltip = {
+                    title: $scope.getTooltipTitle(),
+                    checked: false
+                };
+            }
         }
     ]
-    );
+);
 
 
