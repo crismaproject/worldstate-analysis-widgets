@@ -74,9 +74,15 @@ angular.module(
                 if ($scope.previousInterval) {
                     sumBefore = $scope.previousInterval.criteriaValue || 0;
                 }
-                if ($scope.interval && $scope.interval.criteriaValue) {
+                if ($scope.interval && ($scope.interval.criteriaValue || $scope.interval.criteriaValue === 0)) {
 //                    return  Math.floor(($scope.interval.criteriaValue - sumBefore))
+                    if (sumBefore > $scope.interval.criteriaValue) {
+                        throw new Error('The criteriaValue of the previous interval can not be higher than the criteriaValue of the current Interval');
+                    }
                     return ($scope.interval.criteriaValue - sumBefore);
+                }
+                if (sumBefore > 100) {
+                    throw new Error('The criteriaValue of the previous interval can not be higher than the criteriaValue of the current Interval');
                 }
                 return (100 - sumBefore);
             };
