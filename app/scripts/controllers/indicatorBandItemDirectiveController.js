@@ -106,8 +106,8 @@ angular.module(
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
-                    criteriaValue: $scope.popOverItem.criteriaValue,
-                    indicatorValue: $scope.popOverItem.indicatorValue
+                    criteriaValue: parseFloat($scope.popOverItem.criteriaValue),
+                    indicatorValue: parseFloat($scope.popOverItem.indicatorValue)
                 });
                 $scope.hidePopover();
                 //this is necessary to avoid poping up the poover for the new created interval
