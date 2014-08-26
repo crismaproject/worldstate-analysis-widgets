@@ -18,17 +18,19 @@
     "styles"
   ],
   "dependencies": {
-    "angular": "1.3.0-beta.13",
+    "angular": "~1.2",
     "json3": "~3.2.6",
     "es5-shim": "~2.1.0",
     "angular-resource": "1.2.7",
     "ng-table": "0.3.3",
-    "bootstrap": "~3.1.1",
+    "bootstrap": "3.1.1",
     "icmm_js": "v0.1.1",
     "crisma-worldstate-tree-widget-angular": "0.2.1",
     "d3": "3.3.6",
     "radar-chart-d3": "*",
-    "angularjs-nvd3-directives": "~0.0.7"
+    "angularjs-nvd3-directives": "~0.0.7",
+    "angular-strap": "2.0.3",
+    "angular-local-storage": "~0.0.5"
   },
   "devDependencies": {
     "angular-mocks": "1.2.7",
