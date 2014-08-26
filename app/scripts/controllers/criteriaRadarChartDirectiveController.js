@@ -4,30 +4,37 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers.CriteriaRadarChartDirectiveController',
     [
         '$scope',
-        function ($scope) {
+        'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+        function ($scope,ccs) {
             'use strict';
             $scope.legendItems = [];
             
-            $scope.convertToChartDataStructure = function (criteriaVector) {
-                var i, criteriaData, groupName, group, criteriaProp,
-                    criteria, result, dataItem,legendItems;
+            $scope.convertToChartDataStructure = function (indicatorVector) {
+                var i, j, indicatorData, groupName, group, criteriaProp,
+                    indiactor, result, dataItem,legendItems, criteriaFunction;
                 result = [];
                 legendItems = [];
-                for (i = 0; i < criteriaVector.length; i++) {
+                for (i = 0; i < indicatorVector.length; i++) {
                     dataItem = [];
-                    criteriaData = criteriaVector[i].data;
-                    legendItems.push(criteriaVector[i].name);
-                    for (groupName in criteriaData) {
-                        if (criteriaData.hasOwnProperty(groupName)) {
-                            group = criteriaData[groupName];
+                    indicatorData = indicatorVector[i].data;
+                    legendItems.push(indicatorVector[i].name);
+                    for (groupName in indicatorData) {
+                        if (indicatorData.hasOwnProperty(groupName)) {
+                            group = indicatorData[groupName];
                             for (criteriaProp in group) {
                                 if (group.hasOwnProperty(criteriaProp) &&
                                         criteriaProp !== 'displayName' &&
                                         criteriaProp !== 'iconResource') {
-                                    criteria = group[criteriaProp];
+                                    indiactor = group[criteriaProp];
+                                    for(j=0;j<$scope.criteriaFunction.criteriaFunctions.length;i++){
+                                        if($scope.criteriaFunction.criteriaFunctions[i].indicator === indiactor.displayName){
+                                            criteriaFunction=$scope.criteriaFunction.criteriaFunctions[i];
+                                            break;
+                                        }
+                                    }
                                     dataItem.push({
-                                        axis: criteria.displayName,
-                                        value: criteria.value
+                                        axis: indiactor.displayName,
+                                        value: ccs.calculateCriteria(indiactor.value,criteriaFunction)
                                     });
                                 }
                             }
