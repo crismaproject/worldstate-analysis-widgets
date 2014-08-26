@@ -26,9 +26,9 @@ angular.module(
                                         criteriaProp !== 'displayName' &&
                                         criteriaProp !== 'iconResource') {
                                     indiactor = group[criteriaProp];
-                                    for(j=0;j<$scope.criteriaFunction.criteriaFunctions.length;i++){
-                                        if($scope.criteriaFunction.criteriaFunctions[i].indicator === indiactor.displayName){
-                                            criteriaFunction=$scope.criteriaFunction.criteriaFunctions[i];
+                                    for(j=0;j<$scope.criteriaFunction.criteriaFunctions.length;j++){
+                                        if($scope.criteriaFunction.criteriaFunctions[j].indicator === indiactor.displayName){
+                                            criteriaFunction=$scope.criteriaFunction.criteriaFunctions[j];
                                             break;
                                         }
                                     }
