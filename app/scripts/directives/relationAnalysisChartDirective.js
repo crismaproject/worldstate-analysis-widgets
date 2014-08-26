@@ -11,7 +11,8 @@ angular.module(
             scope = {
                 worldstates: '&',
                 chartHeight:'@height',
-                forCriteria: '='
+                forCriteria: '=',
+                criteriaFunctionSet:"=criteriaFunction"
             };
 
             return {
