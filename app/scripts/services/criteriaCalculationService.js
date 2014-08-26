@@ -21,7 +21,7 @@ angular.module(
                 var i, pre, suc, list = [];
                 //check the format of the criteriaFunction
                 if (!(criteriaFunction.lowerBoundary && criteriaFunction.upperBoundary && criteriaFunction.intervals)) {
-                    throw new Error('CriteriaFunction is not valid')
+                    throw new Error('CriteriaFunction is not valid');
                 }
                 list.push(criteriaFunction.lowerBoundary);
                 list = list.concat(criteriaFunction.intervals);
