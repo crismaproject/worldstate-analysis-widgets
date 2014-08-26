@@ -29,6 +29,7 @@ angular.module(
                 var i, criteriaFunctions = [];
                 for (i = 0; i < $scope.indicators.length; i++) {
                     criteriaFunctions.push({
+                        indicator:$scope.indicators[i].displayName,
                         lowerBoundary: {
                             criteriaValue: 0,
                             indicatorValue: 0
