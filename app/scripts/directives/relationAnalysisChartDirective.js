@@ -10,9 +10,9 @@ angular.module(
             var scope;
             scope = {
                 worldstates: '&',
-                chartHeight:'@height',
+                chartHeight: '@height',
                 forCriteria: '=',
-                criteriaFunctionSet:"=criteriaFunction"
+                criteriaFunctionSet: '=criteriaFunction'
             };
 
             return {

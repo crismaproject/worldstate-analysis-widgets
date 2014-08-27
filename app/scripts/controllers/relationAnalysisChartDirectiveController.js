@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
     [
         '$scope',
@@ -12,7 +12,7 @@ angular.module(
             var controller = this;
 
             this.createChartData = function (iccData, xAxis, yAxis, xAxisCF, yAxisCf, forCriteria) {
-                var i, j, iccItem, valueX, valueY, criteriaFunction, data = [];
+                var i, iccItem, valueX, valueY, data = [];
                 if (!iccData || !xAxis || !yAxis) {
                     throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):' + iccData + ' , ' + xAxis + ' , ' + yAxis;
                 }
@@ -32,9 +32,9 @@ angular.module(
                     data.push({
                         key: (i + 1) + '. ' + iccData[i].name,
                         values: [{
-                                x: valueX,
-                                y: valueY
-                            }]
+                            x: valueX,
+                            y: valueY
+                        }]
                     });
                 }
 
@@ -56,9 +56,8 @@ angular.module(
                                 if (iccGroup[iccProp].displayName === axisProp) {
                                     if (forCriteria) {
                                         return ccs.calculateCriteria(iccGroup[iccProp].value, criteriaFunction);
-                                    } else {
-                                        return iccGroup[iccProp].value;
                                     }
+                                    return iccGroup[iccProp].value;
                                 }
                             }
                         }
@@ -104,10 +103,12 @@ angular.module(
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
                         if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                            $scope.yAxis.name.indexOf('Select') === -1
-                            ) {
+                                $scope.yAxis.name.indexOf('Select') === -1) {
                             $scope.chartdata = controller.createChartData($scope.iccData, $scope.xAxis,
-                                $scope.yAxis, $scope.xAxisCriteriaFunction, $scope.yAxisCriteriaFunction, $scope.forCriteria);
+                                $scope.yAxis,
+                                $scope.xAxisCriteriaFunction,
+                                $scope.yAxisCriteriaFunction,
+                                $scope.forCriteria);
                         }
                     }
                 }
@@ -126,11 +127,9 @@ angular.module(
             };
 
             this.axisWatchCallback = function () {
-                var i;
                 if ($scope.xAxis && $scope.yAxis) {
                     if ($scope.xAxis.name.indexOf('Select') === -1 &&
-                        $scope.yAxis.name.indexOf('Select') === -1
-                        ) {
+                            $scope.yAxis.name.indexOf('Select') === -1) {
                         if ($scope.criteriaFunctionSet) {
                             controller.updateAxisCriteriaFunctions();
                         }
@@ -139,7 +138,7 @@ angular.module(
                     }
                 }
             };
-            
+
             $scope.$watch('xAxis', this.axisWatchCallback);
             $scope.$watch('yAxis', this.axisWatchCallback);
 
@@ -148,6 +147,6 @@ angular.module(
             $scope.$watch('criteriaFunctionSet', this.axisWatchCallback, true);
         }
     ]
-    );
+);
 
 
