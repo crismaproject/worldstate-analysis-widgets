@@ -34,7 +34,7 @@ angular.module(
                                     }
                                     dataItem.push({
                                         axis: indiactor.displayName,
-                                        value: ccs.calculateCriteria(indiactor.value,criteriaFunction)
+                                        value: $scope.forCriteria ? ccs.calculateCriteria(indiactor.value,criteriaFunction) : indiactor.value
                                     });
                                 }
                             }

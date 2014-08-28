@@ -10,6 +10,7 @@ angular.module(
             var scope, linkFunction, drawLegend;
             scope = {
                 localModel: '&worldstates',
+                forCriteria:'=',
                 criteriaFunction: '='
             };
 
@@ -128,7 +129,7 @@ angular.module(
                     elem.empty();
                     if (scope.localModel() && scope.localModel().length > 0) {
                         // we are only interest in criteria data
-                        indicators = WorldstateService.utils.stripIccData(scope.localModel(), false);
+                        indicators = WorldstateService.utils.stripIccData(scope.localModel());
                         chartDataModel = scope.convertToChartDataStructure(indicators);
                         scope.chartData = chartDataModel[0];
                         scope.legendItems = chartDataModel[1];
@@ -152,6 +153,7 @@ angular.module(
 
                 scope.$watchCollection('localModel()', watchCallback);
                 scope.$watch('criteriaFunction', watchCallback,true);
+                scope.$watch('forCriteria', watchCallback);
             };
 
             return {
