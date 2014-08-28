@@ -152,7 +152,7 @@ angular.module(
                 if (newVal !== oldVal && $scope.worldstates) {
                     updateTable();
                 }
-            });
+            },true);
         }
     ]
     );
