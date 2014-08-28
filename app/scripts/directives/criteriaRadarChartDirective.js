@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.directives'
-).directive(
+    ).directive(
     'criteriaRadar',
     [
         'de.cismet.crisma.ICMM.Worldstates',
@@ -9,7 +9,8 @@ angular.module(
 
             var scope, linkFunction, drawLegend;
             scope = {
-                localModel: '&worldstates'
+                localModel: '&worldstates',
+                criteriaFunction: '='
             };
 
             drawLegend = function (elem, chartConfig, legendItems) {
@@ -119,7 +120,27 @@ angular.module(
             };
 
             linkFunction = function (scope, elem) {
-                var dataVector, cfg, width,chartDataModel;
+                var cfg, width, watchCallback;
+
+                watchCallback = function () {
+                    var indicators, chartDataModel;
+                    elem.removeData();
+                    elem.empty();
+                    if (scope.localModel() && scope.localModel().length > 0) {
+                        // we are only interest in criteria data
+                        indicators = WorldstateService.utils.stripIccData(scope.localModel(), false);
+                        chartDataModel = scope.convertToChartDataStructure(indicators);
+                        scope.chartData = chartDataModel[0];
+                        scope.legendItems = chartDataModel[1];
+
+                        var divNode = d3.select(elem[0]).append('div')
+                            .attr('style', 'display:block;margin: 0 auto;')
+                            .node();
+
+                        RadarChart.draw(divNode, scope.chartData, cfg);
+                        drawLegend(elem, cfg, scope.legendItems);
+                    }
+                };
                 //we want the chart to adjust to the size of the element it is placed in
                 width = elem.width ? elem.width() : 200;
                 cfg = {
@@ -128,26 +149,9 @@ angular.module(
                     maxValue: 100,
                     levels: 4
                 };
-                
-                scope.$watchCollection('localModel()', function () {
-                    // remove everything from the element...
-                    elem.removeData();
-                    elem.empty();
-                    if (scope.localModel() && scope.localModel().length > 0) {
-                        // we are only interest in criteria data
-                        dataVector = WorldstateService.utils.stripIccData(scope.localModel(), true);
-                        chartDataModel = scope.convertToChartDataStructure(dataVector);
-                        scope.chartData = chartDataModel[0];
-                        scope.legendItems=chartDataModel[1];
 
-                        var divNode = d3.select(elem[0]).append('div')
-                            .attr('style', 'display:block;margin: 0 auto;')
-                            .node();
-
-                        RadarChart.draw(divNode, scope.chartData, cfg);
-                        drawLegend(elem, cfg,scope.legendItems);
-                    }
-                });
+                scope.$watchCollection('localModel()', watchCallback);
+                scope.$watch('criteriaFunction', watchCallback,true);
             };
 
             return {
@@ -158,4 +162,4 @@ angular.module(
             };
         }
     ]
-);
+    );

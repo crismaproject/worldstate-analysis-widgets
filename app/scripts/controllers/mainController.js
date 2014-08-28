@@ -15,6 +15,7 @@ angular.module(
         function ($scope, Nodes, Worldstates, localStorageService) {
             'use strict';
             $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
+            $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
             $scope.persistCriteriaFunctions = function () {
                 localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSet);
             };
@@ -60,6 +61,10 @@ angular.module(
                     }
                 }
             });
+
+            $scope.updateSelectedCriteriaFunction = function (index) {
+                $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[index];
+            };
 
             $scope.indicatorVector = [];
             // Retrieve the top level nodes from the icmm api

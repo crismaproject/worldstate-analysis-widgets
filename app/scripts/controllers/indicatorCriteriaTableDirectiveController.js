@@ -1,16 +1,18 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
     [
-        'nvd3ChartDirectives'
+        'nvd3ChartDirectives',
+        'eu.crismaproject.worldstateAnalysis.services'
     ]
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
     [
         '$scope',
         '$filter',
         'de.cismet.crisma.ICMM.Worldstates',
         'ngTableParams',
-        function ($scope, $filter, WorldstateService, NgTableParams) {
+        'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+        function ($scope, $filter, WorldstateService, NgTableParams,ccs) {
             'use strict';
             var getOrderedProperties = function (obj) {
                 var p, keys;
@@ -25,16 +27,18 @@ angular.module(
             },
                 updateTable = function () {
                     var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val,
-                        dataVector = WorldstateService.utils.stripIccData($scope.worldstates, $scope.forCriteria);
+                        criteriaFunction, k,
+                        indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
+                    
                     if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
                         $scope.rows = [];
                         $scope.columns = [{
-                            title: $scope.forCriteria ? 'Criteria' : 'Indicators',
-                            field: 'f1',
-                            visible: true
-                        }];
+                                title: $scope.forCriteria ? 'Criteria' : 'Indicators',
+                                field: 'f1',
+                                visible: true
+                            }];
                         j = 0;
-                        iccData = dataVector[0].data;
+                        iccData = indicatorVector[0].data;
                         keys_outer = getOrderedProperties(iccData);
                         for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
                             group = iccData[keys_outer[k_outer]];
@@ -57,14 +61,14 @@ angular.module(
                                 }
                             }
                         }
-                        for (i = 0; i < dataVector.length; ++i) {
+                        for (i = 0; i < indicatorVector.length; ++i) {
                             field = 'f' + (i + 2);
                             $scope.columns.push({
-                                title: dataVector[i].name,
+                                title: indicatorVector[i].name,
                                 field: field,
                                 visible: true
                             });
-                            iccData = dataVector[i].data;
+                            iccData = indicatorVector[i].data;
                             j = 0;
                             keys_outer = getOrderedProperties(iccData);
                             for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
@@ -74,7 +78,17 @@ angular.module(
                                 for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
                                     prop = keys_inner[k_inner];
                                     if (prop !== 'displayName' && prop !== 'iconResource') {
-                                        val = group[prop].value;
+                                        for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
+                                            if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
+                                                criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
+                                                break;
+                                            }
+                                        }
+                                        if($scope.forCriteria){
+                                            val = ccs.calculateCriteria(group[prop].value,criteriaFunction);
+                                        }else{
+                                            val = group[prop].value;
+                                        }
                                         if (val % 1 !== 0) {
                                             val = $filter('number')(val, 2);
                                         }
@@ -115,10 +129,10 @@ angular.module(
                     };
                 return $scope.isGroupRow(row) ? groupRowStyle : '';
             };
-            
-            $scope.getCellStyle = function(index){
+
+            $scope.getCellStyle = function (index) {
                 var dataCellStyle = {
-                    'text-align':'right'
+                    'text-align': 'right'
                 };
                 return index > 0 ? dataCellStyle : '';
             };
@@ -133,6 +147,12 @@ angular.module(
                     updateTable();
                 }
             });
+
+            $scope.$watch('criteriaFunction', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates) {
+                    updateTable();
+                }
+            },true);
         }
     ]
-);
+    );

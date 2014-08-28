@@ -17,6 +17,7 @@ angular.module(
             scope = {
                 worldstates: '=',
                 forCriteria: '=',
+                criteriaFunction:'=',
                 detailIcons: '@'
             };
 

@@ -1,6 +1,6 @@
 describe('RelationAnalysisChartDirective Test Suite', function () {
     'use strict';
-    var ws, ws2;
+    var ws, ws2,criteriaFunction;
     //our test objects..
     ws = [{
             '$self': '/CRISMA.worldstates/1',
@@ -479,9 +479,135 @@ describe('RelationAnalysisChartDirective Test Suite', function () {
             'childworldstates': []
         }
     ];
+    criteriaFunction = {
+        name: "default",
+        criteriaFunctions: [{
+                indicator:'Number of dead',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Number of injured',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Number of homeless',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Direct damage cost',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Indirect damage cost',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Direct restoration cost',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Lost buildings',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Unsafe buildings',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Number of damaged road segments',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Total evacuationcost',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            },{
+                indicator:'Number of dead',
+                lowerBoundary: {
+                    criteriaValue: 0,
+                    indicatorValue: 100
+                },
+                upperBoundary: {
+                    criteriaValue: 100,
+                    indicatorValue: 0
+                },
+                intervals: []
+            }
+        ]
+    };
 
     describe('RelationAnalysisChart Directive Tests', function () {
-        var $compile, $rootScope;
+        var $compile, $rootScope, ccs;
 
         // Load the myApp module, which contains the directive
         beforeEach(function () {
@@ -524,17 +650,20 @@ describe('RelationAnalysisChartDirective Test Suite', function () {
                     '$controller',
                     '$rootScope',
                     'de.cismet.crisma.ICMM.Worldstates',
-                    function (c, r, wsService) {
+                    'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+                    function (c, r, wsService,criteriaService) {
                         scope = r.$new();
                         controller = c;
                         WorldstateService = wsService;
+                        ccs=criteriaService;
                     }
                 ]
                 );
             scope.worldstates = ws;
             scope.forCriteria = false;
+            scope.cf=criteriaFunction;
             // Compile a piece of HTML containing the directive
-            var element = $compile('<relation-analysis-chart height="350" for-criteria="forCriteria" worldstates="worldstates"></relation-analysis-chart>')($rootScope);
+            var element = $compile('<relation-analysis-chart height="350" for-criteria="forCriteria" worldstates="worldstates" criteria-function="cf"></relation-analysis-chart>')($rootScope);
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
