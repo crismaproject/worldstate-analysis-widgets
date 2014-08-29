@@ -1,10 +1,11 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
     [
         '$scope',
-        function ($scope) {
+        'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+        function ($scope, ccs) {
             'use strict';
             var initData, criteriaSortFunction;
             initData = {
@@ -40,118 +41,44 @@ angular.module(
 
 
             $scope.getIntervalColor = function (interval) {
-                var tmpInterval, i, total = $scope.criteriaFunction.intervals.length;
 
-                var index = -1;
-                if (interval) {
-                    for (i = 0; i < total; i++) {
-                        tmpInterval = $scope.criteriaFunction.intervals[i];
-                        if (tmpInterval.criteriaValue === interval.criteriaValue) {
-                            index = i;
-                            break;
-                        }
-                    }
-                }
-                var c;
-                if (total === 0) {
-//                c = E_ORANGE_SHERBERT;
-                    c = 'color-e';
-                } else if (total === 1) {
-                    if (index === 0) {
-//                    c = D_AFFINITY;
-                        c = 'color-d';
-                    } else {
-//                    c = G_JAYANTHI;
-                        c = 'color-g';
-                    }
-                } else if (total === 2) {
-                    if (index === 0) {
-//                    c = C_FEELING_ORANGE;
-                        c = 'color-c';
-                    } else if (index === 1) {
-//                    c = F_PEACE_BABY_YELLOW;
-                        c = 'color-f';
-                    } else {
-//                    c = H_HONEY_DO;
-                        c = 'color-h';
-                    }
-                } else if (total === 3) {
-                    if (index === 0) {
-//                    c = C_FEELING_ORANGE;
-                        c = 'color-c';
-                    } else if (index === 1) {
-//                    c = E_ORANGE_SHERBERT;
-                        c = 'color-e';
-                    } else if (index === 2) {
-//                    c = F_PEACE_BABY_YELLOW;
-                        c = 'color-f';
-                    } else {
-//                    c = H_HONEY_DO;
-                        c = 'color-h';
-                    }
-                } else if (total === 4) {
-                    if (index === 0) {
-//                    c = C_FEELING_ORANGE;
-                        c = 'color-c';
-                    } else if (index === 1) {
-//                    c = D_AFFINITY;
-                        c = 'color-d';
-                    } else if (index === 2) {
-//                    c = F_PEACE_BABY_YELLOW;
-                        c = 'color-f';
-                    } else if (index === 3) {
-//                    c = G_JAYANTHI;
-                        c = 'color-g';
-                    } else {
-//                    c = H_HONEY_DO;
-                        c = 'color-h';
-                    }
-                } else if (total === 5) {
-                    if (index === 0) {
-//                    c = C_FEELING_ORANGE;
-                        c = 'color-c';
-                    } else if (index === 1) {
-//                    c = D_AFFINITY;
-                        c = 'color-d';
-                    } else if (index === 2) {
-//                    c = F_PEACE_BABY_YELLOW;
-                        c = 'color-f';
-                    } else if (index === 3) {
-//                    c = G_JAYANTHI;
-                        c = 'color-g';
-                    } else if (index === 4) {
-//                    c = H_HONEY_DO;
-                        c = 'color-h';
-                    } else {
-//                    c = I_SPLASH_OF_LIME;
-                        c = 'color-i';
-                    }
-                } else {
-                    if (index === 0) {
-//                    c = C_FEELING_ORANGE;
-                        c = 'color-c';
-                    } else if (index === 1) {
-//                    c = D_AFFINITY;
-                        c = 'color-d';
-                    } else if (index === 2) {
-//                    c = E_ORANGE_SHERBERT;
-                        c = 'color-e';
-                    } else if (index === 3) {
-//                    c = F_PEACE_BABY_YELLOW;
-                        c = 'color-f';
-                    } else if (index === 4) {
-//                    c = G_JAYANTHI;
-                        c = 'color-';
-                    } else if (index === 5) {
-//                    c = H_HONEY_DO;
-                        c = 'color-h';
-                    } else {
-//                    c = I_SPLASH_OF_LIME;
-                        c = 'color-i';
-                    }
+                var colorClass, colorValue;
+                colorValue = ccs.getColor(interval, $scope.criteriaFunction);
+                switch (colorValue) {
+                    case '#B5F4BC':
+                        colorClass = 'color-b';
+                        break;
+                    // C_FEELING_ORANGE;
+                    case '#FFBA6B':
+                        colorClass = 'color-e';
+                        break;
+                        //D_AFFINITY;
+                    case '#FF9F80':
+                        colorClass = 'color-d';
+                        break;
+                        //E_ORANGE_SHERBERT;
+                    case '#FFC48C':
+                        colorClass = 'color-e';
+                        break;
+                        // F_PEACE_BABY_YELLOW;
+                    case '#FFDC8A':
+                        colorClass = 'color-f';
+                        break;
+                        //G_JAYANTHI;
+                    case '#FFF19E':
+                        colorClass = 'color-g';
+                        break;
+                        //H_HONEY_DO;
+                    case '#EFFAB4':
+                        colorClass = 'color-h';
+                        break;
+                        //I_SPLASH_OF_LIME;
+                    case '#D1F2A5':
+                        colorClass = 'color-i';
+                        break;
                 }
 
-                return c;
+                return colorClass;
             };
 
             $scope.deleteInterval = function (interval) {
@@ -202,6 +129,6 @@ angular.module(
             };
         }
     ]
-);
+    );
 
 
