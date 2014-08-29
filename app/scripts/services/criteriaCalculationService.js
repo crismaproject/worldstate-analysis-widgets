@@ -5,7 +5,7 @@ angular.module(
     [
         function () {
             'use strict';
-            var calculateCriteria, interpolateValue;
+            var calculateCriteria, interpolateValue, getColor,getColorForCriteria;
 
             interpolateValue = function (indicatorValue, lowerBound, upperBound) {
                 var max, min, lowerCriteriaValue, upperCriteriaValue, rate;
@@ -47,8 +47,143 @@ angular.module(
                     return interpolateValue(indicatorValue, suc, criteriaFunction.upperBoundary);
                 }
             };
+
+            getColorForCriteria = function (criteriaValue, criteriaFunction) {
+                var i, interval = null, tmpInterval;
+                if (criteriaValue === 0) {
+                    return '#FF6543';
+                }
+                if (criteriaValue === 100) {
+                    return '#B5F4BC';
+                }
+
+                if (criteriaFunction.intervals) {
+                    for (i = 0; i < criteriaFunction.intervals.length; i++) {
+                        tmpInterval = criteriaFunction.intervals[i];
+                        if (criteriaValue < tmpInterval.criteriaValue) {
+                            return getColor(tmpInterval, criteriaFunction);
+                        }
+                    }
+                }
+                return getColor(interval, criteriaFunction);
+            };
+
+            getColor = function (interval, criteriaFunction) {
+                var tmpInterval, i, total = criteriaFunction.intervals.length, c;
+                var index = -1;
+                if (interval) {
+                    for (i = 0; i < total; i++) {
+                        tmpInterval = criteriaFunction.intervals[i];
+                        if (tmpInterval.criteriaValue === interval.criteriaValue) {
+                            index = i;
+                        }
+                    }
+                }
+                if (total === 0) {
+//                E_ORANGE_SHERBERT;
+                    c = '#FFC48C';
+                } else if (total === 1) {
+                    if (index === 0) {
+//                    c = D_AFFINITY;
+                        c = '#FF9F80';
+                    } else {
+//                    c = G_JAYANTHI;
+                        c = '#FFF19E';
+                    }
+                } else if (total === 2) {
+                    if (index === 0) {
+//                    c = C_FEELING_ORANGE;
+                        c = '#FFBA6B';
+                    } else if (index === 1) {
+//                    c = F_PEACE_BABY_YELLOW;
+                        c = '#FFDC8A';
+                    } else {
+//                    c = H_HONEY_DO;
+                        c = '#EFFAB4';
+                    }
+                } else if (total === 3) {
+                    if (index === 0) {
+//                    c = C_FEELING_ORANGE;
+                        c = '#FFBA6B';
+                    } else if (index === 1) {
+//                    c = E_ORANGE_SHERBERT;
+                        c = '#FFC48C';
+                    } else if (index === 2) {
+//                    c = F_PEACE_BABY_YELLOW;
+                        c = '#FFDC8A';
+                    } else {
+//                    c = H_HONEY_DO;
+                        c = '#EFFAB4';
+                    }
+                } else if (total === 4) {
+                    if (index === 0) {
+//                    c = C_FEELING_ORANGE;
+                        c = '#FFBA6B';
+                    } else if (index === 1) {
+//                    c = D_AFFINITY;
+                        c = '#FF9F80';
+                    } else if (index === 2) {
+//                    c = F_PEACE_BABY_YELLOW;
+                        c = '#FFDC8A';
+                    } else if (index === 3) {
+//                    c = G_JAYANTHI;
+                        c = '#FFF19E';
+                    } else {
+//                    c = H_HONEY_DO;
+                        c = '#EFFAB4';
+                    }
+                } else if (total === 5) {
+                    if (index === 0) {
+//                    c = C_FEELING_ORANGE;
+                        c = '#FFBA6B';
+                    } else if (index === 1) {
+//                    c = D_AFFINITY;
+                        c = '#FF9F80';
+                    } else if (index === 2) {
+//                    c = F_PEACE_BABY_YELLOW;
+                        c = '#FFDC8A';
+                    } else if (index === 3) {
+//                    c = G_JAYANTHI;
+                        c = '#FFF19E';
+                    } else if (index === 4) {
+//                    c = H_HONEY_DO;
+                        c = '#EFFAB4';
+                    } else {
+//                    c = I_SPLASH_OF_LIME;
+                        c = '#D1F2A5';
+                    }
+                } else {
+                    if (index === 0) {
+//                    c = C_FEELING_ORANGE;
+                        c = '#FFBA6B';
+                    } else if (index === 1) {
+//                    c = D_AFFINITY;
+                        c = '#FF9F80';
+                    } else if (index === 2) {
+//                    c = E_ORANGE_SHERBERT;
+                        c = '#FFC48C';
+                    } else if (index === 3) {
+//                    c = F_PEACE_BABY_YELLOW;
+                        c = '#FFDC8A';
+                    } else if (index === 4) {
+//                    c = G_JAYANTHI;
+                        c = '#FFF19E';
+                    } else if (index === 5) {
+//                    c = H_HONEY_DO;
+                        c = '#EFFAB4';
+                    } else {
+//                    c = I_SPLASH_OF_LIME;
+                        c = '#D1F2A5';
+                    }
+                }
+
+                return c;
+
+            };
             return {
-                'calculateCriteria': calculateCriteria
+                'calculateCriteria': calculateCriteria,
+                'getColor': getColor,
+                'getColorForCriteria':getColorForCriteria
             };
         }
     ]
