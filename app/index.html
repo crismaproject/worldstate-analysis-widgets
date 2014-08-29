@@ -29,7 +29,7 @@
 
         <!-- Add your site or application content here -->
         <div class="container" ng-controller="eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController">
-            <div class="row">
+            <div class="row" style="margin-bottom:20px;">
                 <div class="col-lg-6">
                     <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" ></catalogue-tree>
                 </div>
@@ -49,46 +49,14 @@
                         </div>
                         <button class="btn btn-default btn-sm" ng-click="persistCriteriaFunctions()">save</button>
                     </div>
-                    <div class="row">
-                        <label>
-                            <input ng-model="forCriteria" type="checkbox"> Criteria
-                        </label>
-                        <label>
-                            <input ng-model="detailIcons" type="checkbox"> Detail Icons
-                        </label>
-                    </div>
                 </div>
             </div>
             <div class="row">
-                <h1>Indicator / Criteria Table </h1>
-                <hr>
-                <indicator-criteria-table detail-icons="{{detailIcons}}" worldstates='worldstates' 
-                                          criteria-function="selectedCriteriaFunction"
-                                          for-criteria='forCriteria'>
-                </indicator-criteria-table>
-            </div>
-            <div class="row">
-                <h1>Worldstate Scatter Plot</h1>
-                <hr>
-            </div>
-            <div class="row">
-                <relation-analysis-chart style="padding-left:50px" height="350" for-criteria='forCriteria' worldstates="worldstates"
-                                         criteria-function="selectedCriteriaFunction"
-                                         ></relation-analysis-chart>
-            </div>
-            <div class="row">
-                <h1>Worldstate Radar Chart</h1>
-                <hr>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-
-                    <div criteria-radar worldstates="worldstates" criteria-function="selectedCriteriaFunction">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <criteria-function-manager indicators="indicatorVector" criteria-functions="criteriaFunctionSet"></criteria-function-manager>
+                <worldstate-analysis-widget
+                    worldstates="worldstates"
+                    criteria-function-sets="criteriaFunctionSet"
+                    selected-criteria-function="selectedCriteriaFunction"
+                    ></worldstate-analysis-widget>
             </div>
         </div>
 
@@ -133,20 +101,22 @@
         <script src="scripts/directives/criteriaFunctionManagerDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <script src="scripts/services/criteriaCalculationService.js"></script>
+        <script src="scripts/controllers/WorldstateAnalysisWidgetDirectiveController.js"></script>
+        <script src="scripts/directives/worldstateAnalysisWidget.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->
         <script>
-                            angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                [
-                                    '$provide',
-                                    function ($provide) {
-                                        'use strict';
-                                        $provide.constant('DEBUG', 'true');
-                                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                        $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                    }
-                                ]
-                                );</script>
+                                    angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                        [
+                                            '$provide',
+                                            function ($provide) {
+                                                'use strict';
+                                                $provide.constant('DEBUG', 'true');
+                                                $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                                $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                            }
+                                        ]
+                                        );</script>
     </body>
 </html>
