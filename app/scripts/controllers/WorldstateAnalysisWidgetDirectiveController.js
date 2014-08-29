@@ -1,22 +1,22 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.WorldstateAnalysisWidgetDirectiveController',
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
         function ($scope, Worldstates) {
             'use strict';
-            var worldstates = [], createChartModels, getIndicators;
-            $scope.worldstateRef;
+            var createChartModels, getIndicators;
             $scope.forCriteriaTable = true;
             $scope.chartModels = [];
 
             createChartModels = function () {
+                var j,modelArr;
                 $scope.chartModels = [];
                 if ($scope.worldstates && $scope.worldstates.length > 0) {
-                    for (var j = 0; j < $scope.worldstates.length; j++) {
-                        var modelArr = [];
+                    for (j = 0; j < $scope.worldstates.length; j++) {
+                        modelArr = [];
                         if ($scope.worldstates[j]) {
                             modelArr.push($scope.worldstates[j]);
                         }
@@ -29,9 +29,9 @@ angular.module(
             };
 
             getIndicators = function () {
-                var indicatorGroup, indicatorProp, iccObject, group;
+                var indicatorGroup, indicatorProp, iccObject, group, j;
                 if ($scope.worldstates && $scope.worldstates.length > 0) {
-                    for (var j = 0; j < $scope.worldstates.length; j++) {
+                    for (j = 0; j < $scope.worldstates.length; j++) {
                         iccObject = Worldstates.utils.stripIccData([$scope.worldstates[j]], false)[0];
                         for (indicatorGroup in iccObject.data) {
                             if (iccObject.data.hasOwnProperty(indicatorGroup)) {
@@ -83,7 +83,7 @@ angular.module(
             $scope.indicatorVector = [];
         }
     ]
-    );
+);
 
 
 
