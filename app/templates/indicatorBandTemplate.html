@@ -4,7 +4,6 @@
             <div class="col-lg-2" style="padding-right:5px;width:12.5%">
                 <div class="progress">
                     <indicator-band-item 
-                        class="color-a"
                         interval="criteriaFunction.lowerBoundary" 
                         lower-boundary="true"
                         on-interval-changed="updateLowerBoundary(indicatorValue)"
@@ -31,7 +30,7 @@
                             last="true"
                             first="criteriaFunction.intervals.length<=0"
                             on-interval-changed="createInterval(criteriaValue,indicatorValue)"
-                            get-color="getIntervalColor()"
+                            get-color="getIntervalColor(interval)"
                             >
                         </indicator-band-item>
                     </div>

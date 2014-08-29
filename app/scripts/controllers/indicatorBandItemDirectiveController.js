@@ -59,6 +59,7 @@ angular.module(
             };
             $scope.$on('tooltip.show.before', function () {
                 $scope.popOverItem.criteriaValue = $scope.getCriteriaSuggestion();
+                $scope.popOverItem.indicatorValue= $filter('number')($scope.interval.indicatorValue || 0)
             });
             $scope.minWidth = 80;
             var indicatorVal = $scope.interval ? $scope.interval.indicatorValue || 0 : 0;
