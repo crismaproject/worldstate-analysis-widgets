@@ -115,6 +115,11 @@ angular.module(
                     console.log('received changes in criteria function');
                 }
             }, true);
+            $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
+            $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
+            $scope.persistDecisionStrategies = function () {
+                localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+            };
             $scope.activeItem = {};
             $scope.treeOptions = {
                 checkboxClass: 'glyphicon glyphicon-unchecked',
