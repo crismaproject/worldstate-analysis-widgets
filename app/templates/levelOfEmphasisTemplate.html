@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style=" white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;">
+        Level of satisfaction Emphasis {{model.lse}}
+    </div>
+    <div class="panel-body" >
+        <div ng-if="!expertMode">
+            <form name="myForm" >
+
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="model.lse"  value="-2">
+                        only Positive
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="model.lse"  value="-1">
+                        over-emphasise Positives
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="model.lse"  value="0" checked="true">
+                        neutral
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="model.lse"  value="1">
+                        over-emphasise Negatives
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="model.lse" value="2">
+                        only Negative
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div ng-if="expertMode">
+            <div class="alert alert-warning" role="alert">Expert Mode not yet implemented!</div>    
+        </div>
+    </div>
+</div>
