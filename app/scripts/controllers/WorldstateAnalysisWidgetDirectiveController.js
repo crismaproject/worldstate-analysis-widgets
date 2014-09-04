@@ -5,7 +5,8 @@ angular.module(
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Worldstates) {
+        'localStorageService',
+        function ($scope, Worldstates, localStorageService) {
             'use strict';
             var createChartModels, getIndicators;
             $scope.forCriteriaTable = true;
@@ -62,7 +63,11 @@ angular.module(
                     }
                 }
             };
-
+            
+            $scope.persistCriteriaFunctions = function () {
+                localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSet);
+            };
+            
             Worldstates.query(function (data) {
                 $scope.allWorldstates = data;
             });
