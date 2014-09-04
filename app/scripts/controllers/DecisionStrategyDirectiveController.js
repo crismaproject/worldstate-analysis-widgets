@@ -15,7 +15,7 @@ angular.module(
                 var indicatorGroup, indicatorProp, iccObject, group, j, indicatorMap;
 
                 indicatorMap = {};
-                $scope.indicatorSize = 1;
+                $scope.indicatorSize = 0;
 
                 if (worldstates && worldstates.length > 0) {
                     for (j = 0; j < worldstates.length; j++) {
@@ -41,11 +41,11 @@ angular.module(
             };
 
             $scope.decisionStrategy = $scope.decisionStrategy || {};
-            $scope.indicatorSize = $scope.indicatorSize || 1;
+            $scope.indicatorSize = $scope.indicatorSize || 0;
             $scope.indicatorMap = $scope.indicatorMap || {};
             $scope.$watch('worldstates', function () {
                 $scope.indicatorMap= ctrl.extractIndicators($scope.worldstates);
-            });
+            },true);
 
         }
     ]
