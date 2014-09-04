@@ -12,7 +12,8 @@ angular.module(
         'de.cismet.collidingNameService.Nodes',
         'de.cismet.crisma.ICMM.Worldstates',
         'localStorageService',
-        function ($scope, Nodes, Worldstates, localStorageService) {
+        '$timeout',
+        function ($scope, Nodes, Worldstates, localStorageService, $timeout) {
             'use strict';
             
             var createChartModels, getIndicators;
@@ -115,10 +116,21 @@ angular.module(
                     console.log('received changes in criteria function');
                 }
             }, true);
+            $scope.showDsPersistSpinner = false;
+            $scope.showDsPersistDone = false;
             $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
             $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
             $scope.persistDecisionStrategies = function () {
-                localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+                $scope.showDsPersistSpinner = true;
+                $scope.showDsPersistDone = false;
+                $timeout(function () {
+                    localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+                    $scope.showDsPersistSpinner = false;
+                    $scope.showDsPersistDone = true;
+                    $timeout(function(){
+                        $scope.showDsPersistDone = false;
+                    },1500);
+                }, 500);
             };
             $scope.activeItem = {};
             $scope.treeOptions = {
