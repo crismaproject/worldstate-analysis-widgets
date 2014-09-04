@@ -3,15 +3,14 @@ angular.module(
     ).directive(
     'worldstateAnalysisWidget',
     [
-        'de.cismet.crisma.ICMM.Worldstates',
-        function (WorldstateService) {
+        function () {
             'use strict';
 
-            var scope, linkFunction, drawLegend;
+            var scope;
             scope = {
                 worldstates:'=',
                 criteriaFunctionSets:'=',
-                selectedCriteriaFunction:"="
+                selectedCriteriaFunction:'='
             };
 
             return {

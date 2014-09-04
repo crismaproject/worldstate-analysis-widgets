@@ -1,18 +1,20 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.WorldstateAnalysisWidgetDirectiveController',
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Worldstates) {
+        'localStorageService',
+        '$timeout',
+        function ($scope, Worldstates, localStorageService, $timeout) {
             'use strict';
             var createChartModels, getIndicators;
             $scope.forCriteriaTable = true;
             $scope.chartModels = [];
 
             createChartModels = function () {
-                var j,modelArr;
+                var j, modelArr;
                 $scope.chartModels = [];
                 if ($scope.worldstates && $scope.worldstates.length > 0) {
                     for (j = 0; j < $scope.worldstates.length; j++) {
@@ -29,7 +31,17 @@ angular.module(
             };
 
             getIndicators = function () {
-                var indicatorGroup, indicatorProp, iccObject, group, j;
+                var indicatorGroup, indicatorProp, iccObject, group, j,
+                    indicatorName, indicator, add, forEachFunc;
+                forEachFunc = function (value, index, arr) {
+                    if (indicatorName === value.displayName) {
+                        add = false;
+                    }
+                    if (index === arr.length - 1 && add) {
+                        $scope.indicatorVector.push(indicator);
+                    }
+                };
+
                 if ($scope.worldstates && $scope.worldstates.length > 0) {
                     for (j = 0; j < $scope.worldstates.length; j++) {
                         iccObject = Worldstates.utils.stripIccData([$scope.worldstates[j]], false)[0];
@@ -40,17 +52,10 @@ angular.module(
                                     if (group.hasOwnProperty(indicatorProp)) {
                                         if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
                                             if ($scope.indicatorVector.length > 0) {
-                                                var indicatorName = group[indicatorProp].displayName;
-                                                var indicator = group[indicatorProp];
-                                                var add = true;
-                                                $scope.indicatorVector.forEach(function (value, index, arr) {
-                                                    if (indicatorName === value.displayName) {
-                                                        add = false;
-                                                    }
-                                                    if (index === arr.length - 1 && add) {
-                                                        $scope.indicatorVector.push(indicator);
-                                                    }
-                                                });
+                                                indicatorName = group[indicatorProp].displayName;
+                                                indicator = group[indicatorProp];
+                                                add = true;
+                                                $scope.indicatorVector.forEach(forEachFunc);
                                             } else {
                                                 $scope.indicatorVector.push(group[indicatorProp]);
                                             }
@@ -63,6 +68,20 @@ angular.module(
                 }
             };
 
+            $scope.persistCriteriaFunctions = function () {
+                $scope.showPersistSpinner = true;
+                $scope.showPersistDone = false;
+                $timeout(function () {
+                    localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSets);
+                    $scope.showPersistSpinner = false;
+                    $scope.showPersistDone = true;
+                    $timeout(function () {
+                        $scope.showPersistDone = false;
+                    }, 1500);
+                }, 500);
+
+            };
+
             Worldstates.query(function (data) {
                 $scope.allWorldstates = data;
             });
@@ -73,10 +92,10 @@ angular.module(
                     getIndicators();
                 }
             });
-            $scope.$watch("worldstates", function (newVal, oldVal) {
-                if(newVal !== oldVal && $scope.worldstates){
-                            createChartModels();
-                            getIndicators();
+            $scope.$watch('worldstates', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates) {
+                    createChartModels();
+                    getIndicators();
                 }
             }, true);
 

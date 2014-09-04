@@ -1,17 +1,27 @@
 <div class="col-lg-12">
     <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <span class="pull-left">
-                    <!--<i class="glyphicon glyphicon-th-list"></i>-->
-                    <h3 style="display:inline;" class="panel-title">Criteria Functions</h3>
-                </span>
-                <span class="pull-right">
-                    <!--                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" ng-disabled="disabled" ng-click="persistCriteriaFunctions()">
-                                            Persist
-                                        </button>-->
-                </span>
-                <span class="clearfix"></span>
+            <div class="panel-heading" style="display:table;width:100%">
+                <h3 style="display:table-cell;vertical-align: middle
+                    " class="panel-title">Criteria Functions</h3>
+                <div class="pull-right">
+
+                    <div class="input-group ">
+                        <div class="input-group-btn " style="display: block" ng-click="persistCriteriaFunctions()">
+                            <button
+                                type ="button" 
+                                class="btn btn-success btn-sm">
+                                Persist
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" >
+                                <i ng-if="!showPersistSpinner && !showPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
+                                <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
+                                <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="panel-body">
                 <criteria-function-manager indicators="indicatorVector"  criteria-functions="criteriaFunctionSets"></criteria-function-manager>

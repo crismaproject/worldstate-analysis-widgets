@@ -16,9 +16,6 @@ angular.module(
             'use strict';
             $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
             $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
-            $scope.persistCriteriaFunctions = function () {
-                localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSet);
-            };
             $scope.$watch('criteriaFunctionSet', function (newVal, oldVal) {
                 if (newVal !== oldVal) {
                     console.log('received changes in criteria function');
