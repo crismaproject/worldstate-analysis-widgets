@@ -74,6 +74,18 @@
     background-image: linear-gradient(to bottom, #DAF6DE 0%, #B5F4BC 100%);
 }
 
+.spin {
+    -webkit-animation: spin 1.5s linear infinite ; /* Chrome, Safari, Opera */
+    -moz-animation: spin 1.5s linear infinite ; /* Chrome, Safari, Opera */
+    animation: spin 1.5s linear infinite ;
+}
+
+.fade-out{
+    -webkit-animation: spin 1.5s linear; /* Chrome, Safari, Opera */
+    -moz-animation: spin 1.5s linear; /* Chrome, Safari, Opera */
+    animation: spin 1.5s linear;
+}
+
 /* Chrome, Safari, Opera */
 @-webkit-keyframes spin {
     0%   {-webkit-transform:rotate(0deg);-moz-transform: rotate(0deg);transform: rotate(0deg)}
