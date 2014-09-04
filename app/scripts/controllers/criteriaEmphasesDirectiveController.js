@@ -47,8 +47,10 @@ angular.module(
 
             this.registerInternalWatch = function () {
                 //internal changes (knob) must be propagated...
-                criteriaEmpInternalWatch = $scope.$watch('critEmphInternal', function () {
-                    ctrl.updateCriteriaEmphases();
+                criteriaEmpInternalWatch = $scope.$watch('critEmphInternal', function (newVal,oldVal) {
+                    if(newVal !== oldVal){
+                        ctrl.updateCriteriaEmphases();
+                    }
                 }, true);
             };
 
@@ -61,18 +63,22 @@ angular.module(
                 'angleArc': 250
             };
 
-            $scope.criteriaEmphases = [];
-            $scope.indicatorMap={};
+            $scope.criteriaEmphases = $scope.criteriaEmphases || [];
+            $scope.indicatorMap = {};
             $scope.$watch('indicatorMap', function () {
-                ctrl.updateInternalCriteriaEmphases();
+                if ($scope.indicatorMap && Object.keys($scope.indicatorMap).length !== 0) {
+                    ctrl.updateInternalCriteriaEmphases();
+                }
             }, true);
 
-            $scope.$watch('criteriaEmphases', function () {
+            $scope.$watch('criteriaEmphases', function (newVal, oldVal) {
                 // we need to derigster the watch for the internal model, because it changes the external model
-                criteriaEmpInternalWatch();
-                ctrl.updateInternalCriteriaEmphases();
-                $scope.criteriaEmphases = $scope.critEmphInternal;
-                ctrl.registerInternalWatch();
+                if (newVal !== oldVal) {
+                    criteriaEmpInternalWatch();
+                    ctrl.updateInternalCriteriaEmphases();
+                    $scope.criteriaEmphases = $scope.critEmphInternal;
+                    ctrl.registerInternalWatch();
+                }
             }, true);
 
             ctrl.registerInternalWatch();
