@@ -5,18 +5,18 @@
         Level of satisfaction Emphasis {{model.lse}}
     </div>
     <div class="panel-body" >
-        <div ng-if="!expertMode">
+        <div ng-if="!expertMode && indicatorSize>=1">
             <form name="myForm" >
 
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="model.lse"  value="-2">
+                        <input type="radio" ng-model="model.lse"  value="2">
                         only Positive
                     </label>
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="model.lse"  value="-1">
+                        <input type="radio" ng-model="model.lse"  value="1">
                         over-emphasise Positives
                     </label>
                 </div>
@@ -28,13 +28,13 @@
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="model.lse"  value="1">
+                        <input type="radio" ng-model="model.lse"  value="-1">
                         over-emphasise Negatives
                     </label>
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" ng-model="model.lse" value="2">
+                        <input type="radio" ng-model="model.lse" value="-2">
                         only Negative
                     </label>
                 </div>
