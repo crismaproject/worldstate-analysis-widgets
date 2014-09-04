@@ -105,7 +105,7 @@ angular.module(
                     } else {
                         $scope.tableParams = new NgTableParams({
                             page: 1,
-                            count: $scope.rows.length
+                            count: 10000
                         }, {
                             counts: [],
                             total: $scope.worldstates.length,
