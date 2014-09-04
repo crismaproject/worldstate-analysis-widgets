@@ -27,9 +27,10 @@ angular.module(
             },
                 updateTable = function () {
                     var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val,
-                        criteriaFunction, k,
-                        indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
+                        criteriaFunction, k, unit, indicatorVector;
                     
+                    indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
+                  
                     if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
                         $scope.rows = [];
                         $scope.columns = [{
@@ -77,6 +78,7 @@ angular.module(
                                 keys_inner = getOrderedProperties(group);
                                 for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
                                     prop = keys_inner[k_inner];
+                                    unit = $scope.forCriteria ? 'Percent' : group[prop].unit;
                                     if (prop !== 'displayName' && prop !== 'iconResource') {
                                         for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
                                             if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
@@ -92,7 +94,7 @@ angular.module(
                                         if (val % 1 !== 0) {
                                             val = $filter('number')(val, 2);
                                         }
-                                        $scope.rows[j++][field] = {name: val + ' ' + group[prop].unit};
+                                        $scope.rows[j++][field] = {name: val + ' ' + unit};
                                     }
                                 }
                             }
