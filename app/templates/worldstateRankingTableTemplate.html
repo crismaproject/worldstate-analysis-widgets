@@ -1,0 +1,18 @@
+<div id="indicatorCriteriaTable">
+    <div ng-hide="worldstates.length > 0" class="alert alert-warning">
+        <strong>Warning: </strong>There are no worldstates selected.
+    </div>
+    <table ng-hide="worldstates.length <= 0" ng-table="tableParams" show-filter="false" class="table">
+        <tr ng-repeat="item in $data">
+            <td data-title="'Rank'" sortable="'rank'" >
+                {{item.rank}}
+            </td>
+            <td data-title="'Worldstate'" sortable="'worldstate'" >
+                {{item.worldstate}}
+            </td>
+            <td data-title="'Score'" sortable="'score'" >
+                {{item.score * 100| number:1}}%
+            </td>
+        </tr>
+    </table>
+</div>
