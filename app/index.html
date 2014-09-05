@@ -81,6 +81,32 @@
                                 </div>
                             </div>
                         </div>
+                         <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm">{{selectedDecisionStrategy.name}}</button>
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" >
+                                <li ng-repeat="cf in decisionStrategies" role="presentation" ng-click="updateSelectedDecisionStrategy($index)">
+                                    <a>{{cf.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="display:table;width:100%">
+                        <h3 style="display:table-cell;vertical-align: middle
+                            " class="panel-title">Worldstate Ranking Table</h3>
+                    </div>
+                    <div class="panel-body">
+                        <worldstate-ranking-table worldstates="worldstates"
+                            criteria-function="selectedCriteriaFunction"
+                            decision-strategy="selectedDecisionStrategy">  
+                        </worldstate-ranking-table>
                     </div>
                 </div>
             </div>
@@ -360,6 +386,8 @@
         <script src="scripts/directives/decisionStrategyDirective.js"></script>
         <script src="scripts/controllers/decisionStrategyManagerDirectiveController.js"></script>
         <script src="scripts/directives/decisionStrategyManagerDirective.js"></script>
+        <script src="scripts/controllers/worldstateRankingTableDirectiveController.js"></script>
+        <script src="scripts/directives/worldstateRankingTableDirective.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->

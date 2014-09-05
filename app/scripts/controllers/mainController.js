@@ -173,6 +173,10 @@ angular.module(
             $scope.updateSelectedCriteriaFunction = function (index) {
                 $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[index];
             };
+            
+                        $scope.updateSelectedDecisionStrategy = function (index) {
+                $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
+            };
 
             $scope.indicatorVector = [];
             // Retrieve the top level nodes from the icmm api
