@@ -90,7 +90,7 @@ angular.module(
                     return -1;
                 } else if (controller.satisfactionEmphasisEquals(satisfactionEmphVector, this.neutralLse)) {
                     return 0;
-                } else if (controller.satisfactionEmphasisEquals(satisfactionEmphVector, this.overEmphNPosLse)) {
+                } else if (controller.satisfactionEmphasisEquals(satisfactionEmphVector, this.overEmphPosLse)) {
                     return 1;
                 } else if (controller.satisfactionEmphasisEquals(satisfactionEmphVector, this.onlyPositiveLse)) {
                     return 2;
