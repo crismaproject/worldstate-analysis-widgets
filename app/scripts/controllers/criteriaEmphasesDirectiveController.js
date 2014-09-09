@@ -14,7 +14,14 @@ angular.module(
                 var i, item;
                 for (i = 0; i < $scope.critEmphInternal.length; i++) {
                     item = $scope.critEmphInternal[i];
-                    $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
+                    if($scope.criteriaEmphases[i]){
+                        $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
+                    }else{
+                        $scope.criteriaEmphases.push({
+                            indicator : item.indicator,
+                            criteriaEmphasis : item.criteriaEmphasis
+                        });
+                    }
                 }
             };
 
