@@ -100,8 +100,8 @@ angular.module(
                     } else {
                         insertIndex = -1;
                         rankedWs.forEach(function (rankItem, index) {
-                            if (score < rankItem.ws) {
-                                insertIndex = index
+                            if (insertIndex === -1 && rankItem && rankItem.score && score <= rankItem.score) {
+                                insertIndex = index;
                             }
                         });
                         if (insertIndex !== -1) {
@@ -117,6 +117,7 @@ angular.module(
                         }
                     }
                 }
+                rankedWs = rankedWs.reverse();
                 rankedWs.forEach(function(item,index){
                     item.rank=index+1;
                 });
