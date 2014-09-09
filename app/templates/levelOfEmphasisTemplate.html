@@ -2,7 +2,7 @@
     <div class="panel-heading" style=" white-space: nowrap;
          overflow: hidden;
          text-overflow: ellipsis;">
-        Level of satisfaction Emphasis {{model.lse}}
+        Level of satisfaction emphasis {{model.lse}}
     </div>
     <div class="panel-body" >
         <div ng-if="!expertMode && indicatorSize>=1">
@@ -11,13 +11,13 @@
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="2">
-                        only Positive
+                        only positive
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="1">
-                        over-emphasise Positives
+                        over-emphasise positives
                     </label>
                 </div>
                 <div class="radio">
@@ -29,13 +29,13 @@
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="-1">
-                        over-emphasise Negatives
+                        over-emphasise negatives
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse" value="-2">
-                        only Negative
+                        only negative
                     </label>
                 </div>
             </form>
