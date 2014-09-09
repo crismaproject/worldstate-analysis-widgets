@@ -24,7 +24,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives')
                         'angleOffset': -125,
                         'angleArc': 250,
                     };
-                    knobOptions.change = function (v) {
+                    knobOptions.release = function (v) {
                         scope.knobData = v;
                         scope.$apply();
                     };
