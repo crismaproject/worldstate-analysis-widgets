@@ -50,7 +50,7 @@ angular.module(
                         break;
                     // C_FEELING_ORANGE;
                     case '#FFBA6B':
-                        colorClass = 'color-e';
+                        colorClass = 'color-c';
                         break;
                         //D_AFFINITY;
                     case '#FF9F80':
