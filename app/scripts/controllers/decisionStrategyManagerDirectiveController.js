@@ -39,7 +39,7 @@ angular.module(
                 $scope.editable.push(false);
             };
 
-            $scope.decisionStrategy = function () {
+            $scope.removeDecisionStrategy = function () {
                 $scope.decisionStrategies.splice($scope.selectedDecisionStrategyIndex, 1);
             };
 
