@@ -19,7 +19,7 @@
                        ng-repeat="cf in decisionStrategies">
                         <span ng-hide="editable[$index]">{{cf.name}}</span>
                         <input style ="color:black;" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
-                        <div class="pull-right" ng-hide="$index !== selectedDecisionStrategyIndex">
+                        <div class="pull-right" ng-hide="$index !== selectedDecisionStrategiesIndex">
 
                             <i ng-hide="editable[$index]" 
                                data-placement="top" data-type="info" 
