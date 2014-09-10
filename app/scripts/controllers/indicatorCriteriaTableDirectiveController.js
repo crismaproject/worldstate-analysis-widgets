@@ -34,7 +34,7 @@ angular.module(
                     if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
                         $scope.rows = [];
                         $scope.columns = [{
-                                title: $scope.forCriteria ? 'Criteria' : 'Indicators',
+                                title: $scope.forCriteria ? 'Level of satisfaction (higher is better)' : 'Indicators',
                                 field: 'f1',
                                 visible: true
                             }];
@@ -78,7 +78,7 @@ angular.module(
                                 keys_inner = getOrderedProperties(group);
                                 for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
                                     prop = keys_inner[k_inner];
-                                    unit = $scope.forCriteria ? 'Percent' : group[prop].unit;
+                                    unit = $scope.forCriteria ? '% LoS' : group[prop].unit;
                                     if (prop !== 'displayName' && prop !== 'iconResource') {
                                         for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
                                             if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
