@@ -18,7 +18,7 @@ angular.module(
                 }
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
-                    iccItem = iccData[0];
+                    iccItem = iccData[i];
                     if (!iccItem) {
                         throw 'Invalid icc object ' + iccItem;
                     }
