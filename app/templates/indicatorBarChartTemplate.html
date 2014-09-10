@@ -1,0 +1,33 @@
+<div>
+    <div class="row" >
+        <div class="col-lg-12" style="text-align: center; margin: 20px 0px;">
+            <span ng-repeat="ws in worldstates" style="margin:0px 10px;">
+                <i class="glyphicon glyphicon-stop" ng-style="getLegendColor($index)"></i>{{ws.name}}
+            </span>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-lg-4"  ng-repeat="chartModel in chartModels">
+            <div class="row">
+                <div class="col-lg-12" style="text-align: center">
+                    <label>{{chartModel[0].key}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg12" nvd3-discrete-bar-chart style="margin-top: -40px;"
+                     data="chartModel"
+                     width="400"
+                     height="200"
+                     showXAxis="false"
+                     showYAxis="true"
+                     interactive="true"
+                     showValues="true"
+                     staggerlabels="true"
+                     forceY="{{chartModel.forceY}}"
+                     color="colorFunction()">
+                    <svg></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
