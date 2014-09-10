@@ -82,7 +82,7 @@ angular.module(
 
             };
 
-            Worldstates.query(function (data) {
+            Worldstates.query({level:5},function (data) {
                 $scope.allWorldstates = data;
             });
 
