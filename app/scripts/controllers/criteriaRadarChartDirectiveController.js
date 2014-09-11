@@ -34,7 +34,8 @@ angular.module(
                                     }
                                     dataItem.push({
                                         axis: $scope.useNumbers ? dataItem.length+1 :indiactor.displayName,
-                                        value: ccs.calculateCriteria(indiactor.value,criteriaFunction)
+                                        tooltip: indiactor.displayName,
+                                        value: Math.round(ccs.calculateCriteria(indiactor.value,criteriaFunction)*100)/100
                                     });
                                 }
                             }

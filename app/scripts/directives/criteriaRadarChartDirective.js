@@ -7,7 +7,7 @@ angular.module(
         function (WorldstateService) {
             'use strict';
 
-            var scope, linkFunction, drawLegend;
+            var scope, linkFunction, drawLegend, augmentWithTooltips;
             scope = {
                 localModel: '&worldstates',
                 criteriaFunction: '=',
@@ -15,7 +15,16 @@ angular.module(
                 showAxisText:'=',
                 useNumbers:'='
             };
-
+            
+            augmentWithTooltips = function(elem){
+                 d3.select(elem[0])
+                    .selectAll("circle")
+                    .select('title')
+                    .text(function (j) {
+                        return j.tooltip + ': '+Math.max(j.value, 0);
+                    });
+            };
+            
             drawLegend = function (elem, chartConfig, legendItems) {
                 var colorscale, legendSvg, legendContainer, rects,
                     labelWidthHistory, labels, labelWidth, breakIndex, yOff;
@@ -144,6 +153,9 @@ angular.module(
                         if (scope.showLegend) {
                             drawLegend(elem, cfg, scope.legendItems);
                         }
+                        if(scope.useNumbers){
+                            augmentWithTooltips(elem, cfg, scope.legendItems);
+                        }
                     }
                 };
                 //we want the chart to adjust to the size of the element it is placed in
@@ -154,7 +166,8 @@ angular.module(
                     h: width,
                     maxValue: 100,
                     levels: 4,
-                    axisText: angular.isDefined(scope.showAxisText) ? scope.showAxisText ? true : false : false
+                    axisText: angular.isDefined(scope.showAxisText) ? scope.showAxisText ? true : false : false,
+                    showTooltip: scope.useNumbers
                 };
 
                 scope.$watchCollection('localModel()', watchCallback);
