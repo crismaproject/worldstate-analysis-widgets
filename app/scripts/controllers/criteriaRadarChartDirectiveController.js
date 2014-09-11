@@ -33,7 +33,7 @@ angular.module(
                                         }
                                     }
                                     dataItem.push({
-                                        axis: indiactor.displayName,
+                                        axis: $scope.useNumbers ? dataItem.length+1 :indiactor.displayName,
                                         value: ccs.calculateCriteria(indiactor.value,criteriaFunction)
                                     });
                                 }
