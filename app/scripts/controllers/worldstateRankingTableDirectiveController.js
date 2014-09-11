@@ -138,12 +138,6 @@ angular.module(
                             field: 'score'
                         }
                     ];
-//                if ($scope.showRadarChart){
-//            $scope.columns.push({
-//            title: 'Criteria radar',
-//                field: 'chart'
-//            });
-//            }
                     for (i = 0; i < rankedWorldstates.length; i++) {
                         obj = {
                             'rank': rankedWorldstates[i].rank,
