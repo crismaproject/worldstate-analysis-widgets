@@ -9,7 +9,8 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
         'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
-        function ($scope, $filter, NgTableParams, Worldstates, ccs, as) {
+        'ngDialog',
+        function ($scope, $filter, NgTableParams, Worldstates, ccs, as, ngDialog) {
             'use strict';
             var getOrderedProperties, updateTable, getRankedWorldstates,
                 getCriteriaVectorForWorldstate, extractIndicators, getCritAndWeightVector;
@@ -117,6 +118,14 @@ angular.module(
                 });
                 return rankedWs;
             };
+            $scope.clickToOpen = function (index) {
+                $scope.ws = $scope.tableData[index].ws;
+                ngDialog.open({
+                    template: 'templates/criteriaRadarPopupTemplate.html',
+                    scope: $scope,
+                    className: 'ngdialog-theme-default ngdialog-theme-custom ngdialog-theme-width'
+                });
+            };
             updateTable = function () {
                 var rankedWorldstates, i, obj, iccData, indicatorGroup, group, indicatorProp, indicator, crit, addedCriteriaCols;
                 if ($scope.criteriaFunction && $scope.decisionStrategy && $scope.worldstates && $scope.worldstates.length > 0) {
@@ -126,7 +135,16 @@ angular.module(
                     if (!rankedWorldstates && rankedWorldstates.length <= 0) {
                         throw new Error("Could not rank the worldstates...");
                     }
+
+                    $scope.tooltip = {checked: false}
+                    $scope.tooltip.title = '';
                     $scope.tableData = [];
+                    if ($scope.showRadarChart) {
+                        var f = extractIndicators($scope.worldstates[0]);
+                        for (var i = 0; i < f.length; i++) {
+                            $scope.tooltip.title = $scope.tooltip.title + '<br/>' + (i + 1) + ': ' + f[i].displayName;
+                        }
+                    }
                     $scope.columns = [{
                             title: 'Rank',
                             field: 'rank'
@@ -169,7 +187,7 @@ angular.module(
                                             if (addedCriteriaCols.indexOf(indicator.displayName) === -1) {
                                                 addedCriteriaCols.push(indicator.displayName);
                                                 $scope.columns.push({
-                                                    title: $scope.showRadarChart ? indicator.displayName +' ('+($scope.columns.length-2)+')' : indicator.displayName,
+                                                    title: $scope.showRadarChart ? indicator.displayName + ' (' + ($scope.columns.length - 2) + ')' : indicator.displayName,
                                                     field: indicator.displayName,
                                                 });
                                             }

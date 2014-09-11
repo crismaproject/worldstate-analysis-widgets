@@ -108,3 +108,7 @@
     0%   {opacity: 100%}
     100% {opacity: 0%}
 }
+
+.ngdialog.ngdialog-theme-width .ngdialog-content{
+    width:550px;
+}

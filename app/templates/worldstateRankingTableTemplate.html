@@ -38,7 +38,9 @@
                     show-legend="false"
                     show-axis-text="true"
                     use-numbers="true"
-                    criteria-function="criteriaFunction">
+                    criteria-function="criteriaFunction"
+                    ng-click="clickToOpen($index)"
+                   >
                 </td>
                 <td ng-repeat="col in columns"  ng-if="$index >= 3" style="vertical-align: middle">
                     <span>
