@@ -13,7 +13,6 @@ angular.module(
             'use strict';
             var getOrderedProperties, updateTable, getRankedWorldstates,
                 getCriteriaVectorForWorldstate, extractIndicators, getCritAndWeightVector;
-
             getOrderedProperties = function (obj) {
                 var p, keys;
                 keys = [];
@@ -25,12 +24,9 @@ angular.module(
                 keys.sort();
                 return keys;
             };
-
             extractIndicators = function (worldstate) {
                 var indicatorGroup, indicatorProp, iccObject, group, indicators;
-
                 indicators = [];
-
                 if (worldstate) {
                     iccObject = Worldstates.utils.stripIccData([worldstate], false)[0];
                     for (indicatorGroup in iccObject.data) {
@@ -66,7 +62,6 @@ angular.module(
                 }
                 return criterias;
             };
-
             getCritAndWeightVector = function (dec, criteria) {
                 var critWeight, i, critEmph;
                 critWeight = {};
@@ -83,7 +78,6 @@ angular.module(
                 }
                 return critWeight;
             };
-
             getRankedWorldstates = function (worldstates, criteriaFunction, decisionStrategy) {
                 var i, ws, crit, score, critWeight, rankedWs, insertIndex;
                 rankedWs = [];
@@ -118,28 +112,73 @@ angular.module(
                     }
                 }
                 rankedWs = rankedWs.reverse();
-                rankedWs.forEach(function(item,index){
-                    item.rank=index+1;
+                rankedWs.forEach(function (item, index) {
+                    item.rank = index + 1;
                 });
                 return rankedWs;
             };
-
             updateTable = function () {
-                var rankedWorldstates, i, rank, score, tableData;
+                var rankedWorldstates, i, obj, iccData, indicatorGroup, group, indicatorProp, indicator, crit, addedCriteriaCols;
                 if ($scope.criteriaFunction && $scope.decisionStrategy && $scope.worldstates && $scope.worldstates.length > 0) {
-
+                    addedCriteriaCols = [];
                     //assume the getRankedWorldstates method returns an ascending ordered array / map etc
                     rankedWorldstates = getRankedWorldstates($scope.worldstates, $scope.criteriaFunction, $scope.decisionStrategy);
                     if (!rankedWorldstates && rankedWorldstates.length <= 0) {
                         throw new Error("Could not rank the worldstates...");
                     }
                     $scope.tableData = [];
+                    $scope.columns = [{
+                            title: 'Rank',
+                            field: 'rank'
+                        }, {
+                            title: 'Worldstate',
+                            field: 'worldstate'
+                        }, {
+                            title: 'Score',
+                            field: 'score'
+                        }
+                    ];
                     for (i = 0; i < rankedWorldstates.length; i++) {
-                        $scope.tableData.push({
+                        obj = {
                             'rank': rankedWorldstates[i].rank,
                             'worldstate': rankedWorldstates[i].worldstate.name,
-                            'score': rankedWorldstates[i].score
-                        });
+                            'ws': rankedWorldstates[i].worldstate,
+                            'score': $filter('number')(rankedWorldstates[i].score * 100, 2) + ' %'
+                        };
+
+                        if ($scope.showIndicators) {
+
+                            //we want to add the indicator and criteria....
+                            iccData = Worldstates.utils.stripIccData([rankedWorldstates[i].worldstate])[0].data;
+                            for (indicatorGroup in iccData) {
+                                if (iccData.hasOwnProperty(indicatorGroup)) {
+                                    group = iccData[indicatorGroup];
+                                    for (indicatorProp in group) {
+                                        if (group.hasOwnProperty(indicatorProp) && indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                            indicator = group[indicatorProp];
+                                            crit = 0;
+                                            $scope.criteriaFunction.criteriaFunctions.forEach(function (cf, index) {
+                                                if (cf.indicator === indicator.displayName) {
+                                                    crit = ccs.calculateCriteria(indicator.value, cf);
+                                                }
+                                            });
+                                            obj[indicator.displayName] = {
+                                                indicator: $filter('number')(indicator.value) + ' ' + indicator.unit,
+                                                los: $filter('number')(crit, 2) + ' % LoS'
+                                            };
+                                            if (addedCriteriaCols.indexOf(indicator.displayName) === -1) {
+                                                addedCriteriaCols.push(indicator.displayName);
+                                                $scope.columns.push({
+                                                    title: $scope.showRadarChart ? indicator.displayName +' ('+($scope.columns.length-2)+')' : indicator.displayName,
+                                                    field: indicator.displayName,
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        $scope.tableData.push(obj);
                     }
                     if ($scope.tableParams) {
                         $scope.tableParams.reload();
@@ -151,13 +190,13 @@ angular.module(
                                 name: 'asc'     // initial sorting
                             }
                         }, {
-                            total: $scope.tableData.length, // length of data
+                            counts: [], // hide page counts control
+                            total: 1, // value less than count hide pagination
                             getData: function ($defer, params) {
                                 // use build-in angular filter
                                 var orderedData = params.sorting() ?
                                     $filter('orderBy')($scope.tableData, params.orderBy()) :
                                     $scope.tableData;
-
                                 params.total(orderedData.length); // set total for recalc pagination
                                 $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                             }
@@ -165,25 +204,32 @@ angular.module(
                     }
                 }
             };
-
             $scope.tableVisibleSwitch = '0';
-            
             $scope.$watch('worldstates', function () {
-                if ($scope.worldstates && $scope.worldstates.length>0) {
-                    updateTable();
-                }
-            },true);
-            $scope.$watch('decisionStrategy', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length>0) {
-                    updateTable();
-                }
-            },true);
-
-            $scope.$watch('criteriaFunction', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length>0) {
+                if ($scope.worldstates && $scope.worldstates.length > 0) {
                     updateTable();
                 }
             }, true);
+            $scope.$watch('decisionStrategy', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                    updateTable();
+                }
+            }, true);
+            $scope.$watch('criteriaFunction', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                    updateTable();
+                }
+            }, true);
+            $scope.$watch('showIndicators', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                    updateTable();
+                }
+            });
+            $scope.$watch('showRadarChart', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                    updateTable();
+                }
+            });
         }
     ]
     );
