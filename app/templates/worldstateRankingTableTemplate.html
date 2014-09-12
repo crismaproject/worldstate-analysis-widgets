@@ -1,18 +1,56 @@
-<div id="indicatorCriteriaTable">
+<div id="indicatorCriteriaTable" style="overflow-x: auto">
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
         <strong>Warning: </strong>There are no worldstates selected.
     </div>
-    <table ng-hide="worldstates.length <= 0" ng-table="tableParams" show-filter="false" class="table">
-        <tr ng-repeat="item in $data">
-            <td data-title="'Rank'" sortable="'rank'" >
-                {{item.rank}}
-            </td>
-            <td data-title="'Worldstate'" sortable="'worldstate'" >
-                {{item.worldstate}}
-            </td>
-            <td data-title="'Score'" sortable="'score'" >
-                {{item.score * 100| number:1}}%
-            </td>
-        </tr>
+    <table ng-hide="worldstates.length <= 0" 
+           ng-table="tableParams" 
+           show-filter="false" 
+           class="table table-striped"
+           style="white-space: nowrap">
+        <thead>
+            <tr>
+                <th ng-repeat="column in columns"
+                     ng-if="$index < 3"
+                    class=""
+                    >
+                    {{column.title}}
+                </th>
+                <th ng-if="showRadarChart">
+                    Criteria radar
+                </th>
+                <th ng-repeat="column in columns"
+                     ng-if="$index >= 3"
+                    class=""
+                    >
+                    {{column.title}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in $data">
+                <td ng-repeat="col in columns" ng-if="$index < 3" style="vertical-align: middle">
+                    {{item[col.field]}}
+                </td>
+                <td ng-if="showRadarChart"
+                    style="min-width:150px; width:150px; margin: 0 auto; padding-top: 20px" 
+                    criteria-radar 
+                    worldstates="[item.ws]" 
+                    show-legend="false"
+                    show-axis-text="true"
+                    use-numbers="true"
+                    criteria-function="criteriaFunction"
+                    ng-click="clickToOpen($index)"
+                   >
+                </td>
+                <td ng-repeat="col in columns"  ng-if="$index >= 3" style="vertical-align: middle">
+                    <span>
+                        {{item[col.field].indicator}}
+                        <br/>
+                        {{item[col.field].los}}
+                    </span>
+                </td>
+
+            </tr>
+        </tbody>
     </table>
 </div>

@@ -7,12 +7,24 @@ angular.module(
         function (WorldstateService) {
             'use strict';
 
-            var scope, linkFunction, drawLegend;
+            var scope, linkFunction, drawLegend, augmentWithTooltips;
             scope = {
                 localModel: '&worldstates',
-                criteriaFunction: '='
+                criteriaFunction: '=',
+                showLegend:'=',
+                showAxisText:'=',
+                useNumbers:'='
             };
-
+            
+            augmentWithTooltips = function(elem){
+                 d3.select(elem[0])
+                    .selectAll("circle")
+                    .select('title')
+                    .text(function (j) {
+                        return j.tooltip + ': '+Math.max(j.value, 0);
+                    });
+            };
+            
             drawLegend = function (elem, chartConfig, legendItems) {
                 var colorscale, legendSvg, legendContainer, rects,
                     labelWidthHistory, labels, labelWidth, breakIndex, yOff;
@@ -119,7 +131,7 @@ angular.module(
 
             };
 
-            linkFunction = function (scope, elem) {
+            linkFunction = function (scope, elem, attrs) {
                 var cfg, width, watchCallback;
 
                 watchCallback = function () {
@@ -138,25 +150,33 @@ angular.module(
                             .node();
 
                         RadarChart.draw(divNode, scope.chartData, cfg);
-                        drawLegend(elem, cfg, scope.legendItems);
+                        if (scope.showLegend) {
+                            drawLegend(elem, cfg, scope.legendItems);
+                        }
+                        if(scope.useNumbers){
+                            augmentWithTooltips(elem, cfg, scope.legendItems);
+                        }
                     }
                 };
                 //we want the chart to adjust to the size of the element it is placed in
                 width = elem.width ? elem.width() : 200;
+//                width =  200;
                 cfg = {
                     w: width,
                     h: width,
                     maxValue: 100,
-                    levels: 4
+                    levels: 4,
+                    axisText: angular.isDefined(scope.showAxisText) ? scope.showAxisText ? true : false : false,
+                    showTooltip: scope.useNumbers
                 };
 
                 scope.$watchCollection('localModel()', watchCallback);
-                scope.$watch('criteriaFunction', watchCallback,true);
+                scope.$watch('criteriaFunction', watchCallback, true);
             };
 
             return {
                 scope: scope,
-                restrict: 'A',
+                restrict: 'AE',
                 link: linkFunction,
                 controller: 'eu.crismaproject.worldstateAnalysis.controllers.CriteriaRadarChartDirectiveController'
             };

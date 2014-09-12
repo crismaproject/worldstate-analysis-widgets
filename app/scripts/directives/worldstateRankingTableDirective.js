@@ -10,7 +10,9 @@ angular.module(
             scope = {
                 worldstates:'=',
                 criteriaFunction:'=',
-                decisionStrategy:'='
+                decisionStrategy:'=',
+                showIndicators:'=',
+                showRadarChart:'='
             };
 
             return {

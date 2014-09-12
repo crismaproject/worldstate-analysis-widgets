@@ -79,21 +79,29 @@ var RadarChart = {
             })
             .attr("class", "line").style("stroke", "grey").style("stroke-width", "1px");
 
+        if (cfg.axisText) {
 
-    axis.append("text").attr("class", "legend")
-        .text(function(d){return d})
-        .style("font-family", "sans-serif").style("font-size", cfg.fontSize + "px")
-        .style("text-anchor", function(d, i){
-          var p = getHorizontalPosition(i, 0.5);
-          return (p < 0.4) ? "start" : ((p > 0.6) ? "end" : "middle");
-        })
-        .attr("transform", function(d, i){
-          var p = getVerticalPosition(i, cfg.h / 2);
-          return p < cfg.fontSize ? "translate(0, " + (cfg.fontSize - p) + ")" : "";
-        })
-        .attr("x", function(d, i){return getHorizontalPosition(i, cfg.w / 2, cfg.factorLegend);})
-        .attr("y", function(d, i){return getVerticalPosition(i, cfg.h / 2, cfg.factorLegend);});
 
+            axis.append("text").attr("class", "legend")
+                .text(function (d) {
+                    return d
+                })
+                .style("font-family", "sans-serif").style("font-size", cfg.fontSize + "px")
+                .style("text-anchor", function (d, i) {
+                    var p = getHorizontalPosition(i, 0.5);
+                    return (p < 0.4) ? "start" : ((p > 0.6) ? "end" : "middle");
+                })
+                .attr("transform", function (d, i) {
+                    var p = getVerticalPosition(i, cfg.h / 2);
+                    return p < cfg.fontSize ? "translate(0, " + (cfg.fontSize - p) + ")" : "";
+                })
+                .attr("x", function (d, i) {
+                    return getHorizontalPosition(i, cfg.w / 2, cfg.factorLegend);
+                })
+                .attr("y", function (d, i) {
+                    return getVerticalPosition(i, cfg.h / 2, cfg.factorLegend);
+                });
+        }
 
         d.forEach(function (y, x) {
             dataValues = [];
