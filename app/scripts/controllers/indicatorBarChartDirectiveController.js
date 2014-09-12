@@ -5,21 +5,12 @@ angular.module(
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, WorldstateService) {
+        '$filter',
+        function ($scope, WorldstateService, $filter) {
             'use strict';
-            var ctrl;
+            var ctrl, formatValueFunc;
             ctrl = this;
-            $scope.chartModels = [[
-                    {
-                        "key": "Series 1",
-                        "values": [['ws1', 10], ['ws2', 20], ['ws3', 30], ['ws4', 40]]
-                    }], [{
-                        "key": "Series 2",
-                        "values": [['ws1', 10], ['ws2', 20], ['ws3', 30], ['ws4', 40]]
-                    }]
-            ];
-
-
+            formatValueFunc = d3.format(".3s");
 
             this.createChartModels = function () {
                 var i, indicatorMap, indicators, indicatorGroup, indicatorGroupProp, indicatorProp, indicatorSet;
@@ -62,12 +53,24 @@ angular.module(
                     return colorCategory[i % colorCategory.length];
                 };
             };
-            
-            
-            $scope.getLegendColor = function($index){
+
+            $scope.yAxisTickFormat = function (d) {
+                var d3String = formatValueFunc(d);
+
+                return d3String.replace('M', 'Mio').replace('G', 'Mrd').replace('T', 'B');
+            };
+
+            $scope.toolTipContentFunction = function () {
+                return function (key, x, y, e, graph) {
+                    return  '<h3 style="font-weight:normal; font-size:18px">' + x + '</h3>' +
+                        '<p>' + key + ': ' + $filter('number')(e.value) + '</p>'
+                };
+            };
+
+            $scope.getLegendColor = function ($index) {
                 return {
-                    'color':$scope.colorFunction()(0,$index)
-                }
+                    'color': $scope.colorFunction()(0, $index)
+                };
             };
 
             $scope.$watch('worldstates', function () {

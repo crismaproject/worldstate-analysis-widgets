@@ -1,12 +1,19 @@
 <div>
-    <div class="row" >
+    <div class="row"ng-if="!worldstates || worldstates.length <= 0">
+        <div class="col-lg-12">
+            <div ng-hide="worldstates.length > 0" class="alert alert-warning">
+                <strong>Warning: </strong>There are no worldstates selected.
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="worldstates && worldstates.length > 0" >
         <div class="col-lg-12" style="text-align: center; margin: 20px 0px;">
             <span ng-repeat="ws in worldstates" style="margin:0px 10px;">
                 <i class="glyphicon glyphicon-stop" ng-style="getLegendColor($index)"></i>{{ws.name}}
             </span>
         </div>
     </div>
-    <div class="row" >
+    <div class="row" ng-if="worldstates && worldstates.length > 0">
         <div class="col-lg-4"  ng-repeat="chartModel in chartModels">
             <div class="row">
                 <div class="col-lg-12" style="text-align: center">
@@ -24,7 +31,11 @@
                      showValues="true"
                      staggerlabels="true"
                      forceY="{{chartModel.forceY}}"
-                     color="colorFunction()">
+                     yaxistickformat="yAxisTickFormat"
+                     valueFormat="yAxisTickFormat"
+                     color="colorFunction()"
+                     tooltips="true"
+                     tooltipcontent="toolTipContentFunction()">
                     <svg></svg>
                 </div>
             </div>
