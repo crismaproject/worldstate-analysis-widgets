@@ -625,33 +625,43 @@ describe('CriteriaRadarChartDirective Test Suite', function () {
 
             chartModelRef = [[{
                         axis: 'Number of dead',
+                        tooltip: 'Number of dead',
                         value: 100
                     }, {
                         axis: 'Total evacuationcost',
+                        tooltip: 'Total evacuationcost',
                         value: 100
                     }, {
                         axis: 'Number of damaged road segments',
+                        tooltip: 'Number of damaged road segments',
                         value: 100
                     }, {
                         axis: 'Unsafe buildings',
+                        tooltip: 'Unsafe buildings',
                         value: 100
                     }, {
                         axis: 'Lost buildings',
+                        tooltip: 'Lost buildings',
                         value: 100
                     }, , {
                         axis: 'Direct restoration cost',
+                        tooltip: 'Direct restoration cost',
                         value: 100
                     }, {
                         axis: 'Indirect damage cost',
+                        tooltip: 'Indirect damage cost',
                         value: 100
                     }, {
                         axis: 'Direct damage cost',
+                        tooltip: 'Direct damage cost',
                         value: 100
                     }, {
                         axis: 'Number of homeless',
+                        tooltip: 'Number of homeless',
                         value: 100
                     }, {
                         axis: 'Number of injured',
+                        tooltip: 'Number of injured',
                         value: 100
                     }].sort(compare)];
 
@@ -678,36 +688,46 @@ describe('CriteriaRadarChartDirective Test Suite', function () {
             var scope = $rootScope.$new();
             scope.criteriaFunction = criteriaFunction;
             chartModelRef = [{
-                    axis: 'Number of dead',
-                    value: 100
-                }, {
-                    axis: 'Total evacuationcost',
-                    value: 100
-                }, {
-                    axis: 'Number of damaged road segments',
-                    value: 100
-                }, {
-                    axis: 'Unsafe buildings',
-                    value: 100
-                }, {
-                    axis: 'Lost buildings',
-                    value: 100
-                }, , {
-                    axis: 'Direct restoration cost',
-                    value: 100
-                }, {
-                    axis: 'Indirect damage cost',
-                    value: 100
-                }, {
-                    axis: 'Direct damage cost',
-                    value: 100
-                }, {
-                    axis: 'Number of homeless',
-                    value: 100
-                }, {
-                    axis: 'Number of injured',
-                    value: 100
-                }].sort(compare);
+                        axis: 'Number of dead',
+                        tooltip: 'Number of dead',
+                        value: 100
+                    }, {
+                        axis: 'Total evacuationcost',
+                        tooltip: 'Total evacuationcost',
+                        value: 100
+                    }, {
+                        axis: 'Number of damaged road segments',
+                        tooltip: 'Number of damaged road segments',
+                        value: 100
+                    }, {
+                        axis: 'Unsafe buildings',
+                        tooltip: 'Unsafe buildings',
+                        value: 100
+                    }, {
+                        axis: 'Lost buildings',
+                        tooltip: 'Lost buildings',
+                        value: 100
+                    }, , {
+                        axis: 'Direct restoration cost',
+                        tooltip: 'Direct restoration cost',
+                        value: 100
+                    }, {
+                        axis: 'Indirect damage cost',
+                        tooltip: 'Indirect damage cost',
+                        value: 100
+                    }, {
+                        axis: 'Direct damage cost',
+                        tooltip: 'Direct damage cost',
+                        value: 100
+                    }, {
+                        axis: 'Number of homeless',
+                        tooltip: 'Number of homeless',
+                        value: 100
+                    }, {
+                        axis: 'Number of injured',
+                        tooltip: 'Number of injured',
+                        value: 100
+                    }].sort(compare);
 
             chartModelRef = [chartModelRef, chartModelRef, chartModelRef];
 
