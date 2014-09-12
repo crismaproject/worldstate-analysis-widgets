@@ -10,7 +10,7 @@ angular.module(
 
             scope = {
                 satisfactionEmphasis: '=',
-                indicatorSize:"=",
+                indicatorSize:'=',
                 // the expert mode feature is implemented later on. When true a similiar component 
                 // to the criteriaEmphasis is needed...
                 expertMode:'='

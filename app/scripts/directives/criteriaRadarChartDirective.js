@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.directives'
-    ).directive(
+).directive(
     'criteriaRadar',
     [
         'de.cismet.crisma.ICMM.Worldstates',
@@ -11,20 +11,20 @@ angular.module(
             scope = {
                 localModel: '&worldstates',
                 criteriaFunction: '=',
-                showLegend:'=',
-                showAxisText:'=',
-                useNumbers:'='
+                showLegend: '=',
+                showAxisText: '=',
+                useNumbers: '='
             };
-            
-            augmentWithTooltips = function(elem){
-                 d3.select(elem[0])
-                    .selectAll("circle")
+
+            augmentWithTooltips = function (elem) {
+                d3.select(elem[0])
+                    .selectAll('circle')
                     .select('title')
                     .text(function (j) {
-                        return j.tooltip + ': '+Math.max(j.value, 0);
+                        return j.tooltip + ': ' + Math.max(j.value, 0);
                     });
             };
-            
+
             drawLegend = function (elem, chartConfig, legendItems) {
                 var colorscale, legendSvg, legendContainer, rects,
                     labelWidthHistory, labels, labelWidth, breakIndex, yOff;
@@ -131,7 +131,7 @@ angular.module(
 
             };
 
-            linkFunction = function (scope, elem, attrs) {
+            linkFunction = function (scope, elem) {
                 var cfg, width, watchCallback;
 
                 watchCallback = function () {
@@ -153,7 +153,7 @@ angular.module(
                         if (scope.showLegend) {
                             drawLegend(elem, cfg, scope.legendItems);
                         }
-                        if(scope.useNumbers){
+                        if (scope.useNumbers) {
                             augmentWithTooltips(elem, cfg, scope.legendItems);
                         }
                     }

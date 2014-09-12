@@ -5,7 +5,7 @@ angular.module(
         'de.cismet.cids.rest.collidngNames.Nodes',
         'LocalStorageModule'
     ]
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
@@ -174,7 +174,7 @@ angular.module(
                 $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[index];
             };
             
-                        $scope.updateSelectedDecisionStrategy = function (index) {
+            $scope.updateSelectedDecisionStrategy = function (index) {
                 $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
             };
 

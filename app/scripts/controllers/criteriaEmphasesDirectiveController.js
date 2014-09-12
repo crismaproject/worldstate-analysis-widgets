@@ -33,6 +33,7 @@ angular.module(
                         //check if there is a value for that indicator in the bounded critEmphases
                         critEmphExists = false;
                         if ($scope.criteriaEmphases && $scope.criteriaEmphases.length !== 0) {
+                            /*jshint -W083 */
                             $scope.criteriaEmphases.forEach(function (critEmph) {
                                 if (critEmph.indicator.displayName === $scope.indicatorMap[indicatorName].displayName) {
                                     critEmphExists = true;

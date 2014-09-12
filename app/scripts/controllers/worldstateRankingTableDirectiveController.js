@@ -51,7 +51,8 @@ angular.module(
                 criterias = [];
                 if (indicators && indicators.length === critFunc.criteriaFunctions.length) {
                     for (i = 0; i < indicators.length; i++) {
-                        critFunc.criteriaFunctions.forEach(function (cf, index) {
+                        /*jshint -W083 */
+                        critFunc.criteriaFunctions.forEach(function (cf) {
                             if (cf.indicator === indicators[i].displayName) {
                                 criterias.push({
                                     indicator: indicators[i],
@@ -70,6 +71,7 @@ angular.module(
                 critWeight.weights = [];
                 for (i = 0; i < dec.criteriaEmphases.length; i++) {
                     critEmph = dec.criteriaEmphases[i];
+                    /*jshint -W083 */
                     criteria.forEach(function (c) {
                         if (c.indicator.displayName === critEmph.indicator.displayName) {
                             critWeight.criteria.push(c.criteria);
@@ -86,7 +88,7 @@ angular.module(
                     ws = worldstates[i];
                     crit = getCriteriaVectorForWorldstate(ws, criteriaFunction);
                     critWeight = getCritAndWeightVector(decisionStrategy, crit);
-                    score = as.getOwa().aggregateLS(critWeight.criteria, decisionStrategy.satisfactionEmphasis, critWeight.weights)
+                    score = as.getOwa().aggregateLS(critWeight.criteria, decisionStrategy.satisfactionEmphasis, critWeight.weights);
                     if (rankedWs.length === 0) {
                         rankedWs.push({
                             worldstate: ws,
@@ -94,6 +96,7 @@ angular.module(
                         });
                     } else {
                         insertIndex = -1;
+                        /*jshint -W083 */
                         rankedWs.forEach(function (rankItem, index) {
                             if (insertIndex === -1 && rankItem && rankItem.score && score <= rankItem.score) {
                                 insertIndex = index;
@@ -127,21 +130,22 @@ angular.module(
                 });
             };
             updateTable = function () {
-                var rankedWorldstates, i, obj, iccData, indicatorGroup, group, indicatorProp, indicator, crit, addedCriteriaCols;
+                var rankedWorldstates, i, obj, iccData, indicatorGroup, group, indicatorProp, indicator,
+                    crit, addedCriteriaCols;
                 if ($scope.criteriaFunction && $scope.decisionStrategy && $scope.worldstates && $scope.worldstates.length > 0) {
                     addedCriteriaCols = [];
                     //assume the getRankedWorldstates method returns an ascending ordered array / map etc
                     rankedWorldstates = getRankedWorldstates($scope.worldstates, $scope.criteriaFunction, $scope.decisionStrategy);
                     if (!rankedWorldstates && rankedWorldstates.length <= 0) {
-                        throw new Error("Could not rank the worldstates...");
+                        throw new Error('Could not rank the worldstates...');
                     }
 
-                    $scope.tooltip = {checked: false}
+                    $scope.tooltip = {checked: false};
                     $scope.tooltip.title = '';
                     $scope.tableData = [];
                     if ($scope.showRadarChart) {
                         var f = extractIndicators($scope.worldstates[0]);
-                        for (var i = 0; i < f.length; i++) {
+                        for (i = 0; i < f.length; i++) {
                             $scope.tooltip.title = $scope.tooltip.title + '<br/>' + (i + 1) + ': ' + f[i].displayName;
                         }
                     }
@@ -175,7 +179,8 @@ angular.module(
                                         if (group.hasOwnProperty(indicatorProp) && indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
                                             indicator = group[indicatorProp];
                                             crit = 0;
-                                            $scope.criteriaFunction.criteriaFunctions.forEach(function (cf, index) {
+                                            /*jshint -W083 */
+                                            $scope.criteriaFunction.criteriaFunctions.forEach(function (cf) {
                                                 if (cf.indicator === indicator.displayName) {
                                                     crit = ccs.calculateCriteria(indicator.value, cf);
                                                 }

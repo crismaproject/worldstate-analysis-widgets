@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.indicatorBarChartDirectiveController',
     [
         '$scope',
@@ -10,10 +10,10 @@ angular.module(
             'use strict';
             var ctrl, formatValueFunc;
             ctrl = this;
-            formatValueFunc = d3.format(".3s");
+            formatValueFunc = d3.format('.3s');
 
             this.createChartModels = function () {
-                var i, indicatorMap, indicators, indicatorGroup, indicatorGroupProp, indicatorProp, indicatorSet;
+                var i, indicatorMap, indicators, indicatorGroup, indicatorGroupProp, indicatorProp;
                 indicatorMap = {};
                 for (i = 0; i < $scope.worldstates.length; i++) {
                     indicators = WorldstateService.utils.stripIccData([$scope.worldstates[i]])[0].data;
@@ -61,9 +61,9 @@ angular.module(
             };
 
             $scope.toolTipContentFunction = function () {
-                return function (key, x, y, e, graph) {
-                    return  '<h3 style="font-weight:normal; font-size:18px">' + x + '</h3>' +
-                        '<p>' + key + ': ' + $filter('number')(e.value) + '</p>'
+                return function (key, x, y, e) {
+                    return '<h3 style="font-weight:normal; font-size:18px">' + x + '</h3>' +
+                        '<p>' + key + ': ' + $filter('number')(e.value) + '</p>';
                 };
             };
 
@@ -80,7 +80,7 @@ angular.module(
             }, true);
         }
     ]
-    );
+);
 
 
 
