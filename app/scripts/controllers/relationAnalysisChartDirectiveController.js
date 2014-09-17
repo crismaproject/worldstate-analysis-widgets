@@ -143,7 +143,7 @@ angular.module(
             $scope.$watch('yAxis', this.axisWatchCallback);
 
             $scope.$watch('forCriteria', this.dataChangedWatchCallback);
-            $scope.$watch('worldstates()', this.dataChangedWatchCallback);
+            $scope.$watch('worldstates()', this.dataChangedWatchCallback,true);
             $scope.$watch('criteriaFunctionSet', this.axisWatchCallback, true);
         }
     ]
