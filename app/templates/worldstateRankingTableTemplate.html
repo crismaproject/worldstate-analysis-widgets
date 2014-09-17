@@ -2,6 +2,7 @@
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
         <strong>Warning: </strong>There are no worldstates selected.
     </div>
+
     <table ng-hide="worldstates.length <= 0" 
            ng-table="tableParams" 
            show-filter="false" 
@@ -19,7 +20,7 @@
                     Criteria radar
                 </th>
                 <th ng-repeat="column in columns"
-                     ng-if="$index >= 3"
+                     ng-if="showIndicators && $index >= 3"
                     class=""
                     >
                     {{column.title}}
@@ -42,7 +43,7 @@
                     ng-click="clickToOpen($index)"
                    >
                 </td>
-                <td ng-repeat="col in columns"  ng-if="$index >= 3" style="vertical-align: middle">
+                <td ng-repeat="col in columns"  ng-if="showIndicators && $index >= 3" style="vertical-align: middle">
                     <span>
                         {{item[col.field].indicator}}
                         <br/>
