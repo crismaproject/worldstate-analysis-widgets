@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
     [
         '$scope',
@@ -87,7 +87,7 @@ angular.module(
             };
 
             ctrl.createTableItem = function (ws) {
-                var i, crit, critWeight, score, newTableItem;
+                var i, crit, critWeight, score, newTableItem, item;
                 crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
                 critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
                 score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
@@ -101,7 +101,7 @@ angular.module(
 
                 //we want to add the indicator and criteria....
                 for (i = 0; i < crit.length; i++) {
-                    var item = crit[i];
+                    item = crit[i];
                     newTableItem[item.indicator.displayName] = {
                         indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
                         los: $filter('number')(item.criteria, 2) + ' % LoS'
@@ -115,6 +115,7 @@ angular.module(
                 indicators = ctrl.extractIndicators(ws);
                 for (i = 0; i < indicators.length; i++) {
                     indicator = indicators[i];
+                    /*jshint -W083 */
                     $scope.columns.forEach(function (item) {
                         if (item.field === indicator.displayName) {
                             exists = true;
@@ -136,7 +137,6 @@ angular.module(
                 if (!tableArr || tableArr.length === 0) {
                     newTableItem.rank = 1;
                     tableArr.push(newTableItem);
-                    return;
                 } else {
                     insertPosition = -1;
                     updateRank = false;
@@ -188,16 +188,16 @@ angular.module(
                     }
 //                    ctrl.refreshTable();
                 } else {
-                    console.error("Could not remove worldstate " + ws + " from ranking table");
+                    console.error('Could not remove worldstate ' + ws + ' from ranking table');
                 }
             };
 
             ctrl.updateWorldstateTableData = function (ws) {
-                var tableItem, i, newTableItem, indexToRemove;
+                var tableItem, i, newTableItem;
                 newTableItem = ctrl.createTableItem(ws);
-                for(i=0;i<$scope.tableData.length;i++){
+                for (i = 0; i < $scope.tableData.length; i++) {
                     tableItem = $scope.tableData[i];
-                    if(tableItem.ws.id === ws.id){
+                    if (tableItem.ws.id === ws.id) {
                         ctrl.removeWorldstateFromTableData(tableItem.ws);
                         break;
                     }
@@ -220,7 +220,8 @@ angular.module(
                         total: 1, // value less than count hide pagination
                         getData: function ($defer, params) {
                             // use build-in angular filter
-                            var orderedData = params.sorting() ?
+                            var orderedData;
+                            orderedData = params.sorting() ?
                                 $filter('orderBy')($scope.tableData, params.orderBy()) :
                                 $scope.tableData;
                             params.total(orderedData.length); // set total for recalc pagination
@@ -241,6 +242,7 @@ angular.module(
                         for (i = $scope.worldstates.length - 1; i >= 0; i--) {
                             ws = $scope.worldstates[i];
                             isContained = false;
+                            /*jshint -W083 */
                             oldVal.forEach(function (val) {
                                 if (parseInt(val.id) === parseInt(ws.id)) {
                                     isContained = true;
@@ -256,6 +258,7 @@ angular.module(
                         for (i = oldVal.length - 1; i >= 0; i--) {
                             ws = oldVal[i];
                             isContained = false;
+                            /*jshint -W083 */
                             $scope.worldstates.forEach(function (val) {
                                 if (parseInt(val.id) === parseInt(ws.id)) {
                                     isContained = true;
@@ -276,7 +279,7 @@ angular.module(
                         }
                     }
                 }
-                      ctrl.refreshTable();
+                ctrl.refreshTable();
             };
 
             ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
@@ -285,7 +288,7 @@ angular.module(
                     // we need to re-calculate and re-index the tableData...
                     for (i = 0; i < $scope.tableData.length; i++) {
                         ws = $scope.tableData[i].ws;
-                        newTableItem = createTableItem(ws);
+                        newTableItem = ctrl.createTableItem(ws);
                         ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
                     }
                     $scope.tableData = newTableData;
@@ -303,16 +306,15 @@ angular.module(
             };
 
             $scope.columns = [{
-                    title: 'Rank',
-                    field: 'rank'
-                }, {
-                    title: 'Worldstate',
-                    field: 'worldstate'
-                }, {
-                    title: 'Score',
-                    field: 'score'
-                }
-            ];
+                title: 'Rank',
+                field: 'rank'
+            }, {
+                title: 'Worldstate',
+                field: 'worldstate'
+            }, {
+                title: 'Score',
+                field: 'score'
+            }];
 
             $scope.tableVisibleSwitch = '0';
             $scope.$watch('worldstates', ctrl.worldstateWatchCallback, true);
@@ -322,4 +324,4 @@ angular.module(
             $scope.$watch('criteriaFunction', ctrl.decisionStrategyWatchCallback, true);
         }
     ]
-    );
+);

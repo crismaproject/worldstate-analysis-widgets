@@ -5,7 +5,7 @@ angular.module(
         'de.cismet.cids.rest.collidngNames.Nodes',
         'LocalStorageModule'
     ]
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
@@ -156,7 +156,8 @@ angular.module(
                         for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
                             wsNode = $scope.treeSelection[i];
                             isContained = false;
-                            $scope.worldstates.forEach(function (val, index) {
+                            /*jshint -W083 */
+                            $scope.worldstates.forEach(function (val) {
                                 objectKey = wsNode.objectKey;
                                 wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
                                 if (parseInt(val.id) === wsId) {
@@ -166,6 +167,7 @@ angular.module(
                             if (!isContained) {
                                 objectKey = wsNode.objectKey;
                                 wsId = objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length);
+                                /*jshint -W083 */
                                 Worldstates.get({level: 2, fields: 'id,name,iccdata,actualaccessinfo, actualaccessinfocontenttype', deduplicate: false, 'wsId': wsId}, function (tmpWs) {
                                     $scope.worldstates.push(tmpWs);
                                 });
@@ -177,7 +179,8 @@ angular.module(
                         for (i = 0; i < $scope.worldstates.length; i++) {
                             ws = $scope.worldstates[i];
                             isContained = false;
-                            $scope.treeSelection.forEach(function (val, index) {
+                            /*jshint -W083 */
+                            $scope.treeSelection.forEach(function (val) {
                                 objectKey = val.objectKey;
                                 wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
                                 if (parseInt(ws.id) === wsId) {
