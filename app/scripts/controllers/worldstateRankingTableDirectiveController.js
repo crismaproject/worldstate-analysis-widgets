@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
     [
         '$scope',
@@ -12,9 +12,10 @@ angular.module(
         'ngDialog',
         function ($scope, $filter, NgTableParams, Worldstates, ccs, as, ngDialog) {
             'use strict';
-            var getOrderedProperties, updateTable, getRankedWorldstates,
-                getCriteriaVectorForWorldstate, extractIndicators, getCritAndWeightVector;
-            getOrderedProperties = function (obj) {
+            var ctrl;
+
+            ctrl = this;
+            ctrl.getOrderedProperties = function (obj) {
                 var p, keys;
                 keys = [];
                 for (p in obj) {
@@ -25,7 +26,8 @@ angular.module(
                 keys.sort();
                 return keys;
             };
-            extractIndicators = function (worldstate) {
+
+            ctrl.extractIndicators = function (worldstate) {
                 var indicatorGroup, indicatorProp, iccObject, group, indicators;
                 indicators = [];
                 if (worldstate) {
@@ -45,9 +47,10 @@ angular.module(
                 }
                 return indicators;
             };
-            getCriteriaVectorForWorldstate = function (ws, critFunc) {
+
+            ctrl.getCriteriaVectorForWorldstate = function (ws, critFunc) {
                 var indicators, criterias, i;
-                indicators = extractIndicators(ws);
+                indicators = ctrl.extractIndicators(ws);
                 criterias = [];
                 if (indicators && indicators.length === critFunc.criteriaFunctions.length) {
                     for (i = 0; i < indicators.length; i++) {
@@ -64,7 +67,8 @@ angular.module(
                 }
                 return criterias;
             };
-            getCritAndWeightVector = function (dec, criteria) {
+
+            ctrl.getCritAndWeightVector = function (dec, criteria) {
                 var critWeight, i, critEmph;
                 critWeight = {};
                 critWeight.criteria = [];
@@ -81,46 +85,217 @@ angular.module(
                 }
                 return critWeight;
             };
-            getRankedWorldstates = function (worldstates, criteriaFunction, decisionStrategy) {
-                var i, ws, crit, score, critWeight, rankedWs, insertIndex;
-                rankedWs = [];
-                for (i = 0; i < worldstates.length; i++) {
-                    ws = worldstates[i];
-                    crit = getCriteriaVectorForWorldstate(ws, criteriaFunction);
-                    critWeight = getCritAndWeightVector(decisionStrategy, crit);
-                    score = as.getOwa().aggregateLS(critWeight.criteria, decisionStrategy.satisfactionEmphasis, critWeight.weights);
-                    if (rankedWs.length === 0) {
-                        rankedWs.push({
-                            worldstate: ws,
-                            score: score
+
+            ctrl.createTableItem = function (ws) {
+                var i, crit, critWeight, score, newTableItem, item;
+                crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
+                critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
+                score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
+                newTableItem = {
+                    'rank': i,
+                    'worldstate': ws.name,
+                    'ws': ws,
+                    'score': $filter('number')(score * 100, 2) + ' %',
+                    rawScore: score
+                };
+
+                //we want to add the indicator and criteria....
+                for (i = 0; i < crit.length; i++) {
+                    item = crit[i];
+                    newTableItem[item.indicator.displayName] = {
+                        indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
+                        los: $filter('number')(item.criteria, 2) + ' % LoS'
+                    };
+                }
+                return newTableItem;
+            };
+
+            ctrl.addMissingColumns = function (ws) {
+                var i, indicator, indicators, exists = false;
+                indicators = ctrl.extractIndicators(ws);
+                for (i = 0; i < indicators.length; i++) {
+                    indicator = indicators[i];
+                    /*jshint -W083 */
+                    $scope.columns.forEach(function (item) {
+                        if (item.field === indicator.displayName) {
+                            exists = true;
+                        }
+                    });
+                    if (!exists) {
+                        $scope.columns.push({
+                            title: indicator.displayName + ' (' + ($scope.columns.length - 2) + ')',
+                            field: indicator.displayName,
                         });
+                    }
+                }
+            };
+
+            ctrl.insertAtCorrectTablePosition = function (tableArr, newTableItem) {
+                var i, insertPosition, updateRank,
+                    tableItem, score;
+                score = newTableItem.rawScore;
+                if (!tableArr || tableArr.length === 0) {
+                    newTableItem.rank = 1;
+                    tableArr.push(newTableItem);
+                } else {
+                    insertPosition = -1;
+                    updateRank = false;
+                    for (i = 0; i < tableArr.length; i++) {
+                        tableItem = tableArr[i];
+                        if (updateRank) {
+                            tableItem.rank++;
+                        }
+                        if (tableItem.rawScore <= score && insertPosition === -1) {
+                            //we have found our insertion point..
+                            newTableItem.rank = i + 1;
+                            tableItem.rank++;
+                            updateRank = true;
+                            insertPosition = i;
+                        }
+                    }
+                    if (insertPosition === -1) {
+                        newTableItem.rank = $scope.tableData.length + 1;
+                        tableArr.push(newTableItem);
                     } else {
-                        insertIndex = -1;
-                        /*jshint -W083 */
-                        rankedWs.forEach(function (rankItem, index) {
-                            if (insertIndex === -1 && rankItem && rankItem.score && score <= rankItem.score) {
-                                insertIndex = index;
+                        tableArr.splice(insertPosition, 0, newTableItem);
+                    }
+                }
+            };
+
+            ctrl.addWorldstateToTableData = function (ws) {
+                var newTableItem;
+                ctrl.addMissingColumns(ws);
+                newTableItem = ctrl.createTableItem(ws);
+                // we need to find out the insertion point...
+                if (!$scope.tableData) {
+                    $scope.tableData = [];
+                }
+                ctrl.insertAtCorrectTablePosition($scope.tableData, newTableItem);
+//                ctrl.refreshTable();
+            };
+
+            ctrl.removeWorldstateFromTableData = function (ws) {
+                var i, isRemoved = -1;
+                $scope.tableData.forEach(function (item, index) {
+                    if (angular.equals(item.ws, ws) && isRemoved === -1) {
+                        isRemoved = index;
+                    }
+                });
+                if (isRemoved !== -1) {
+                    $scope.tableData.splice(isRemoved, 1);
+                    for (i = isRemoved; i < $scope.tableData.length; i++) {
+                        $scope.tableData[i].rank--;
+                    }
+//                    ctrl.refreshTable();
+                } else {
+                    console.error('Could not remove worldstate ' + ws + ' from ranking table');
+                }
+            };
+
+            ctrl.updateWorldstateTableData = function (ws) {
+                var tableItem, i, newTableItem;
+                newTableItem = ctrl.createTableItem(ws);
+                for (i = 0; i < $scope.tableData.length; i++) {
+                    tableItem = $scope.tableData[i];
+                    if (tableItem.ws.id === ws.id) {
+                        ctrl.removeWorldstateFromTableData(tableItem.ws);
+                        break;
+                    }
+                }
+                ctrl.insertAtCorrectTablePosition($scope.tableData,newTableItem);
+            };
+
+            ctrl.refreshTable = function () {
+                if ($scope.tableParams) {
+                    $scope.tableParams.reload();
+                } else {
+                    $scope.tableParams = new NgTableParams({
+                        page: 1, // show first page
+                        count: 1000, // count per page
+                        sorting: {
+                            name: 'asc'     // initial sorting
+                        }
+                    }, {
+                        counts: [], // hide page counts control
+                        total: 1, // value less than count hide pagination
+                        getData: function ($defer, params) {
+                            // use build-in angular filter
+                            var orderedData;
+                            orderedData = params.sorting() ?
+                                $filter('orderBy')($scope.tableData, params.orderBy()) :
+                                $scope.tableData;
+                            params.total(orderedData.length); // set total for recalc pagination
+                            $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                        }
+                    });
+                }
+            };
+
+            ctrl.worldstateWatchCallback = function (newVal, oldVal) {
+                var isContained, i, ws;
+                if (newVal === oldVal || !oldVal) {
+                    return;
+                }
+                if ($scope.worldstates) {
+                    if (newVal.length > oldVal.length) {
+//                        a new worldstate was added, we need to calculate the row model for it
+                        for (i = $scope.worldstates.length - 1; i >= 0; i--) {
+                            ws = $scope.worldstates[i];
+                            isContained = false;
+                            /*jshint -W083 */
+                            oldVal.forEach(function (val) {
+                                if (parseInt(val.id) === parseInt(ws.id)) {
+                                    isContained = true;
+                                }
+                            });
+                            if (!isContained) {
+                                ctrl.addWorldstateToTableData(ws);
+                                break;
                             }
-                        });
-                        if (insertIndex !== -1) {
-                            rankedWs.splice(insertIndex, 0, {
-                                worldstate: ws,
-                                score: score
+                        }
+                    } else if (newVal.length < oldVal.length) {
+                        //a worldstate was removed. we need to remove the row model.
+                        for (i = oldVal.length - 1; i >= 0; i--) {
+                            ws = oldVal[i];
+                            isContained = false;
+                            /*jshint -W083 */
+                            $scope.worldstates.forEach(function (val) {
+                                if (parseInt(val.id) === parseInt(ws.id)) {
+                                    isContained = true;
+                                }
                             });
-                        } else {
-                            rankedWs.push({
-                                worldstate: ws,
-                                score: score
-                            });
+                            if (!isContained) {
+                                ctrl.removeWorldstateFromTableData(ws);
+                                break;
+                            }
+                        }
+                    } else {
+                        // a worldstate or the order has changed, check what worldstates have changed..
+                        for (i = 0; i < $scope.worldstates.length; i++) {
+                            if (!angular.equals($scope.worldstates[i], oldVal[i])) {
+                                ws = $scope.worldstates[i];
+                                ctrl.updateWorldstateTableData(ws);
+                            }
                         }
                     }
                 }
-                rankedWs = rankedWs.reverse();
-                rankedWs.forEach(function (item, index) {
-                    item.rank = index + 1;
-                });
-                return rankedWs;
+                ctrl.refreshTable();
             };
+
+            ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
+                var ws, newTableItem, i = 0, newTableData = [];
+                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                    // we need to re-calculate and re-index the tableData...
+                    for (i = 0; i < $scope.tableData.length; i++) {
+                        ws = $scope.tableData[i].ws;
+                        newTableItem = ctrl.createTableItem(ws);
+                        ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+                    }
+                    $scope.tableData = newTableData;
+                    ctrl.refreshTable();
+                }
+            };
+
             $scope.clickToOpen = function (index) {
                 $scope.ws = $scope.tableData[index].ws;
                 ngDialog.open({
@@ -129,130 +304,24 @@ angular.module(
                     className: 'ngdialog-theme-default ngdialog-theme-custom ngdialog-theme-width'
                 });
             };
-            updateTable = function () {
-                var rankedWorldstates, i, obj, iccData, indicatorGroup, group, indicatorProp, indicator,
-                    crit, addedCriteriaCols;
-                if ($scope.criteriaFunction && $scope.decisionStrategy && $scope.worldstates && $scope.worldstates.length > 0) {
-                    addedCriteriaCols = [];
-                    //assume the getRankedWorldstates method returns an ascending ordered array / map etc
-                    rankedWorldstates = getRankedWorldstates($scope.worldstates, $scope.criteriaFunction, $scope.decisionStrategy);
-                    if (!rankedWorldstates && rankedWorldstates.length <= 0) {
-                        throw new Error('Could not rank the worldstates...');
-                    }
 
-                    $scope.tooltip = {checked: false};
-                    $scope.tooltip.title = '';
-                    $scope.tableData = [];
-                    if ($scope.showRadarChart) {
-                        var f = extractIndicators($scope.worldstates[0]);
-                        for (i = 0; i < f.length; i++) {
-                            $scope.tooltip.title = $scope.tooltip.title + '<br/>' + (i + 1) + ': ' + f[i].displayName;
-                        }
-                    }
-                    $scope.columns = [{
-                            title: 'Rank',
-                            field: 'rank'
-                        }, {
-                            title: 'Worldstate',
-                            field: 'worldstate'
-                        }, {
-                            title: 'Score',
-                            field: 'score'
-                        }
-                    ];
-                    for (i = 0; i < rankedWorldstates.length; i++) {
-                        obj = {
-                            'rank': rankedWorldstates[i].rank,
-                            'worldstate': rankedWorldstates[i].worldstate.name,
-                            'ws': rankedWorldstates[i].worldstate,
-                            'score': $filter('number')(rankedWorldstates[i].score * 100, 2) + ' %'
-                        };
+            $scope.columns = [{
+                title: 'Rank',
+                field: 'rank'
+            }, {
+                title: 'Worldstate',
+                field: 'worldstate'
+            }, {
+                title: 'Score',
+                field: 'score'
+            }];
 
-                        if ($scope.showIndicators) {
-
-                            //we want to add the indicator and criteria....
-                            iccData = Worldstates.utils.stripIccData([rankedWorldstates[i].worldstate])[0].data;
-                            for (indicatorGroup in iccData) {
-                                if (iccData.hasOwnProperty(indicatorGroup)) {
-                                    group = iccData[indicatorGroup];
-                                    for (indicatorProp in group) {
-                                        if (group.hasOwnProperty(indicatorProp) && indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                                            indicator = group[indicatorProp];
-                                            crit = 0;
-                                            /*jshint -W083 */
-                                            $scope.criteriaFunction.criteriaFunctions.forEach(function (cf) {
-                                                if (cf.indicator === indicator.displayName) {
-                                                    crit = ccs.calculateCriteria(indicator.value, cf);
-                                                }
-                                            });
-                                            obj[indicator.displayName] = {
-                                                indicator: $filter('number')(indicator.value) + ' ' + indicator.unit,
-                                                los: $filter('number')(crit, 2) + ' % LoS'
-                                            };
-                                            if (addedCriteriaCols.indexOf(indicator.displayName) === -1) {
-                                                addedCriteriaCols.push(indicator.displayName);
-                                                $scope.columns.push({
-                                                    title: $scope.showRadarChart ? indicator.displayName + ' (' + ($scope.columns.length - 2) + ')' : indicator.displayName,
-                                                    field: indicator.displayName,
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        $scope.tableData.push(obj);
-                    }
-                    if ($scope.tableParams) {
-                        $scope.tableParams.reload();
-                    } else {
-                        $scope.tableParams = new NgTableParams({
-                            page: 1, // show first page
-                            count: 1000, // count per page
-                            sorting: {
-                                name: 'asc'     // initial sorting
-                            }
-                        }, {
-                            counts: [], // hide page counts control
-                            total: 1, // value less than count hide pagination
-                            getData: function ($defer, params) {
-                                // use build-in angular filter
-                                var orderedData = params.sorting() ?
-                                    $filter('orderBy')($scope.tableData, params.orderBy()) :
-                                    $scope.tableData;
-                                params.total(orderedData.length); // set total for recalc pagination
-                                $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                            }
-                        });
-                    }
-                }
-            };
             $scope.tableVisibleSwitch = '0';
-            $scope.$watch('worldstates', function () {
-                if ($scope.worldstates && $scope.worldstates.length > 0) {
-                    updateTable();
-                }
-            }, true);
-            $scope.$watch('decisionStrategy', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-                    updateTable();
-                }
-            }, true);
-            $scope.$watch('criteriaFunction', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-                    updateTable();
-                }
-            }, true);
-            $scope.$watch('showIndicators', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-                    updateTable();
-                }
-            });
-            $scope.$watch('showRadarChart', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-                    updateTable();
-                }
-            });
+            $scope.$watch('worldstates', ctrl.worldstateWatchCallback, true);
+
+            $scope.$watch('decisionStrategy', ctrl.decisionStrategyWatchCallback, true);
+
+            $scope.$watch('criteriaFunction', ctrl.decisionStrategyWatchCallback, true);
         }
     ]
-    );
+);

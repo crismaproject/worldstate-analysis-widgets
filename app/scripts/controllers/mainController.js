@@ -15,7 +15,7 @@ angular.module(
         '$timeout',
         function ($scope, Nodes, Worldstates, localStorageService, $timeout) {
             'use strict';
-            
+
             var createChartModels, getIndicators;
             $scope.forCriteriaTable = false;
             $scope.chartModels = [];
@@ -89,7 +89,7 @@ angular.module(
 
             };
 
-            Worldstates.query({level:5},function (data) {
+            Worldstates.query({level: 2}, function (data) {
                 $scope.allWorldstates = data;
             });
 
@@ -99,15 +99,15 @@ angular.module(
                     getIndicators();
                 }
             });
-            $scope.$watch('worldstates', function (newVal, oldVal) {
+            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
                 if (newVal !== oldVal && $scope.worldstates) {
                     createChartModels();
                     getIndicators();
                 }
-            }, true);
+            });
 
             $scope.indicatorVector = [];
-            
+
             $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
             $scope.criteriaFunctionSets = $scope.criteriaFunctionSet;
             $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
@@ -127,9 +127,9 @@ angular.module(
                     localStorageService.add('decisionStrategies', $scope.decisionStrategies);
                     $scope.showDsPersistSpinner = false;
                     $scope.showDsPersistDone = true;
-                    $timeout(function(){
+                    $timeout(function () {
                         $scope.showDsPersistDone = false;
-                    },1500);
+                    }, 1500);
                 }, 500);
             };
             $scope.activeItem = {};
@@ -141,31 +141,57 @@ angular.module(
                 imagePath: 'bower_components/crisma-worldstate-tree-widget-angular/dist/images/',
                 multiSelection: true
             };
+            $scope.treeSelection = [];
+            $scope.worldstates = [];
             // every time the treeSelection changes, we need to determine the
             // corresponding worldstates to the selected nodes. 
-            $scope.treeSelection = [];
+            // we assume that the treeSelection watch is only fired as a result of selection
+            // or deselection events in the tree.
             $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
-                var i, wsId, wsNode, wsArr = [],
-                    worldstateCallback = function (worldstate) {
-                        wsArr.push(worldstate);
-                        if (wsArr.length === $scope.treeSelection.length) {
-                            if (!$scope.worldstates) {
-                                $scope.worldstates = [];
-                            } else {
-                                $scope.worldstates.splice(0, $scope.worldstates.length);
-                            }
-                            $scope.worldstates = wsArr;
-                        }
-                    };
+                var i, wsId, wsNode, ws, objectKey, isContained;
+
                 if (newVal !== oldVal) {
-                    //clear the old worldstate array
-                    if ($scope.treeSelection.length <= 0) {
-                        $scope.worldstates.splice(0, $scope.worldstates.length);
-                    }
-                    for (i = 0; i < $scope.treeSelection.length; i++) {
-                        wsNode = $scope.treeSelection[i].objectKey;
-                        wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-                        Worldstates.get({'wsId': wsId}, worldstateCallback);
+                    if ($scope.treeSelection.length > $scope.worldstates.length) {
+                        //we need to find the new element in the treeSelection array.
+                        for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
+                            wsNode = $scope.treeSelection[i];
+                            isContained = false;
+                            /*jshint -W083 */
+                            $scope.worldstates.forEach(function (val) {
+                                objectKey = wsNode.objectKey;
+                                wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
+                                if (parseInt(val.id) === wsId) {
+                                    isContained = true;
+                                }
+                            });
+                            if (!isContained) {
+                                objectKey = wsNode.objectKey;
+                                wsId = objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length);
+                                /*jshint -W083 */
+                                Worldstates.get({level: 2, fields: 'id,name,iccdata,actualaccessinfo, actualaccessinfocontenttype', deduplicate: false, 'wsId': wsId}, function (tmpWs) {
+                                    $scope.worldstates.push(tmpWs);
+                                });
+                                break;
+                            }
+                        }
+                    } else if ($scope.treeSelection.length < $scope.worldstates.length) {
+                        //we need to find the deleted element in the treeSelection array.
+                        for (i = 0; i < $scope.worldstates.length; i++) {
+                            ws = $scope.worldstates[i];
+                            isContained = false;
+                            /*jshint -W083 */
+                            $scope.treeSelection.forEach(function (val) {
+                                objectKey = val.objectKey;
+                                wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
+                                if (parseInt(ws.id) === wsId) {
+                                    isContained = true;
+                                }
+                            });
+                            if (!isContained) {
+                                $scope.worldstates.splice(i, 1);
+                                break;
+                            }
+                        }
                     }
                 }
             });
@@ -173,7 +199,7 @@ angular.module(
             $scope.updateSelectedCriteriaFunction = function (index) {
                 $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[index];
             };
-            
+
             $scope.updateSelectedDecisionStrategy = function (index) {
                 $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
             };
