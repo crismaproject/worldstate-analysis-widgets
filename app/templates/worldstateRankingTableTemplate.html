@@ -1,9 +1,8 @@
-<div id="indicatorCriteriaTable" style="overflow-x: auto">
-    <div ng-hide="worldstates.length > 0" class="alert alert-warning">
+<div id="worldstateRankingTable" style="overflow-x: auto">
+    <div ng-hide="worldstates.length > 0 && criteriaFunction && decisionStrategy" class="alert alert-warning">
         <strong>Warning: </strong>There are no worldstates selected.
     </div>
-
-    <table ng-hide="worldstates.length <= 0" 
+    <table ng-hide="worldstates.length <= 0 || !criteriaFunction || !decisionStrategy" 
            ng-table="tableParams" 
            show-filter="false" 
            class="table table-striped"
