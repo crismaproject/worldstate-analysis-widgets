@@ -252,7 +252,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         }, 1500);
       }, 500);
     };
-    Worldstates.query({ level: 5 }, function (data) {
+    Worldstates.query({ level: 2 }, function (data) {
       $scope.allWorldstates = data;
     });
     $scope.$watch('worldstateRef', function (newVal, oldVal) {
@@ -1354,7 +1354,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.$watch('xAxis', this.axisWatchCallback);
     $scope.$watch('yAxis', this.axisWatchCallback);
     $scope.$watch('forCriteria', this.dataChangedWatchCallback);
-    $scope.$watch('worldstates()', this.dataChangedWatchCallback);
+    $scope.$watch('worldstates()', this.dataChangedWatchCallback, true);
     $scope.$watch('criteriaFunctionSet', this.axisWatchCallback, true);
   }
 ]);
@@ -1566,11 +1566,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
             $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
           }
         });
+        $scope.tableParams.settings().$scope = $scope;
       }
     };
     ctrl.worldstateWatchCallback = function (newVal, oldVal) {
       var isContained, i, ws;
       if (newVal === oldVal || !oldVal) {
+        return;
+      }
+      if (!$scope.criteriaFunction || !$scope.decisionStrategy) {
         return;
       }
       if ($scope.worldstates) {
@@ -1621,14 +1625,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
       var ws, newTableItem, i = 0, newTableData = [];
       if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-        // we need to re-calculate and re-index the tableData...
-        for (i = 0; i < $scope.tableData.length; i++) {
-          ws = $scope.tableData[i].ws;
-          newTableItem = ctrl.createTableItem(ws);
-          ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+        if ($scope.criteriaFunction && $scope.decisionStrategy) {
+          // we need to re-calculate and re-index the tableData...
+          for (i = 0; i < $scope.tableData.length; i++) {
+            ws = $scope.tableData[i].ws;
+            newTableItem = ctrl.createTableItem(ws);
+            ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+          }
+          $scope.tableData = newTableData;
+          ctrl.refreshTable();
         }
-        $scope.tableData = newTableData;
-        ctrl.refreshTable();
       }
     };
     $scope.clickToOpen = function (index) {
@@ -2005,7 +2011,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('worl
     scope = {
       worldstates: '=',
       criteriaFunctionSets: '=',
-      selectedCriteriaFunction: '='
+      selectedCriteriaFunction: '=',
+      decisionStrategies: '=',
+      selectedDecisionStrategy: '='
     };
     return {
       scope: scope,

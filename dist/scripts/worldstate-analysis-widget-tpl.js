@@ -47,7 +47,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           data-delay=\"500\" \n" +
     "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
-    "                           bs-tooltip=\"tooltipSave.title\"\n" +
+    "                           bs-tooltip=\"tooltipAdd.title\"\n" +
     "                           ng-click=\"addCriteriaFunction()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
     "                    <a class=\"list-group-item\" \n" +
@@ -141,7 +141,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           data-delay=\"500\" \n" +
     "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
-    "                           bs-tooltip=\"tooltipSave.title\"\n" +
+    "                           bs-tooltip=\"tooltipAdd.title\"\n" +
     "                           ng-click=\"addDecisionStrategy()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
     "                    <a class=\"list-group-item\" \n" +
@@ -150,7 +150,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                       ng-repeat=\"cf in decisionStrategies\">\n" +
     "                        <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
     "                        <input style =\"color:black;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
-    "                        <div class=\"pull-right\" ng-hide=\"$index !== selectedDecisionStrategiesIndex\">\n" +
+    "                        <div class=\"pull-right\" ng-hide=\"$index !== selectedDecisionStrategyIndex\">\n" +
     "\n" +
     "                            <i ng-hide=\"editable[$index]\" \n" +
     "                               data-placement=\"top\" data-type=\"info\" \n" +
@@ -537,9 +537,44 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "<div class=\"col-lg-12\">\n" +
     "    <div class=\"row\">\n" +
     "        <div class=\"panel panel-default\">\n" +
+    "            <div class=\"panel-heading\" style=\"display:table;width:100%\">\n" +
+    "                <i class=\"glyphicon glyphicon-list-alt\"></i>\n" +
+    "                <h3 style=\"display:table-cell;vertical-align: middle\n" +
+    "                    \" class=\"panel-title\">Worldstate ranking table</h3>\n" +
+    "                <div class=\"pull-right\">\n" +
+    "                    <div class=\"input-group \">\n" +
+    "                        <div class=\"input-group-btn \" style=\"display: block\" ng-click=\"persistDecisionStrategies()\">\n" +
+    "                            <button type=\"button\" class=\"btn btn-sm btn-primary dropdown-toggle\" data-toggle=\"dropdown\" ng-disabled=\"disabled\">\n" +
+    "                                Change Mode <span class=\"caret\"></span>\n" +
+    "                            </button>\n" +
+    "                            <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                                <li style=\"padding-left: 10px;\"> \n" +
+    "                                    <input type=\"checkbox\" ng-model=\"showTableIndicators\"> Show Indicators\n" +
+    "                                </li>\n" +
+    "                                <li style=\"padding-left: 10px;\"> \n" +
+    "                                    <input type=\"checkbox\" ng-model=\"showTableRadarChart\"> Show radar chart\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "            <div class=\"panel-body\">\n" +
+    "                <worldstate-ranking-table \n" +
+    "                    worldstates=\"worldstates\"\n" +
+    "                    criteria-function=\"selectedCriteriaFunction\"\n" +
+    "                    decision-strategy=\"selectedDecisionStrategy\"\n" +
+    "                    show-indicators=\"showTableIndicators\"\n" +
+    "                    show-radar-chart=\"showTableRadarChart\">  \n" +
+    "                </worldstate-ranking-table>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"row\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
     "            <div class=\"panel-heading\">\n" +
     "                <span class=\"pull-left\">\n" +
-    "                    <!--<i class=\"glyphicon glyphicon-list-alt\"></i>-->\n" +
+    "                    <i class=\"glyphicon glyphicon-list-alt\"></i>\n" +
     "                    <h3 style=\"display:inline\" class=\"panel-title\" ng-if=\"!forCriteriaTable\">Indicator table</h3>\n" +
     "                    <h3 style=\"display:inline\" class=\"panel-title\" ng-if=\"forCriteriaTable\">Criteria table</h3>\n" +
     "                </span>\n" +
@@ -549,8 +584,12 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                            Change Mode <span class=\"caret\"></span>\n" +
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                            <li><a ng-click=\"forCriteriaTable = false\"><i ng-show=\"!forCriteriaTable\" class=\"glyphicon glyphicon-ok-circle\"></i> <span ng-style=\"{'padding-left' : !forCriteriaTable? '0px': '19px'}\">Indicator</span></a></li>\n" +
-    "                            <li><a ng-click=\"forCriteriaTable = true\"><i ng-show=\"forCriteriaTable\" class=\"glyphicon glyphicon-ok-circle\"> </i>  <span ng-style=\"{'padding-left' : forCriteriaTable? '0px': '19px'}\">Criteria</span></a></li>\n" +
+    "                            <li><a ng-click=\"forCriteriaTable = false\"><i ng-show=\"!forCriteriaTable\" class=\"glyphicon glyphicon-ok-circle\"></i> <span ng-style=\"{\n" +
+    "                                                        'padding-left'\n" +
+    "                                                        : !forCriteriaTable? '0px': '19px'}\">Indicator</span></a></li>\n" +
+    "                            <li><a ng-click=\"forCriteriaTable = true\"><i ng-show=\"forCriteriaTable\" class=\"glyphicon glyphicon-ok-circle\"> </i>  <span ng-style=\"{\n" +
+    "                                                        'padding-left'\n" +
+    "                                                        : forCriteriaTable? '0px': '19px'}\">Criteria</span></a></li>\n" +
     "                        </ul>\n" +
     "                    </div>\n" +
     "                </span>\n" +
@@ -566,13 +605,28 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
+    "    <div class=\"row\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "            <div class=\"panel-heading\">\n" +
+    "                <i class=\"glyphicon glyphicon-stats\"></i>\n" +
+    "                <h3 style=\"display:inline\" class=\"panel-title\" >Indicator bar charts</h3>\n" +
+    "            </div>\n" +
+    "            <div class=\"panel-body\">\n" +
+    "                <indicator-bar-charts\n" +
+    "                    worldstates=\"worldstates\"\n" +
+    "                    >\n" +
+    "\n" +
+    "                </indicator-bar-charts>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
     "    <!-- end widget -->\n" +
     "\n" +
     "    <div class=\"row\">\n" +
     "        <div class=\"panel panel-default\">\n" +
     "            <div class=\"panel-heading\">\n" +
     "                <span class=\"pull-left\">\n" +
-    "                    <!--<span class=\"widget-icon\"> <i class=\"fa fa-table\"></i> </span>-->\n" +
+    "                    <span class=\"widget-icon\"> <i class=\"fa fa-table\"></i> </span>\n" +
     "                    <h3 style=\"display:inline\" class=\"panel-title\">Worldstate relation analysis chart</h3>\n" +
     "                </span>\n" +
     "                <span class=\"pull-right\">\n" +
@@ -581,8 +635,12 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                            Change Mode <span class=\"caret\"></span>\n" +
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                            <li><a ng-click=\"isCriteria = false\"><i ng-show=\"!isCriteria\" class=\"glyphicon glyphicon-ok-circle\"></i> <span ng-style=\"{'padding-left' : !isCriteria? '0px': '19px'}\">Indicator</span></a></li>\n" +
-    "                            <li><a ng-click=\"isCriteria = true\"><i ng-show=\"isCriteria\" class=\"glyphicon glyphicon-ok-circle\"> </i>  <span ng-style=\"{'padding-left' : isCriteria? '0px': '19px'}\">Criteria</span></a></li>\n" +
+    "                            <li><a ng-click=\"isCriteria = false\"><i ng-show=\"!isCriteria\" class=\"glyphicon glyphicon-ok-circle\"></i> <span ng-style=\"{\n" +
+    "                                                        'padding-left'\n" +
+    "                                                        : !isCriteria? '0px': '19px'}\">Indicator</span></a></li>\n" +
+    "                            <li><a ng-click=\"isCriteria = true\"><i ng-show=\"isCriteria\" class=\"glyphicon glyphicon-ok-circle\"> </i>  <span ng-style=\"{\n" +
+    "                                                        'padding-left'\n" +
+    "                                                        : isCriteria? '0px': '19px'}\">Criteria</span></a></li>\n" +
     "                        </ul>\n" +
     "                    </div>\n" +
     "                </span>\n" +
@@ -603,7 +661,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        <div class=\"panel panel-default\">\n" +
     "            <div class=\"panel-heading\">\n" +
     "                <span class=\"pull-left\">\n" +
-    "                    <!--<span class=\"widget-icon\"> <i class=\"fa fa-table\"></i> </span>-->\n" +
+    "                    <span class=\"widget-icon\"> <i class=\"fa fa-table\"></i> </span>\n" +
     "                    <h3 style=\"display:inline\" class=\"panel-title\">Criteria radar chart comparison</h3>\n" +
     "                </span>\n" +
     "                <span class=\"pull-right\">\n" +
@@ -613,10 +671,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            </div>\n" +
     "            <div class=\"panel-body\">\n" +
     "                <div class=\"col-lg-3\">\n" +
-    "                    <select multiple=\"\" ng-model=\"worldstateRef\" \n" +
-    "                            ng-options=\"ws.name for ws in allWorldstates\"\n" +
-    "                            style=\"width: 100%;height: 100%\">\n" +
-    "                    </select>\n" +
+    "                    <div class=\"row\">\n" +
+    "                        <label>Reference Worldstate</label>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"row\">\n" +
+    "\n" +
+    "                        <select multiple=\"\" ng-model=\"worldstateRef\" \n" +
+    "                                ng-options=\"ws.name for ws in allWorldstates\"\n" +
+    "                                style=\"width: 100%;height: 100%\">\n" +
+    "                        </select>\n" +
+    "                    </div>\n" +
     "                </div>\n" +
     "                <div class=\"col-lg-9\">\n" +
     "                    <div class=\"row\">\n" +
@@ -632,16 +696,45 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                         criteria-radar \n" +
     "                                         worldstates=\"chartModel\"\n" +
     "                                         criteria-function=\"selectedCriteriaFunction\"\n" +
+    "                                         show-legend=\"true\"\n" +
+    "                                         show-axis-text=true\n" +
     "                                         >\n" +
     "                                    </div>\n" +
     "                                </div>\n" +
-    "                                <!--                            <div class=\"panel-footer no-padding\">\n" +
-    "                                                            </div>-->\n" +
     "                            </div>\n" +
     "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"row\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "            <div class=\"panel-heading\" style=\"display:table;width:100%\">\n" +
+    "                <h3 style=\"display:table-cell;vertical-align: middle\n" +
+    "                    \" class=\"panel-title\">Decision strategies</h3>\n" +
+    "                <div class=\"pull-right\">\n" +
+    "\n" +
+    "                    <div class=\"input-group \">\n" +
+    "                        <div class=\"input-group-btn \" style=\"display: block\" ng-click=\"persistDecisionStrategies()\">\n" +
+    "                            <button\n" +
+    "                                type =\"button\" \n" +
+    "                                class=\"btn btn-success btn-sm\">\n" +
+    "                                Persist\n" +
+    "                            </button>\n" +
+    "                            <button type=\"button\" class=\"btn btn-success btn-sm\" >\n" +
+    "                                <i ng-if=\"!showDsPersistSpinner && !showDsPersistDone\" class=\"glyphicon glyphicon-floppy-disk\"></i>\n" +
+    "                                <i ng-if=\"showDsPersistSpinner\" class=\"spin glyphicon glyphicon-refresh\" ></i>\n" +
+    "                                <i ng-if=\"showDsPersistDone\" class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                            </button>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "            <div class=\"panel-body\">\n" +
+    "                <decision-strategy-manager worldstates=\"worldstates\" decision-strategies=\"decisionStrategies\"></decision-strategy-manager>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -675,17 +768,18 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </div>\n" +
     "    </div>\n" +
     "</div>\n" +
+    "\n" +
+    "</div>\n" +
     "<!-- end widget -->"
   );
 
 
   $templateCache.put('templates/worldstateRankingTableTemplate.html',
-    "<div id=\"indicatorCriteriaTable\" style=\"overflow-x: auto\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
+    "<div id=\"worldstateRankingTable\" style=\"overflow-x: auto\">\n" +
+    "    <div ng-hide=\"worldstates.length > 0 && criteriaFunction && decisionStrategy\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "\n" +
-    "    <table ng-hide=\"worldstates.length <= 0\" \n" +
+    "    <table ng-hide=\"worldstates.length <= 0 || !criteriaFunction || !decisionStrategy\" \n" +
     "           ng-table=\"tableParams\" \n" +
     "           show-filter=\"false\" \n" +
     "           class=\"table table-striped\"\n" +
