@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
     [
         '$scope',
@@ -202,7 +202,7 @@ angular.module(
                         break;
                     }
                 }
-                ctrl.insertAtCorrectTablePosition($scope.tableData,newTableItem);
+                ctrl.insertAtCorrectTablePosition($scope.tableData, newTableItem);
             };
 
             ctrl.refreshTable = function () {
@@ -228,12 +228,16 @@ angular.module(
                             $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                         }
                     });
+                      $scope.tableParams.settings().$scope = $scope;
                 }
             };
 
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
                 var isContained, i, ws;
                 if (newVal === oldVal || !oldVal) {
+                    return;
+                }
+                if (!$scope.criteriaFunction || !$scope.decisionStrategy) {
                     return;
                 }
                 if ($scope.worldstates) {
@@ -285,14 +289,16 @@ angular.module(
             ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
                 var ws, newTableItem, i = 0, newTableData = [];
                 if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
-                    // we need to re-calculate and re-index the tableData...
-                    for (i = 0; i < $scope.tableData.length; i++) {
-                        ws = $scope.tableData[i].ws;
-                        newTableItem = ctrl.createTableItem(ws);
-                        ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+                    if ($scope.criteriaFunction && $scope.decisionStrategy) {
+                        // we need to re-calculate and re-index the tableData...
+                        for (i = 0; i < $scope.tableData.length; i++) {
+                            ws = $scope.tableData[i].ws;
+                            newTableItem = ctrl.createTableItem(ws);
+                            ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+                        }
+                        $scope.tableData = newTableData;
+                        ctrl.refreshTable();
                     }
-                    $scope.tableData = newTableData;
-                    ctrl.refreshTable();
                 }
             };
 
@@ -306,15 +312,15 @@ angular.module(
             };
 
             $scope.columns = [{
-                title: 'Rank',
-                field: 'rank'
-            }, {
-                title: 'Worldstate',
-                field: 'worldstate'
-            }, {
-                title: 'Score',
-                field: 'score'
-            }];
+                    title: 'Rank',
+                    field: 'rank'
+                }, {
+                    title: 'Worldstate',
+                    field: 'worldstate'
+                }, {
+                    title: 'Score',
+                    field: 'score'
+                }];
 
             $scope.tableVisibleSwitch = '0';
             $scope.$watch('worldstates', ctrl.worldstateWatchCallback, true);
@@ -324,4 +330,4 @@ angular.module(
             $scope.$watch('criteriaFunction', ctrl.decisionStrategyWatchCallback, true);
         }
     ]
-);
+    );
