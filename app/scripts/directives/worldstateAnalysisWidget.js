@@ -10,7 +10,9 @@ angular.module(
             scope = {
                 worldstates:'=',
                 criteriaFunctionSets:'=',
-                selectedCriteriaFunction:'='
+                selectedCriteriaFunction:'=',
+                decisionStrategies:'=',
+                selectedDecisionStrategy:'='
             };
 
             return {
