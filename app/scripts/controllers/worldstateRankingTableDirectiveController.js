@@ -228,7 +228,7 @@ angular.module(
                             $defer.resolve($scope.tableData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                         }
                     });
-                      $scope.tableParams.settings().$scope = $scope;
+                    $scope.tableParams.settings().$scope = $scope;
                 }
             };
 
