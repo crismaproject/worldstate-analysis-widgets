@@ -130,7 +130,7 @@ angular.module(
                 } else if ($scope.upperBoundary) {
                     title += '>= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else {
-                    title += ($scope.interval ? $scope.interval.indicatorValue || 0 : 0) + '- ' + $scope.interval.indicatorValue;
+                    title += ($scope.previousInterval ? $scope.previousInterval.indicatorValue || 0 : 0) + '- ' + $scope.interval.indicatorValue;
                 }
                 return title;
             };
