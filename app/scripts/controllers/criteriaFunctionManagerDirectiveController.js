@@ -4,9 +4,11 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController',
     [
         '$scope',
-        function ($scope) {
+        'de.cismet.crisma.ICMM.Worldstates',
+        function ($scope, Worldstates) {
             'use strict';
             $scope.editable = [];
+            $scope.indicators = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedCriteriaFunctionIndex = -1;
             $scope.tooltipDelete = {
@@ -29,7 +31,7 @@ angular.module(
                 var i, criteriaFunctions = [];
                 for (i = 0; i < $scope.indicators.length; i++) {
                     criteriaFunctions.push({
-                        indicator:$scope.indicators[i].displayName,
+                        indicator: $scope.indicators[i].displayName,
                         lowerBoundary: {
                             criteriaValue: 0,
                             indicatorValue: 0
@@ -52,18 +54,55 @@ angular.module(
                 $scope.criteriaFunctionSet.splice($scope.selectedCriteriaFunctionIndex, 1);
             };
 
-            $scope.isActiveItem = function (index) {
-                if ($scope.selectedCriteriaFunctionIndex === index) {
-                    return 'list-group-item-info';
-                } else {
-                    return '';
+            $scope.getListItemClass = function (index) {
+                var classList = 'list-group-item';
+                if ($scope.listItemsDisabled) {
+                    classList += ' disabled';
                 }
+                if ($scope.selectedCriteriaFunctionIndex === index) {
+                    classList += ' list-group-item-info';
+                }
+                return classList;
             };
 
             $scope.setSelectedCriteriaFunction = function (index) {
-                $scope.selectedCriteriaFunctionIndex = index;
-                $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
+                if (!$scope.listItemsDisabled) {
+                    $scope.selectedCriteriaFunctionIndex = index;
+                    $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
+                }
             };
+
+            $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+
+            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
+                var indicatorGroup, indicatorProp, iccObject, group;
+                if (newVal !== oldVal) {
+                    if ($scope.worldstates && $scope.worldstates.length === 0) {
+                        $scope.indicators = [];
+                    } else {
+                        if ($scope.indicators.length === 0) {
+                            iccObject = Worldstates.utils.stripIccData([$scope.worldstates[0]], false)[0];
+                            for (indicatorGroup in iccObject.data) {
+                                if (iccObject.data.hasOwnProperty(indicatorGroup)) {
+                                    group = iccObject.data[indicatorGroup];
+                                    for (indicatorProp in group) {
+                                        if (group.hasOwnProperty(indicatorProp)) {
+                                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                $scope.indicators.push(group[indicatorProp]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+                    if ($scope.listItemsDisaled) {
+                        $scope.selectedCriteriaFunctionIndex = -1;
+                    }
+                }
+            });
 
         }
     ]

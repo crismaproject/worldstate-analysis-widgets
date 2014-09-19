@@ -43,17 +43,23 @@ angular.module(
                 $scope.decisionStrategies.splice($scope.selectedDecisionStrategyIndex, 1);
             };
 
-            $scope.isActiveItem = function (index) {
+            $scope.getItemStyle = function (index) {
+                var c = 'list-group-item';
                 if ($scope.selectedDecisionStrategyIndex === index) {
-                    return 'list-group-item-info';
-                } else {
-                    return '';
+                    c += ' list-group-item-info';
                 }
+                if($scope.listItemsDisabled){
+                    c+= ' disabled';
+                }
+                
+                return c;
             };
 
             $scope.setSelectedDecisionStrategy = function (index) {
-                $scope.selectedDecisionStrategyIndex = index;
-                $scope.currentDecisionStrategy = $scope.decisionStrategies[$scope.selectedDecisionStrategyIndex];
+                if(!$scope.listItemsDisabled){
+                    $scope.selectedDecisionStrategyIndex = index;
+                    $scope.currentDecisionStrategy = $scope.decisionStrategies[$scope.selectedDecisionStrategyIndex];
+                }
             };
 
             $scope.updateModel = function () {
@@ -77,8 +83,13 @@ angular.module(
                 }
             };
             $scope.worldstates = $scope.worldstates || [];
+            $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
             $scope.$watch('worldstates', function () {
                 $scope.updateModel();
+                $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
+                if($scope.listItemsDisabled){
+                    $scope.selectedDecisionStrategyIndex = -1;
+                }
             }, true);
         }
     ]

@@ -5,7 +5,7 @@ angular.module(
         'de.cismet.cids.rest.collidngNames.Nodes',
         'LocalStorageModule'
     ]
-).controller(
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
@@ -151,6 +151,26 @@ angular.module(
                 var i, wsId, wsNode, ws, objectKey, isContained;
 
                 if (newVal !== oldVal) {
+                    if ($scope.indicatorVector.length === 0) {
+                        wsNode = $scope.treeSelection[0].objectKey;
+                        wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
+                        Worldstates.get({'wsId': wsId}, function (ws) {
+                            var indicatorGroup, indicatorProp, iccObject, group;
+                            iccObject = Worldstates.utils.stripIccData([ws], false)[0];
+                            for (indicatorGroup in iccObject.data) {
+                                if (iccObject.data.hasOwnProperty(indicatorGroup)) {
+                                    group = iccObject.data[indicatorGroup];
+                                    for (indicatorProp in group) {
+                                        if (group.hasOwnProperty(indicatorProp)) {
+                                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                $scope.indicatorVector.push(group[indicatorProp]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
                     if ($scope.treeSelection.length > $scope.worldstates.length) {
                         //we need to find the new element in the treeSelection array.
                         for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
@@ -207,25 +227,6 @@ angular.module(
             $scope.indicatorVector = [];
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
-                var wsId, wsNode, ws, iccObject, group;
-                wsNode = $scope.treeNodes[0].objectKey;
-                wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-                ws = Worldstates.get({'wsId': wsId}, function () {
-                    var indicatorGroup, indicatorProp;
-                    iccObject = Worldstates.utils.stripIccData([ws], false)[0];
-                    for (indicatorGroup in iccObject.data) {
-                        if (iccObject.data.hasOwnProperty(indicatorGroup)) {
-                            group = iccObject.data[indicatorGroup];
-                            for (indicatorProp in group) {
-                                if (group.hasOwnProperty(indicatorProp)) {
-                                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                                        $scope.indicatorVector.push(group[indicatorProp]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
             });
         }
     ]
