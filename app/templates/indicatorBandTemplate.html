@@ -2,9 +2,14 @@
     <div class="col-lg-12">
         <div class="row">
             <div class="col-lg-2" style="padding-right:5px;width:12.5%">
+<!--                we use the previous-interval binding to bind the upperBoundary
+                to this element. this is necessary to correctly set the labels. 
+                see also 
+                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->
                 <div class="progress">
                     <indicator-band-item 
                         interval="criteriaFunction.lowerBoundary" 
+                        previous-interval="criteriaFunction.upperBoundary"
                         lower-boundary="true"
                         on-interval-changed="updateLowerBoundary(indicatorValue)"
                         title="Criteria / Indicator values">
@@ -42,9 +47,14 @@
                 </div>
             </div>
             <div class="col-lg-2"  style="padding-left:5px;width: 12.5%">
+                <!-- we use the previous-interval binding to bind the lowerBoundary
+                to this element. this is necessary to correctly set the labels. 
+                see also 
+                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->
                 <div class="progress">
                     <indicator-band-item 
                         interval="criteriaFunction.upperBoundary" 
+                        previous-interval="criteriaFunction.lowerBoundary"
                         upper-boundary="true"
                         on-interval-changed="updateUpperBoundary(indicatorValue)"
                         title="Criteria / Indicator values">
