@@ -8,7 +8,7 @@ angular.module(
 
             var scope;
             scope = {
-                indicators:'=',
+                worldstates:'=',
                 criteriaFunctionSet:'=criteriaFunctions'
             };
 
