@@ -354,9 +354,11 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController', [
   '$scope',
-  function ($scope) {
+  'de.cismet.crisma.ICMM.Worldstates',
+  function ($scope, Worldstates) {
     'use strict';
     $scope.editable = [];
+    $scope.indicators = [];
     $scope.currentIntervalFunctions = [];
     $scope.selectedCriteriaFunctionIndex = -1;
     $scope.tooltipDelete = { title: 'Delete this criteria function' };
@@ -389,17 +391,51 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.removeCriteriaFunction = function () {
       $scope.criteriaFunctionSet.splice($scope.selectedCriteriaFunctionIndex, 1);
     };
-    $scope.isActiveItem = function (index) {
-      if ($scope.selectedCriteriaFunctionIndex === index) {
-        return 'list-group-item-info';
-      } else {
-        return '';
+    $scope.getListItemClass = function (index) {
+      var classList = 'list-group-item';
+      if ($scope.listItemsDisabled) {
+        classList += ' disabled';
       }
+      if ($scope.selectedCriteriaFunctionIndex === index) {
+        classList += ' list-group-item-info';
+      }
+      return classList;
     };
     $scope.setSelectedCriteriaFunction = function (index) {
-      $scope.selectedCriteriaFunctionIndex = index;
-      $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
+      if (!$scope.listItemsDisabled) {
+        $scope.selectedCriteriaFunctionIndex = index;
+        $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
+      }
     };
+    $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+    $scope.$watchCollection('worldstates', function (newVal, oldVal) {
+      var indicatorGroup, indicatorProp, iccObject, group;
+      if (newVal !== oldVal) {
+        if ($scope.worldstates && $scope.worldstates.length === 0) {
+          $scope.indicators = [];
+        } else {
+          if ($scope.indicators.length === 0) {
+            iccObject = Worldstates.utils.stripIccData([$scope.worldstates[0]], false)[0];
+            for (indicatorGroup in iccObject.data) {
+              if (iccObject.data.hasOwnProperty(indicatorGroup)) {
+                group = iccObject.data[indicatorGroup];
+                for (indicatorProp in group) {
+                  if (group.hasOwnProperty(indicatorProp)) {
+                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                      $scope.indicators.push(group[indicatorProp]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+        if ($scope.listItemsDisaled) {
+          $scope.selectedCriteriaFunctionIndex = -1;
+        }
+      }
+    });
   }
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.CriteriaRadarChartDirectiveController', [
@@ -470,16 +506,21 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.removeDecisionStrategy = function () {
       $scope.decisionStrategies.splice($scope.selectedDecisionStrategyIndex, 1);
     };
-    $scope.isActiveItem = function (index) {
+    $scope.getItemStyle = function (index) {
+      var c = 'list-group-item';
       if ($scope.selectedDecisionStrategyIndex === index) {
-        return 'list-group-item-info';
-      } else {
-        return '';
+        c += ' list-group-item-info';
       }
+      if ($scope.listItemsDisabled) {
+        c += ' disabled';
+      }
+      return c;
     };
     $scope.setSelectedDecisionStrategy = function (index) {
-      $scope.selectedDecisionStrategyIndex = index;
-      $scope.currentDecisionStrategy = $scope.decisionStrategies[$scope.selectedDecisionStrategyIndex];
+      if (!$scope.listItemsDisabled) {
+        $scope.selectedDecisionStrategyIndex = index;
+        $scope.currentDecisionStrategy = $scope.decisionStrategies[$scope.selectedDecisionStrategyIndex];
+      }
     };
     $scope.updateModel = function () {
       var i, indicatorGroup, indicatorProp, iccObject, group;
@@ -501,8 +542,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
       }
     };
     $scope.worldstates = $scope.worldstates || [];
+    $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
     $scope.$watch('worldstates', function () {
       $scope.updateModel();
+      $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
+      if ($scope.listItemsDisabled) {
+        $scope.selectedDecisionStrategyIndex = -1;
+      }
     }, true);
   }
 ]);
@@ -739,7 +785,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
       } else if ($scope.upperBoundary) {
         title += '>= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
       } else {
-        title += ($scope.interval ? $scope.interval.indicatorValue || 0 : 0) + '- ' + $scope.interval.indicatorValue;
+        title += ($scope.previousInterval ? $scope.previousInterval.indicatorValue || 0 : 0) + '- ' + $scope.interval.indicatorValue;
       }
       return title;
     };
@@ -1155,6 +1201,26 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
     $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
       var i, wsId, wsNode, ws, objectKey, isContained;
       if (newVal !== oldVal) {
+        if ($scope.indicatorVector.length === 0) {
+          wsNode = $scope.treeSelection[0].objectKey;
+          wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
+          Worldstates.get({ 'wsId': wsId }, function (ws) {
+            var indicatorGroup, indicatorProp, iccObject, group;
+            iccObject = Worldstates.utils.stripIccData([ws], false)[0];
+            for (indicatorGroup in iccObject.data) {
+              if (iccObject.data.hasOwnProperty(indicatorGroup)) {
+                group = iccObject.data[indicatorGroup];
+                for (indicatorProp in group) {
+                  if (group.hasOwnProperty(indicatorProp)) {
+                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                      $scope.indicatorVector.push(group[indicatorProp]);
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
         if ($scope.treeSelection.length > $scope.worldstates.length) {
           //we need to find the new element in the treeSelection array.
           for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
@@ -1213,25 +1279,6 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
     $scope.indicatorVector = [];
     // Retrieve the top level nodes from the icmm api
     $scope.treeNodes = Nodes.query(function () {
-      var wsId, wsNode, ws, iccObject, group;
-      wsNode = $scope.treeNodes[0].objectKey;
-      wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-      ws = Worldstates.get({ 'wsId': wsId }, function () {
-        var indicatorGroup, indicatorProp;
-        iccObject = Worldstates.utils.stripIccData([ws], false)[0];
-        for (indicatorGroup in iccObject.data) {
-          if (iccObject.data.hasOwnProperty(indicatorGroup)) {
-            group = iccObject.data[indicatorGroup];
-            for (indicatorProp in group) {
-              if (group.hasOwnProperty(indicatorProp)) {
-                if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                  $scope.indicatorVector.push(group[indicatorProp]);
-                }
-              }
-            }
-          }
-        }
-      });
     });
   }
 ]);
@@ -1725,7 +1772,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('crit
     'use strict';
     var scope;
     scope = {
-      indicators: '=',
+      worldstates: '=',
       criteriaFunctionSet: '=criteriaFunctions'
     };
     return {

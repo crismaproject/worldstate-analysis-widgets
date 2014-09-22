@@ -34,11 +34,6 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "    <div class=\"row\">\n" +
     "        <div class=\"col-lg-3\">\n" +
     "            <div class=\"row\">\n" +
-    "                <div class=\"btn-group\" style=\"margin-bottom: 10px;\">\n" +
-    "\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "            <div class=\"row\">\n" +
     "                <div class=\"list-group\">\n" +
     "                    <a class=\"list-group-item active\">\n" +
     "                        Criteria Functions \n" +
@@ -50,15 +45,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           bs-tooltip=\"tooltipAdd.title\"\n" +
     "                           ng-click=\"addCriteriaFunction()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
-    "                    <a class=\"list-group-item\" \n" +
-    "                       ng-click=\"setSelectedCriteriaFunction($index)\"\n" +
-    "                       ng-class=\"isActiveItem($index)\" \n" +
+    "                    <a ng-click=\"setSelectedCriteriaFunction($index)\"\n" +
+    "                         class=\"list-group-item\"\n" +
+    "                       ng-class=\"getListItemClass($index)\"\n" +
     "                       ng-repeat=\"cf in criteriaFunctionSet\">\n" +
     "                        <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
     "                        <input style =\"color:black;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
     "                        <div class=\"pull-right\" ng-hide=\"$index!==selectedCriteriaFunctionIndex\">\n" +
     "\n" +
-    "                            <i ng-hide=\"editable[$index]\" \n" +
+    "                            <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
     "                               data-placement=\"top\" data-type=\"info\" \n" +
     "                               data-delay=\"500\" \n" +
     "                               data-animation=\"am-fade-and-scale\" \n" +
@@ -67,7 +62,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                               ng-click=\"editable[$index] = true\" \n" +
     "                               style=\"margin-right: 10px;\"\n" +
     "                               class=\"glyphicon glyphicon-pencil\"></i>\n" +
-    "                            <i ng-hide=\"!editable[$index]\"\n" +
+    "                            <i ng-hide=\"listItemsDisabled || !editable[$index]\"\n" +
     "                               data-placement=\"top\" \n" +
     "                               data-type=\"info\" \n" +
     "                               data-delay=\"500\" \n" +
@@ -87,6 +82,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                               data-animation=\"am-fade-and-scale\" \n" +
     "                               bs-tooltip=\"tooltipSave.title\"\n" +
     "                               data-container=\"body\"\n" +
+    "                               ng-hide=\"listItemsDisabled\"\n" +
     "                               ng-click=\"removeCriteriaFunction()\"\n" +
     "                               class=\"glyphicon glyphicon-minus-sign\"></i>\n" +
     "                        </div>\n" +
@@ -94,8 +90,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "        <div class=\"col-lg-9\" ng-if=\"listItemsDisabled\">\n" +
+    "            <div class=\"row\" ng-if=\"listItemsDisabled\">\n" +
+    "                <div class=\"col-lg-12\">\n" +
+    "                    <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
+    "                </div>   \n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "        <div class=\"col-lg-9\" ng-if=\"selectedCriteriaFunctionIndex >= 0 && criteriaFunctionSet[selectedCriteriaFunctionIndex]\">\n" +
-    "            <div class=\"row\" ng-repeat=\"indicator in indicators\">\n" +
+    "            <div class=\"row\" ng-if=\"!listItemsDisabled\" ng-repeat=\"indicator in indicators\">\n" +
     "                <div class=\"col-lg-12\">\n" +
     "                    <div class=\"row\">\n" +
     "                        <div class=\"col-lg-12 vCenter\">\n" +
@@ -144,15 +147,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           bs-tooltip=\"tooltipAdd.title\"\n" +
     "                           ng-click=\"addDecisionStrategy()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
-    "                    <a class=\"list-group-item\" \n" +
-    "                       ng-click=\"setSelectedDecisionStrategy($index)\"\n" +
-    "                       ng-class=\"isActiveItem($index)\" \n" +
+    "                    <a ng-click=\"setSelectedDecisionStrategy($index)\"\n" +
+    "                       ng-class=\"getItemStyle($index)\" \n" +
     "                       ng-repeat=\"cf in decisionStrategies\">\n" +
     "                        <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
     "                        <input style =\"color:black;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
     "                        <div class=\"pull-right\" ng-hide=\"$index !== selectedDecisionStrategyIndex\">\n" +
     "\n" +
-    "                            <i ng-hide=\"editable[$index]\" \n" +
+    "                            <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
     "                               data-placement=\"top\" data-type=\"info\" \n" +
     "                               data-delay=\"500\" \n" +
     "                               data-animation=\"am-fade-and-scale\" \n" +
@@ -161,7 +163,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                               ng-click=\"editable[$index] = true\" \n" +
     "                               style=\"margin-right: 10px;\"\n" +
     "                               class=\"glyphicon glyphicon-pencil\"></i>\n" +
-    "                            <i ng-hide=\"!editable[$index]\"\n" +
+    "                            <i ng-hide=\"listItemDisabled || !editable[$index]\"\n" +
     "                               data-placement=\"top\" \n" +
     "                               data-type=\"info\" \n" +
     "                               data-delay=\"500\" \n" +
@@ -172,6 +174,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                               style=\"margin-right: 10px;\"\n" +
     "                               class=\"glyphicon glyphicon-ok\"></i>\n" +
     "                            <i data-placement=\"top\" \n" +
+    "                               ng-hide=\"listItemsDisabled\"\n" +
     "                               data-type=\"info\" \n" +
     "                               data-delay=\"500\" \n" +
     "                               data-animation=\"am-fade-and-scale\" \n" +
@@ -184,7 +187,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" ng-if=\"selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
+    "        <div class=\"col-lg-9\" ng-if=\"listItemsDisabled\">\n" +
+    "            <div class=\"row\">\n" +
+    "                <div class=\"col-lg-12\">\n" +
+    "                    <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
+    "                </div>   \n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"col-lg-9\" ng-if=\"!listItemDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
     "            <decision-strategy worldstates=\"worldstates\" decision-strategy=\"currentDecisionStrategy\">\n" +
     "\n" +
     "            </decision-strategy>\n" +
@@ -233,8 +243,10 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            <span ng-if=\"upperBoundary\">100%</span>\n" +
     "            <span ng-if=\"!lowerBoundary && !upperBoundary\">{{previousInterval.criteriaValue||'0' | number}}% - {{interval.criteriaValue| number}}% </span>\n" +
     "            <br/> \n" +
-    "            <span ng-if=\"lowerBoundary\">&gt;=</span>\n" +
-    "            <span ng-if=\"upperBoundary\">&lt;=</span>\n" +
+    "            <span ng-if=\"lowerBoundary && interval.indicatorValue>=previousInterval.indicatorValue\">&gt;=</span>\n" +
+    "            <span ng-if=\"lowerBoundary && interval.indicatorValue<previousInterval.indicatorValue\">&lt;=</span>\n" +
+    "            <span ng-if=\"upperBoundary && interval.indicatorValue>previousInterval.indicatorValue\">&gt;=</span>\n" +
+    "            <span ng-if=\"upperBoundary && interval.indicatorValue<=previousInterval.indicatorValue\">&lt;=</span>\n" +
     "            <span ng-if=\"!lowerBoundary && !upperBoundary\">{{previousInterval.indicatorValue||'0' | number}} -</span>\n" +
     "            <span>{{interval.indicatorValue| number}}</span>\n" +
     "        </div>\n" +
@@ -284,9 +296,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "    <div class=\"col-lg-12\">\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-2\" style=\"padding-right:5px;width:12.5%\">\n" +
+    "<!--                we use the previous-interval binding to bind the upperBoundary\n" +
+    "                to this element. this is necessary to correctly set the labels. \n" +
+    "                see also \n" +
+    "                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->\n" +
     "                <div class=\"progress\">\n" +
     "                    <indicator-band-item \n" +
     "                        interval=\"criteriaFunction.lowerBoundary\" \n" +
+    "                        previous-interval=\"criteriaFunction.upperBoundary\"\n" +
     "                        lower-boundary=\"true\"\n" +
     "                        on-interval-changed=\"updateLowerBoundary(indicatorValue)\"\n" +
     "                        title=\"Criteria / Indicator values\">\n" +
@@ -324,9 +341,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                </div>\n" +
     "            </div>\n" +
     "            <div class=\"col-lg-2\"  style=\"padding-left:5px;width: 12.5%\">\n" +
+    "                <!-- we use the previous-interval binding to bind the lowerBoundary\n" +
+    "                to this element. this is necessary to correctly set the labels. \n" +
+    "                see also \n" +
+    "                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->\n" +
     "                <div class=\"progress\">\n" +
     "                    <indicator-band-item \n" +
     "                        interval=\"criteriaFunction.upperBoundary\" \n" +
+    "                        previous-interval=\"criteriaFunction.lowerBoundary\"\n" +
     "                        upper-boundary=\"true\"\n" +
     "                        on-interval-changed=\"updateUpperBoundary(indicatorValue)\"\n" +
     "                        title=\"Criteria / Indicator values\">\n" +
