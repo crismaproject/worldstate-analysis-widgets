@@ -1,0 +1,14 @@
+<div class="btn-group">
+    <button type="button" class="btn btn-default btn-sm"> <img ng-src="{{selectedAxis.icon}}" style="margin-right:5px;float:left"/>{{selectedAxis.name}}</button>
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu" role="menu" >
+        <li ng-repeat="scale in scales" role="presentation" ng-click="axisSelected($index)" ng-class="{'dropdown-header':scale.isGroup}">
+            <a ng-if="!scale.isGroup">{{scale.name}}</a>
+            <img ng-if="scale.isGroup" ng-src="{{scale.icon}}" style="margin-right:5px;float:left"/>
+            <span ng-if="scale.isGroup" style="margin-top: 4px">{{scale.name}}</span>
+        </li>
+    </ul>
+</div>

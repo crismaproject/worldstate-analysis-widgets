@@ -1,6 +1,6 @@
-describe('IndiciatorCriteriaTableDirective Test Suite', function () {
+describe('RelationAnalysisChartDirective Test Suite', function () {
     'use strict';
-    var ws, ws2, cf;
+    var ws, ws2,criteriaFunction;
     //our test objects..
     ws = [{
             '$self': '/CRISMA.worldstates/1',
@@ -143,7 +143,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                         'defaultaccessinfo': null
                     },
                     'actualaccessinfocontenttype': 'application/json',
-                    'actualaccessinfo': '{"tobe":"done"}',
+                    'actualaccessinfo': '{"casualties":{"displayName":"Casualties","iconResource":"images/flower_16.png","noOfDead":{"displayName":"Number of dead","iconResource":"images/flower_dead_16.png","value":"15","unit":"Percent"},"noOfInjured":{"displayName":"Number of injured","iconResource":"images/flower_injured_16.png","value":"80","unit":"Percent"},"noOfHomeless":{"displayName":"Number of homeless","iconResource":"images/flower_homeless_16.png","value":"5","unit":"Percent"}},"cost":{"directDamageCost":{"displayName":"Direct damage cost","iconResource":"images/dollar_direct_16.png","value":"90","unit":"Percent"},"displayName":"Economic cost","iconResource":"images/dollar_16.png","indirectDamageCost":{"displayName":"Indirect damage cost","iconResource":"images/dollar_indirect_16.png","value":"50","unit":"Percent"},"restorationCost":{"displayName":"Direct restoration cost","iconResource":"images/dollar_restoration_16.png","value":"34","unit":"Percent"}},"damagedBuildings":{"displayName":"Damaged buildings","iconResource":"images/home_16.png","lostBuildings":{"displayName":"Lost buildings","iconResource":"images/home_lost_16.png","value":"49","unit":"Percent"},"unsafeBuildings":{"displayName":"Unsafe buildings","iconResource":"images/home_unsafe_16.png","value":"29","unit":"Percent"}},"damagedInfrastructure":{"damagedRoadSegments":{"displayName":"Number of damaged road segments","iconResource":"images/road_damaged_16.png","value":"34","unit":"Percent"},"displayName":"Damaged Infrastructure","iconResource":"images/road_16.png"},"evacuationCost":{"displayName":"Evacuation cost","iconResource":"images/money_evac_16.png","totalEvacuationCost":{"displayName":"Total evacuationcost","iconResource":"images/money_total_evac_16.png","value":"80","unit":"Percent"}}}',
                     'categories': [
                         {
                             '$self': '/CRISMA.categories/6',
@@ -479,11 +479,10 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             'childworldstates': []
         }
     ];
-
-    cf = {
+    criteriaFunction = {
         name: "default",
         criteriaFunctions: [{
-                indicator: 'Number of dead',
+                indicator:'Number of dead',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -493,8 +492,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Number of injured',
+            },{
+                indicator:'Number of injured',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -504,8 +503,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Number of homeless',
+            },{
+                indicator:'Number of homeless',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -515,8 +514,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Direct damage cost',
+            },{
+                indicator:'Direct damage cost',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -526,8 +525,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Indirect damage cost',
+            },{
+                indicator:'Indirect damage cost',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -537,8 +536,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Direct restoration cost',
+            },{
+                indicator:'Direct restoration cost',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -548,8 +547,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Lost buildings',
+            },{
+                indicator:'Lost buildings',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -559,8 +558,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Unsafe buildings',
+            },{
+                indicator:'Unsafe buildings',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -570,8 +569,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Number of damaged road segments',
+            },{
+                indicator:'Number of damaged road segments',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -581,8 +580,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Total evacuationcost',
+            },{
+                indicator:'Total evacuationcost',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -592,8 +591,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Number of dead',
+            },{
+                indicator:'Number of dead',
                 lowerBoundary: {
                     criteriaValue: 0,
                     indicatorValue: 100
@@ -607,8 +606,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
         ]
     };
 
-    describe('IndiciatorCriteriaTable Directive Tests', function () {
-        var $compile, $rootScope;
+    describe('RelationAnalysisChart Directive Tests', function () {
+        var $compile, $rootScope, ccs;
 
         // Load the myApp module, which contains the directive
         beforeEach(function () {
@@ -618,10 +617,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                 $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
             });
             module('de.cismet.crisma.ICMM.Worldstates');
-            module('ngTable');
             module('eu.crismaproject.worldstateAnalysis.directives');
-            module('eu.crismaproject.worldstateAnalysis.services');
-            module('templates/indicatorCriteriaTableTemplate.html', 'templates/nopager.html');
+            module('templates/relationAnalysisChartTemplate.html', 'templates/indicatorCriteriaAxisChooserTemplate.html');
         });
 
         // Store references to $rootScope and $compile
@@ -639,56 +636,44 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
 
         it('Replaces the element with a warn badge when no worldstate is provided ', function () {
             // Compile a piece of HTML containing the directive
-            var element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false"></indicator-criteria-table>')($rootScope);
+            var element = $compile('<relation-analysis-chart height="350" for-criteria="forCriteria" worldstates="worldstates"></relation-analysis-chart>')($rootScope);
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0" class="alert alert-warning">');
+            expect(element.html()).toContain('<div class="alert alert-warning">');
         });
 
-        it('Replaces the element with a table when worldstates are provided ', function () {
-            var element;
+        it('contains at least an svg element if correct data is provided', function () {
+            var scope, controller, WorldstateService;
+            inject(
+                [
+                    '$controller',
+                    '$rootScope',
+                    'de.cismet.crisma.ICMM.Worldstates',
+                    'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+                    function (c, r, wsService,criteriaService) {
+                        scope = r.$new();
+                        controller = c;
+                        WorldstateService = wsService;
+                        ccs=criteriaService;
+                    }
+                ]
+                );
+            scope.worldstates = ws;
+            scope.forCriteria = false;
+            scope.cf=criteriaFunction;
             // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
-            $rootScope.criteriaFunction = cf;
-
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
+            var element = $compile('<relation-analysis-chart height="350" for-criteria="forCriteria" worldstates="worldstates" criteria-function="cf"></relation-analysis-chart>')($rootScope);
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("<table");
+            expect(element.html()).toContain('<svg>');
         });
 
-        it('shows Criteria when forCriteria is true', function () {
-            var element;
-            // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
-            $rootScope.forCriteria = true;
-            $rootScope.criteriaFunction = cf;
-
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
-            // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
-            $rootScope.$digest();
-            // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("Criteria");
-        });
-
-        it('shows Indicators when forCriteria is false', function () {
-            var element;
-            // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
-            $rootScope.forCriteria = true;
-            $rootScope.criteriaFunction = cf;
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
-            // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
-            $rootScope.$digest();
-            // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("Indicators");
-        });
     });
 
-    describe('IndiciatorCriteriaTable Controller Tests', function () {
-        var WorldstateService, controller, scope, filter, tableParams, critCalcService;
+    describe('RelationAnalysisChart Controller Tests', function () {
+        var WorldstateService, controller, scope, filter, tableParams;
 
         // load the controller's module
         beforeEach(function () {
@@ -700,120 +685,157 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
             module('eu.crismaproject.worldstateAnalysis.controllers');
-            module('eu.crismaproject.worldstateAnalysis.services');
         });
 
         beforeEach(inject(
             [
                 '$controller',
                 '$rootScope',
-                '$filter',
                 'de.cismet.crisma.ICMM.Worldstates',
-                'ngTableParams',
-                'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-                function (c, r, f, wsService, tp, criteriaCalculator) {
+                function (c, r, wsService) {
                     scope = r.$new();
                     controller = c;
                     WorldstateService = wsService;
-                    filter = f;
-                    tableParams = tp;
-                    critCalcService = criteriaCalculator;
                 }
             ]
             ));
 
 
-        it('tabledata_built_correctly_1', function () {
-            var columns, rows;
+        it('builds chart data for indicators correctly', function () {
+            var resultModel, myController, iccData, calculatedModel,
+                xAxis, yAxis;
 
             scope.worldstates = ws;
             scope.forCriteria = false;
-            scope.criteriaFunction = cf;
-
-            controller(
-                'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
+            xAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            yAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            myController = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
                 {
                     $scope: scope,
-                    $ilter: filter,
-                    WorldstateService: WorldstateService,
-                    NgTableParams: tableParams,
-                    ccs: critCalcService
+                    WorldstateService: WorldstateService
                 }
             );
 
-            //we need to call digets to fire the watch that listens on worldstate changes
-            scope.$digest();
+            iccData = WorldstateService.utils.stripIccData(scope.worldstates, false);
+            calculatedModel = myController.createChartData(iccData, xAxis, yAxis);
 
             // our example result model of the table...
-            columns = [{title: 'Indicators', field: 'f1', visible: true}, {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1', field: 'f2', visible: true}];
-            rows = [
-                {f1: {name: 'Casualties', icon: 'flower_16.png'}, f2: null},
-                {f1: {name: 'Number of dead', icon: 'flower_dead_16.png'}, f2: {name: '257 People'}},
-                {f1: {name: 'Number of homeless', icon: 'flower_homeless_16.png'}, f2: {name: '129 People'}},
-                {f1: {name: 'Number of injured', icon: 'flower_injured_16.png'}, f2: {name: '409 People'}},
-                {f1: {name: 'Economic cost', icon: 'dollar_16.png'}, f2: null},
-                {f1: {name: 'Direct damage cost', icon: 'dollar_direct_16.png'}, f2: {name: '4,582,048.34 Dollar'}},
-                {f1: {name: 'Indirect damage cost', icon: 'dollar_indirect_16.png'}, f2: {name: '830,923,892.47 Dollar'}},
-                {f1: {name: 'Direct restoration cost', icon: 'dollar_restoration_16.png'}, f2: {name: '892,930,184.91 Dollar'}},
-                {f1: {name: 'Damaged buildings', icon: 'home_16.png'}, f2: null},
-                {f1: {name: 'Lost buildings', icon: 'home_lost_16.png'}, f2: {name: '49 Buildings'}},
-                {f1: {name: 'Unsafe buildings', icon: 'home_unsafe_16.png'}, f2: {name: '152 Buildings'}},
-                {f1: {name: 'Damaged Infrastructure', icon: 'road_16.png'}, f2: null},
-                {f1: {name: 'Number of damaged road segments', icon: 'road_damaged_16.png'}, f2: {name: '34 Roadsegments'}},
-                {f1: {name: 'Evacuation cost', icon: 'money_evac_16.png'}, f2: null},
-                {f1: {name: 'Total evacuationcost', icon: 'money_total_evac_16.png'}, f2: {name: '3,494,023,211.23 Dollar'}}
-            ];
+            resultModel = [{"key": "1. Ski-Weltmeisterschaften Garmisch-Partenkirchen 1", "values": [{"x": "257", "y": "257"}]}];
 
-            expect(scope.columns).toEqual(columns);
-            expect(scope.rows).toEqual(rows);
+            expect(calculatedModel).toEqual(resultModel);
         });
 
-        it('tabledata_built_correctly_2', function () {
-            var columns, rows;
+        it('builds chart data for criteria correctly', function () {
+            var resultModel, myController, iccData, calculatedModel,
+                xAxis, yAxis;
 
-            scope.worldstates = ws2;
+            scope.worldstates = ws;
             scope.forCriteria = false;
-            scope.criteriaFunction = cf;
-
-            controller(
-                'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
+            xAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            yAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            myController = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
                 {
                     $scope: scope,
-                    $ilter: filter,
-                    WorldstateService: WorldstateService,
-                    NgTableParams: tableParams,
-                    ccs: critCalcService
+                    WorldstateService: WorldstateService
                 }
             );
 
-            //we need to call digest to fire the watch that listens on worldstate changes
-            scope.$digest();
+            iccData = WorldstateService.utils.stripIccData(scope.worldstates, true);
+            calculatedModel = myController.createChartData(iccData, xAxis, yAxis);
 
-            columns = [
-                {title: 'Indicators', field: 'f1', visible: true},
-                {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1', field: 'f2', visible: true},
-                {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 2', field: 'f3', visible: true}
-            ];
-            rows = [
-                {f1: {name: 'Casualties', icon: 'flower_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Number of dead', icon: 'flower_dead_16.png'}, f2: {name: '257 People'}, f3: {name: '257 People'}},
-                {f1: {name: 'Number of homeless', icon: 'flower_homeless_16.png'}, f2: {name: '129 People'}, f3: {name: '129 People'}},
-                {f1: {name: 'Number of injured', icon: 'flower_injured_16.png'}, f2: {name: '409 People'}, f3: {name: '409 People'}},
-                {f1: {name: 'Economic cost', icon: 'dollar_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Direct damage cost', icon: 'dollar_direct_16.png'}, f2: {name: '4,582,048.34 Dollar'}, f3: {name: '4,582,048.34 Dollar'}},
-                {f1: {name: 'Indirect damage cost', icon: 'dollar_indirect_16.png'}, f2: {name: '830,923,892.47 Dollar'}, f3: {name: '830,923,892.47 Dollar'}},
-                {f1: {name: 'Direct restoration cost', icon: 'dollar_restoration_16.png'}, f2: {name: '892,930,184.91 Dollar'}, f3: {name: '892,930,184.91 Dollar'}},
-                {f1: {name: 'Damaged buildings', icon: 'home_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Lost buildings', icon: 'home_lost_16.png'}, f2: {name: '49 Buildings'}, f3: {name: '49 Buildings'}},
-                {f1: {name: 'Unsafe buildings', icon: 'home_unsafe_16.png'}, f2: {name: '152 Buildings'}, f3: {name: '152 Buildings'}},
-                {f1: {name: 'Damaged Infrastructure', icon: 'road_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Number of damaged road segments', icon: 'road_damaged_16.png'}, f2: {name: '34 Roadsegments'}, f3: {name: '34 Roadsegments'}},
-                {f1: {name: 'Evacuation cost', icon: 'money_evac_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Total evacuationcost', icon: 'money_total_evac_16.png'}, f2: {name: '3,494,023,211.23 Dollar'}, f3: {name: '3,494,023,211.23 Dollar'}}
-            ];
-            expect(scope.columns).toEqual(columns);
-            expect(scope.rows).toEqual(rows);
+            // our example result model of the table...
+            resultModel = [{"key": "1. Ski-Weltmeisterschaften Garmisch-Partenkirchen 1", "values": [{"x": "15", "y": "15"}]}];
+
+            expect(calculatedModel).toEqual(resultModel);
         });
-    });
 
+        it('does not mix up the axes', function () {
+            var resultModel, myController, iccData, calculatedModel,
+                xAxis, yAxis;
+
+            scope.worldstates = ws;
+            scope.forCriteria = false;
+            xAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            yAxis = {"name": "Lost buildings", "icon": "images/flower_dead_16.png", "isGroup": false};
+            myController = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
+                {
+                    $scope: scope,
+                    WorldstateService: WorldstateService
+                }
+            );
+
+            iccData = WorldstateService.utils.stripIccData(scope.worldstates, true);
+            calculatedModel = myController.createChartData(iccData, xAxis, yAxis);
+
+            // our example result model of the table...
+            resultModel = [{"key": "1. Ski-Weltmeisterschaften Garmisch-Partenkirchen 1", "values": [{"x": "15", "y": "49"}]}];
+
+            expect(calculatedModel).toEqual(resultModel);
+        });
+
+        it('throws an error if no iccData object is provided', function () {
+            var myController, errFunc1, errFunc2, errFunc3,
+                xAxis, yAxis;
+
+            scope.worldstates = ws;
+            scope.forCriteria = false;
+            xAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            yAxis = {"name": "Lost buildings", "icon": "images/flower_dead_16.png", "isGroup": false};
+            myController = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
+                {
+                    $scope: scope,
+                    WorldstateService: WorldstateService
+                }
+            );
+
+            errFunc1 = function () {
+                return myController.createChartData(undefined, xAxis, yAxis);
+            };
+
+            errFunc2 = function () {
+                return myController.createChartData(null, xAxis, yAxis);
+            };
+
+            expect(errFunc1).toThrow();
+            expect(errFunc2).toThrow();
+
+        });
+        
+
+        it('throws an error if no axis objects are provided', function () {
+            var iccData, myController, errFunc1, errFunc2, errFunc3,
+                xAxis, yAxis;
+
+            scope.worldstates = ws;
+            scope.forCriteria = false;
+            xAxis = {"name": "Number of dead", "icon": "images/flower_dead_16.png", "isGroup": false};
+            yAxis = {"name": "Lost buildings", "icon": "images/flower_dead_16.png", "isGroup": false};
+            myController = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController',
+                {
+                    $scope: scope,
+                    WorldstateService: WorldstateService
+                }
+            );
+
+            iccData = WorldstateService.utils.stripIccData(scope.worldstates, true);
+
+            errFunc1 = function () {
+                return myController.createChartData(iccData, undefined, yAxis);
+            };
+
+            errFunc2 = function () {
+                return myController.createChartData(iccData, xAxis, undefined);
+            };
+
+            expect(errFunc1).toThrow();
+            expect(errFunc2).toThrow();
+
+        });
+        
+    });
 });

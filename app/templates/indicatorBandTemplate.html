@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-2" style="padding-right:5px;width:12.5%">
+<!--                we use the previous-interval binding to bind the upperBoundary
+                to this element. this is necessary to correctly set the labels. 
+                see also 
+                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->
+                <div class="progress">
+                    <indicator-band-item 
+                        interval="criteriaFunction.lowerBoundary" 
+                        previous-interval="criteriaFunction.upperBoundary"
+                        lower-boundary="true"
+                        on-interval-changed="updateLowerBoundary(indicatorValue)"
+                        title="Criteria / Indicator values">
+                    </indicator-band-item>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="progress">
+                        <indicator-band-item 
+                            ng-repeat="interval in criteriaFunction.intervals"
+                            interval="interval"
+                            previous-interval="$first ? criteriaFunction.lowerBoundary : criteriaFunction.intervals[$index-1]"
+                            first="$first"
+                            delete-interval="deleteInterval(interval)"
+                            on-interval-changed="createInterval(criteriaValue,indicatorValue)"
+                            get-color="getIntervalColor(interval)"
+                            >
+                        </indicator-band-item>
+                        <indicator-band-item 
+                            interval="criteriaFunction.upperBoundary" 
+                            previous-interval="criteriaFunction.intervals[criteriaFunction.intervals.length-1] || criteriaFunction.lowerBoundary"
+                            last="true"
+                            first="criteriaFunction.intervals.length<=0"
+                            on-interval-changed="createInterval(criteriaValue,indicatorValue)"
+                            get-color="getIntervalColor(interval)"
+                            >
+                        </indicator-band-item>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 20px;">
+                    <div class="intervalMarker" ng-style="getIntervalWidth(interval, criteriaFunction.intervals[$index - 1])" ng-repeat="interval in criteriaFunction.intervals">
+                        <span class="glyphicon glyphicon-chevron-up" style="width:16px;float:right;margin-right: -8px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2"  style="padding-left:5px;width: 12.5%">
+                <!-- we use the previous-interval binding to bind the lowerBoundary
+                to this element. this is necessary to correctly set the labels. 
+                see also 
+                https://github.com/crismaproject/worldstate-analysis-widgets/issues/36-->
+                <div class="progress">
+                    <indicator-band-item 
+                        interval="criteriaFunction.upperBoundary" 
+                        previous-interval="criteriaFunction.lowerBoundary"
+                        upper-boundary="true"
+                        on-interval-changed="updateUpperBoundary(indicatorValue)"
+                        title="Criteria / Indicator values">
+                    </indicator-band-item>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

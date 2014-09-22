@@ -4,6 +4,7 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.controllers',
         'ngTable',
         'de.cismet.crisma.ICMM.Worldstates',
+        'mgcrea.ngStrap.popover'
     ]
 ).directive(
     'indicatorCriteriaTable',
@@ -16,6 +17,7 @@ angular.module(
             scope = {
                 worldstates: '=',
                 forCriteria: '=',
+                criteriaFunction:'=',
                 detailIcons: '@'
             };
 

@@ -1,6 +1,6 @@
-describe('IndiciatorCriteriaTableDirective Test Suite', function () {
+describe('Worldstate Ranking Table Test Suite', function () {
     'use strict';
-    var ws, ws2, cf;
+    var ws, ws2, cf, ds;
     //our test objects..
     ws = [{
             '$self': '/CRISMA.worldstates/1',
@@ -160,7 +160,6 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             ],
             'childworldstates': []
         }];
-
     ws2 = [
         {
             '$self': '/CRISMA.worldstates/1',
@@ -479,7 +478,6 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             'childworldstates': []
         }
     ];
-
     cf = {
         name: "default",
         criteriaFunctions: [{
@@ -592,24 +590,96 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     indicatorValue: 0
                 },
                 intervals: []
-            }, {
-                indicator: 'Number of dead',
-                lowerBoundary: {
-                    criteriaValue: 0,
-                    indicatorValue: 100
-                },
-                upperBoundary: {
-                    criteriaValue: 100,
-                    indicatorValue: 0
-                },
-                intervals: []
             }
         ]
     };
-
-    describe('IndiciatorCriteriaTable Directive Tests', function () {
+    ds = {
+        name: 'No dead no mater the cost',
+        criteriaEmphases: [{
+                indicator: {
+                    displayName: 'Number of dead',
+                    iconResource: 'flower_dead_16.png',
+                    value: 1,
+                    unit: 'People'
+                },
+                criteriaEmphasis: 100
+            }, {
+                indicator: {
+                    displayName: 'Number of injured',
+                    iconResource: 'flower_injured_16.png',
+                    value: 54,
+                    unit: 'People'
+                },
+                criteriaEmphasis: 91
+            }, {
+                indicator: {
+                    displayName: 'Number of homeless',
+                    iconResource: 'flower_homeless_16.png',
+                    value: 8434,
+                    unit: 'People'
+                },
+                criteriaEmphasis: 75
+            }, {
+                indicator: {
+                    displayName: 'Direct damage cost',
+                    iconResource: 'dollar_direct_16.png',
+                    value: 22547532,
+                    unit: 'Dollar'
+                },
+                criteriaEmphasis: 0
+            }, {
+                indicator: {
+                    displayName: 'Indirect damage cost',
+                    iconResource: 'dollar_indirect_16.png',
+                    value: 43753689,
+                    unit: 'Dollar'
+                },
+                criteriaEmphasis: 0
+            }, {
+                indicator: {
+                    displayName: 'Direct restoration cost',
+                    iconResource: 'dollar_restoration_16.png',
+                    value: 83657772,
+                    unit: 'Dollar'
+                },
+                criteriaEmphasis: 0
+            }, {
+                indicator: {
+                    displayName: 'Lost buildings',
+                    iconResource: 'home_lost_16.png',
+                    value: 178,
+                    unit: 'Buildings'
+                },
+                criteriaEmphasis: 31
+            }, {
+                indicator: {
+                    displayName: 'Unsafe buildings',
+                    iconResource: 'home_unsafe_16.png',
+                    value: 449,
+                    unit: 'Buildings'
+                },
+                criteriaEmphasis: 24
+            }, {
+                indicator: {
+                    displayName: 'Number of damaged road segments',
+                    iconResource: 'road_damaged_16.png',
+                    value: 1287,
+                    unit: 'Road seqments'
+                },
+                criteriaEmphasis: 17
+            }, {
+                indicator: {
+                    displayName: 'Total evacuationcost',
+                    iconResource: 'money_total_evac_16.png',
+                    value: 25067094,
+                    unit: 'Dollar'
+                },
+                criteriaEmphasis: 0
+            }],
+        satisfactionEmphasis: [0.0005955687417718765, 0.003919369989414712, 0.011799997968901054, 0.025792927056955333, 0.047307430204593395, 0.07765444132758087, 0.11807189711775551, 0.16974031233646442, 0.23379325055209618, 0.3113248047044667]
+    };
+    describe('WorldstateRankingTable Directive Tests', function () {
         var $compile, $rootScope;
-
         // Load the myApp module, which contains the directive
         beforeEach(function () {
             // we mock the constants necessary for the Worldstates Service
@@ -619,11 +689,11 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             });
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
+            module('ngDialog');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
-            module('templates/indicatorCriteriaTableTemplate.html', 'templates/nopager.html');
+            module('templates/worldstateRankingTableTemplate.html');
         });
-
         // Store references to $rootScope and $compile
         // so they are available to all tests in this describe block
         beforeEach(inject(
@@ -636,60 +706,56 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                 }
             ]
             ));
-
-        it('Replaces the element with a warn badge when no worldstate is provided ', function () {
+        it('replaces the element with a warn badge when no worldstate is provided ', function () {
             // Compile a piece of HTML containing the directive
-            var element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false"></indicator-criteria-table>')($rootScope);
-            // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
-            $rootScope.$digest();
-            // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0" class="alert alert-warning">');
-        });
-
-        it('Replaces the element with a table when worldstates are provided ', function () {
-            var element;
-            // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
             $rootScope.criteriaFunction = cf;
-
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
-            // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
+            $rootScope.decisionStrategy = ds;
+            var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("<table");
+            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0 &amp;&amp; criteriaFunction &amp;&amp; decisionStrategy" class="alert alert-warning">');
         });
-
-        it('shows Criteria when forCriteria is true', function () {
-            var element;
-            // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
-            $rootScope.forCriteria = true;
-            $rootScope.criteriaFunction = cf;
-
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
+        it('replaces the element with a warn badge when no criteriaFunction is provided ', function () {
+            $rootScope.worldstates = [ws];
+            $rootScope.decisionStrategy = ds;
+            var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("Criteria");
+            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0 &amp;&amp; criteriaFunction &amp;&amp; decisionStrategy" class="alert alert-warning">');
         });
-
-        it('shows Indicators when forCriteria is false', function () {
-            var element;
-            // Compile a piece of HTML containing the directive
-            $rootScope.worldstates = ws;
-            $rootScope.forCriteria = true;
+        it('replaces the element with a warn badge when no decisionstrategy is provided ', function () {
             $rootScope.criteriaFunction = cf;
-            element = $compile('<indicator-criteria-table detail-icons="{{false}}" worldstates="worldstates" for-criteria="false" criteria-function="criteriaFunction"></indicator-criteria-table>')($rootScope);
+            $rootScope.worldstates = [ws];
+            var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain("Indicators");
+            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0 &amp;&amp; criteriaFunction &amp;&amp; decisionStrategy" class="alert alert-warning">');
+        });
+        it('replaces the element with a table when worldstates, critFunc, decStrat is provided', function () {
+            $rootScope.criteriaFunction = cf;
+            $rootScope.worldstates = [ws];
+            $rootScope.decisionStrategy = ds;
+            var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
+            $rootScope.$digest();
+            expect(element.html()).toContain('Rank');
+            expect(element.html()).toContain('Worldstate');
+            expect(element.html()).toContain('Score');
+        });
+        it('shows a criteria radar chart if criteria radar chart is true', function () {
+            $rootScope.criteriaFunction = cf;
+            $rootScope.worldstates = [ws];
+            $rootScope.decisionStrategy = ds;
+            $rootScope.showRadar = true;
+            var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="showRadar"> </worldstate-ranking-table>')($rootScope);
+            $rootScope.$digest();
+            expect(element.html()).toContain('Criteria radar');
+//            expect(element.html()).toContain('<svg');
         });
     });
-
     describe('IndiciatorCriteriaTable Controller Tests', function () {
-        var WorldstateService, controller, scope, filter, tableParams, critCalcService;
-
+        var WorldstateService, controller, scope, filter, tableParams, critCalcService, analysisService, ngDialog;
         // load the controller's module
         beforeEach(function () {
             // we mock the constants necessary for the Worldstates Service
@@ -702,118 +768,488 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             module('eu.crismaproject.worldstateAnalysis.controllers');
             module('eu.crismaproject.worldstateAnalysis.services');
         });
-
         beforeEach(inject(
             [
                 '$controller',
                 '$rootScope',
                 '$filter',
-                'de.cismet.crisma.ICMM.Worldstates',
                 'ngTableParams',
+                'de.cismet.crisma.ICMM.Worldstates',
                 'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-                function (c, r, f, wsService, tp, criteriaCalculator) {
+                'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
+                'ngDialog',
+                function (c, r, f, wsService, tp, criteriaCalculator, as, dialog) {
                     scope = r.$new();
                     controller = c;
                     WorldstateService = wsService;
                     filter = f;
                     tableParams = tp;
                     critCalcService = criteriaCalculator;
+                    analysisService = as;
+                    ngDialog = dialog;
                 }
             ]
             ));
 
-
-        it('tabledata_built_correctly_1', function () {
+        it('builds table data correctly with indicators / LoS values', function () {
             var columns, rows;
-
-            scope.worldstates = ws;
-            scope.forCriteria = false;
-            scope.criteriaFunction = cf;
-
+            scope.worldstates = [];
             controller(
-                'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
                 {
                     $scope: scope,
                     $ilter: filter,
-                    WorldstateService: WorldstateService,
                     NgTableParams: tableParams,
-                    ccs: critCalcService
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
                 }
             );
-
             //we need to call digets to fire the watch that listens on worldstate changes
             scope.$digest();
-
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
+            scope.criteriaFunction = cf;
+            scope.showIndicators = true;
+            scope.$digest();
             // our example result model of the table...
-            columns = [{title: 'Indicators', field: 'f1', visible: true}, {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1', field: 'f2', visible: true}];
-            rows = [
-                {f1: {name: 'Casualties', icon: 'flower_16.png'}, f2: null},
-                {f1: {name: 'Number of dead', icon: 'flower_dead_16.png'}, f2: {name: '257 People'}},
-                {f1: {name: 'Number of homeless', icon: 'flower_homeless_16.png'}, f2: {name: '129 People'}},
-                {f1: {name: 'Number of injured', icon: 'flower_injured_16.png'}, f2: {name: '409 People'}},
-                {f1: {name: 'Economic cost', icon: 'dollar_16.png'}, f2: null},
-                {f1: {name: 'Direct damage cost', icon: 'dollar_direct_16.png'}, f2: {name: '4,582,048.34 Dollar'}},
-                {f1: {name: 'Indirect damage cost', icon: 'dollar_indirect_16.png'}, f2: {name: '830,923,892.47 Dollar'}},
-                {f1: {name: 'Direct restoration cost', icon: 'dollar_restoration_16.png'}, f2: {name: '892,930,184.91 Dollar'}},
-                {f1: {name: 'Damaged buildings', icon: 'home_16.png'}, f2: null},
-                {f1: {name: 'Lost buildings', icon: 'home_lost_16.png'}, f2: {name: '49 Buildings'}},
-                {f1: {name: 'Unsafe buildings', icon: 'home_unsafe_16.png'}, f2: {name: '152 Buildings'}},
-                {f1: {name: 'Damaged Infrastructure', icon: 'road_16.png'}, f2: null},
-                {f1: {name: 'Number of damaged road segments', icon: 'road_damaged_16.png'}, f2: {name: '34 Roadsegments'}},
-                {f1: {name: 'Evacuation cost', icon: 'money_evac_16.png'}, f2: null},
-                {f1: {name: 'Total evacuationcost', icon: 'money_total_evac_16.png'}, f2: {name: '3,494,023,211.23 Dollar'}}
-            ];
-
+            columns = [{
+                    title: 'Rank',
+                    field: 'rank'
+                }, {
+                    title: 'Worldstate',
+                    field: 'worldstate'
+                }, {
+                    title: 'Score',
+                    field: 'score'
+                }, {
+                    title: 'Number of dead (1)',
+                    field: 'Number of dead'
+                }, {
+                    title: 'Number of injured (2)',
+                    field: 'Number of injured'
+                }, {
+                    title: 'Number of homeless (3)',
+                    field: 'Number of homeless'
+                }, {
+                    title: 'Direct damage cost (4)',
+                    field: 'Direct damage cost'
+                }, {
+                    title: 'Indirect damage cost (5)',
+                    field: 'Indirect damage cost'
+                }, {
+                    title: 'Direct restoration cost (6)',
+                    field: 'Direct restoration cost'
+                }, {
+                    title: 'Lost buildings (7)',
+                    field: 'Lost buildings'
+                }, {
+                    title: 'Unsafe buildings (8)',
+                    field: 'Unsafe buildings'
+                }, {
+                    title: 'Number of damaged road segments (9)',
+                    field: 'Number of damaged road segments'
+                }, {
+                    title: 'Total evacuationcost (10)',
+                    field: 'Total evacuationcost'
+                }];
+            rows = [{
+                    "rank": 1,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 1",
+                    "ws": 'ws',
+                    "score": "0.30 %",
+                    "rawScore": 0.003005552248419059,
+                    "Number of dead": {
+                        "indicator": "257 People",
+                        "los": "0.00 % LoS"
+                    },
+                    "Number of injured": {
+                        "indicator": "409 People",
+                        "los": "0.00 % LoS"
+                    },
+                    "Number of homeless": {
+                        "indicator": "129 People",
+                        "los": "0.00 % LoS"
+                    },
+                    "Direct damage cost": {
+                        "indicator": "4,582,048.34 Dollar",
+                        "los": "0.00 % LoS"
+                    },
+                    "Indirect damage cost": {
+                        "indicator": "830,923,892.47 Dollar",
+                        "los": "0.00 % LoS"
+                    },
+                    "Direct restoration cost": {
+                        "indicator": "892,930,184.91 Dollar",
+                        "los": "0.00 % LoS"
+                    },
+                    "Lost buildings": {
+                        "indicator": "49 Buildings",
+                        "los": "0.51 % LoS"
+                    },
+                    "Unsafe buildings": {
+                        "indicator": "152 Buildings",
+                        "los": "0.00 % LoS"
+                    },
+                    "Number of damaged road segments": {
+                        "indicator": "34 Roadsegments",
+                        "los": "0.66 % LoS"
+                    },
+                    "Total evacuationcost": {
+                        "indicator": "3,494,023,211.23 Dollar",
+                        "los": "0.00 % LoS"
+                    }
+                }];
+            //change the worldstate object to a simple value since it is not necessary for the test
+            scope.tableData[0].ws = 'ws';
             expect(scope.columns).toEqual(columns);
-            expect(scope.rows).toEqual(rows);
+            expect(scope.tableData).toEqual(rows);
         });
 
-        it('tabledata_built_correctly_2', function () {
-            var columns, rows;
-
-            scope.worldstates = ws2;
-            scope.forCriteria = false;
+        it('extracts indicators from a worldstate', function () {
+            var ctrl, result;
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
             scope.criteriaFunction = cf;
-
-            controller(
-                'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
+            scope.showIndicators = true;
+            ctrl = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
                 {
                     $scope: scope,
                     $ilter: filter,
-                    WorldstateService: WorldstateService,
                     NgTableParams: tableParams,
-                    ccs: critCalcService
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
+                });
+
+            result = [{
+                    displayName: 'Number of dead',
+                    iconResource: 'flower_dead_16.png',
+                    value: '257',
+                    unit: 'People'
+                }, {
+                    displayName: 'Number of injured',
+                    iconResource: 'flower_injured_16.png',
+                    value: '409',
+                    unit: 'People'
+                }, {
+                    displayName: 'Number of homeless',
+                    iconResource: 'flower_homeless_16.png',
+                    value: '129',
+                    unit: 'People'
+                }, {
+                    displayName: 'Direct damage cost',
+                    iconResource: 'dollar_direct_16.png',
+                    value: '4582048.34',
+                    unit: 'Dollar'
+                }, {
+                    displayName: 'Indirect damage cost',
+                    iconResource: 'dollar_indirect_16.png',
+                    value: '830923892.47',
+                    unit: 'Dollar'
+                }, {
+                    displayName: 'Direct restoration cost',
+                    iconResource: 'dollar_restoration_16.png',
+                    value: '892930184.91',
+                    unit: 'Dollar'
+                }, {
+                    displayName: 'Lost buildings',
+                    iconResource: 'home_lost_16.png',
+                    value: '49',
+                    unit: 'Buildings'
+                }, {
+                    displayName: 'Unsafe buildings',
+                    iconResource: 'home_unsafe_16.png',
+                    value: '152',
+                    unit: 'Buildings'
+                }, {
+                    displayName: 'Number of damaged road segments',
+                    iconResource: 'road_damaged_16.png',
+                    value: '34',
+                    unit: 'Roadsegments'
+                }, {
+                    displayName: 'Total evacuationcost',
+                    iconResource: 'money_total_evac_16.png',
+                    value: '3494023211.23',
+                    unit: 'Dollar'
+                }];
+            expect(ctrl.extractIndicators(ws[0])).toEqual(result);
+        });
+
+        it('calculates a correct criteria values', function () {
+            var ctrl, result;
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
+            scope.criteriaFunction = cf;
+            scope.showIndicators = true;
+            ctrl = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
+                {
+                    $scope: scope,
+                    $ilter: filter,
+                    NgTableParams: tableParams,
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
                 }
             );
 
-            //we need to call digest to fire the watch that listens on worldstate changes
-            scope.$digest();
-
-            columns = [
-                {title: 'Indicators', field: 'f1', visible: true},
-                {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 1', field: 'f2', visible: true},
-                {title: 'Ski-Weltmeisterschaften Garmisch-Partenkirchen 2', field: 'f3', visible: true}
-            ];
-            rows = [
-                {f1: {name: 'Casualties', icon: 'flower_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Number of dead', icon: 'flower_dead_16.png'}, f2: {name: '257 People'}, f3: {name: '257 People'}},
-                {f1: {name: 'Number of homeless', icon: 'flower_homeless_16.png'}, f2: {name: '129 People'}, f3: {name: '129 People'}},
-                {f1: {name: 'Number of injured', icon: 'flower_injured_16.png'}, f2: {name: '409 People'}, f3: {name: '409 People'}},
-                {f1: {name: 'Economic cost', icon: 'dollar_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Direct damage cost', icon: 'dollar_direct_16.png'}, f2: {name: '4,582,048.34 Dollar'}, f3: {name: '4,582,048.34 Dollar'}},
-                {f1: {name: 'Indirect damage cost', icon: 'dollar_indirect_16.png'}, f2: {name: '830,923,892.47 Dollar'}, f3: {name: '830,923,892.47 Dollar'}},
-                {f1: {name: 'Direct restoration cost', icon: 'dollar_restoration_16.png'}, f2: {name: '892,930,184.91 Dollar'}, f3: {name: '892,930,184.91 Dollar'}},
-                {f1: {name: 'Damaged buildings', icon: 'home_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Lost buildings', icon: 'home_lost_16.png'}, f2: {name: '49 Buildings'}, f3: {name: '49 Buildings'}},
-                {f1: {name: 'Unsafe buildings', icon: 'home_unsafe_16.png'}, f2: {name: '152 Buildings'}, f3: {name: '152 Buildings'}},
-                {f1: {name: 'Damaged Infrastructure', icon: 'road_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Number of damaged road segments', icon: 'road_damaged_16.png'}, f2: {name: '34 Roadsegments'}, f3: {name: '34 Roadsegments'}},
-                {f1: {name: 'Evacuation cost', icon: 'money_evac_16.png'}, f2: null, f3: null},
-                {f1: {name: 'Total evacuationcost', icon: 'money_total_evac_16.png'}, f2: {name: '3,494,023,211.23 Dollar'}, f3: {name: '3,494,023,211.23 Dollar'}}
-            ];
-            expect(scope.columns).toEqual(columns);
-            expect(scope.rows).toEqual(rows);
+            result = [{
+                    "indicator": {
+                        "displayName": "Number of dead",
+                        "iconResource": "flower_dead_16.png",
+                        "value": "257",
+                        "unit": "People"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Number of injured",
+                        "iconResource": "flower_injured_16.png",
+                        "value": "409",
+                        "unit": "People"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Number of homeless",
+                        "iconResource": "flower_homeless_16.png",
+                        "value": "129",
+                        "unit": "People"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Direct damage cost",
+                        "iconResource": "dollar_direct_16.png",
+                        "value": "4582048.34",
+                        "unit": "Dollar"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Indirect damage cost",
+                        "iconResource": "dollar_indirect_16.png",
+                        "value": "830923892.47",
+                        "unit": "Dollar"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Direct restoration cost",
+                        "iconResource": "dollar_restoration_16.png",
+                        "value": "892930184.91",
+                        "unit": "Dollar"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Lost buildings",
+                        "iconResource": "home_lost_16.png",
+                        "value": "49",
+                        "unit": "Buildings"
+                    },
+                    "criteria": 0.51
+                }, {
+                    "indicator": {
+                        "displayName": "Unsafe buildings",
+                        "iconResource": "home_unsafe_16.png",
+                        "value": "152",
+                        "unit": "Buildings"
+                    },
+                    "criteria": 0
+                }, {
+                    "indicator": {
+                        "displayName": "Number of damaged road segments",
+                        "iconResource": "road_damaged_16.png",
+                        "value": "34",
+                        "unit": "Roadsegments"
+                    },
+                    "criteria": 0.66
+                }, {
+                    "indicator": {
+                        "displayName": "Total evacuationcost",
+                        "iconResource": "money_total_evac_16.png",
+                        "value": "3494023211.23",
+                        "unit": "Dollar"
+                    },
+                    "criteria": 0
+                }];
+            expect(ctrl.getCriteriaVectorForWorldstate(ws[0], cf)).toEqual(result);
         });
-    });
 
+        it('inserts a new item with the highest score at row 1', function () {
+            var ctrl, newTableItem;
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
+            scope.criteriaFunction = cf;
+            scope.showIndicators = true;
+            scope.tableData = [{
+                    "rank": 1,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 1",
+                    "ws": 'ws',
+                    "score": "0.30 %",
+                    "rawScore": 0.001005552248419059
+                }, {
+                    "rank": 2,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 2",
+                    "ws": 'ws',
+                    "score": "0.20 %",
+                    "rawScore": 0.002005552248419059
+                }, {
+                    "rank": 3,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 3",
+                    "ws": 'ws',
+                    "score": "0.10 %",
+                    "rawScore": 0.001005552248419059
+                }];
+
+            ctrl = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
+                {
+                    $scope: scope,
+                    $ilter: filter,
+                    NgTableParams: tableParams,
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
+                }
+            );
+            newTableItem = {
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "100.0 %",
+                "rawScore": 1
+            };
+            ctrl.insertAtCorrectTablePosition(scope.tableData, newTableItem);
+
+            expect(scope.tableData[0]).toEqual({
+                "rank": 1,
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "100.0 %",
+                "rawScore": 1
+            });
+        });
+
+        it('inserts a new item with the lowest score at the last row', function () {
+            var ctrl, newTableItem;
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
+            scope.criteriaFunction = cf;
+            scope.showIndicators = true;
+            scope.tableData = [{
+                    "rank": 1,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 1",
+                    "ws": 'ws',
+                    "score": "0.30 %",
+                    "rawScore": 0.003005552248419059
+                }, {
+                    "rank": 2,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 2",
+                    "ws": 'ws',
+                    "score": "0.20 %",
+                    "rawScore": 0.002005552248419059
+                }, {
+                    "rank": 3,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 3",
+                    "ws": 'ws',
+                    "score": "0.10 %",
+                    "rawScore": 0.001005552248419059
+                }];
+
+
+            ctrl = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
+                {
+                    $scope: scope,
+                    $ilter: filter,
+                    NgTableParams: tableParams,
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
+                }
+            );
+            newTableItem = {
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "0.00 %",
+                "rawScore": 0
+            };
+            ctrl.insertAtCorrectTablePosition(scope.tableData, newTableItem);
+
+            expect(scope.tableData[3]).toEqual({
+                "rank": 4,
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "0.00 %",
+                "rawScore": 0
+            });
+        });
+
+        it('inserts a new item between exisisting rows', function () {
+            var ctrl, newTableItem;
+            scope.worldstates = ws;
+            scope.decisionStrategy = ds;
+            scope.criteriaFunction = cf;
+            scope.showIndicators = true;
+
+            scope.tableData = [{
+                    "rank": 1,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 1",
+                    "ws": 'ws',
+                    "score": "0.30 %",
+                    "rawScore": 0.003005552248419059
+                }, {
+                    "rank": 2,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 2",
+                    "ws": 'ws',
+                    "score": "0.20 %",
+                    "rawScore": 0.002005552248419059
+                }, {
+                    "rank": 3,
+                    "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 3",
+                    "ws": 'ws',
+                    "score": "0.10 %",
+                    "rawScore": 0.001005552248419059
+                }];
+
+
+            ctrl = controller(
+                'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController',
+                {
+                    $scope: scope,
+                    $ilter: filter,
+                    NgTableParams: tableParams,
+                    WorldstateService: WorldstateService,
+                    ccs: critCalcService,
+                    as: analysisService,
+                    dialog: ngDialog
+                }
+            );
+            newTableItem = {
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "25.0 %",
+                "rawScore": 0.002505552248419059
+            };
+            
+            ctrl.insertAtCorrectTablePosition(scope.tableData, newTableItem);
+
+            expect(scope.tableData[1]).toEqual({
+                "rank": 2,
+                "worldstate": "Ski-Weltmeisterschaften Garmisch-Partenkirchen 4",
+                "ws": 'ws',
+                "score": "25.0 %",
+                "rawScore": 0.002505552248419059
+            });
+        });
+
+    });
 });
