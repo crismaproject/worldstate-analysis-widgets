@@ -60,6 +60,7 @@
                                     </ul>
                                 </div>
                             </div>
+                            
                         </div>
                         <div class="col-lg-6">
                             <div class="row">
@@ -79,6 +80,31 @@
                                     <ul class="dropdown-menu" role="menu" >
                                         <li ng-repeat="cf in decisionStrategies" role="presentation" ng-click="updateSelectedDecisionStrategy($index)">
                                             <a>{{cf.name}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <label>ICMS</label>        
+                            </div>
+                            <div class="row">
+                                <div class="btn-group" style="width: 100%">
+                                    <button type="button" 
+                                            class="btn btn-default btn-sm"
+                                            style="width: 80%">
+                                        {{selectedIcms.name}}
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" >
+                                        <li ng-repeat="icms in backendUrls" role="presentation" ng-click="updateSelectedIcms($index)">
+                                            <a>{{icms.name}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -417,16 +443,21 @@
 
         <!-- demo only -->
         <script>
-                                                angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+    angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
                                                     [
                                                         '$provide',
-                                                        function ($provide) {
+                                                        'ContextProvider',
+                                                        function ($provide,ContextProvider) {
                                                             'use strict';
                                                             $provide.constant('DEBUG', 'true');
                                                             $provide.constant('CRISMA_DOMAIN', 'CRISMA');
                                                             $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                                             ContextProvider.setInitialIcmmApi('http://localhost:8890');
                                                         }
                                                     ]
-                                                    );</script>
+                                                    );                                            
+                                                    
+                                                            
+                                                        </script>
     </body>
 </html>

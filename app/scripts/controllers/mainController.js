@@ -3,7 +3,8 @@ angular.module(
     [
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes',
-        'LocalStorageModule'
+        'LocalStorageModule',
+        'de.cismet.crisma.ICMM.config'
     ]
     ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
@@ -13,7 +14,8 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'localStorageService',
         '$timeout',
-        function ($scope, Nodes, Worldstates, localStorageService, $timeout) {
+        'Context',
+        function ($scope, Nodes, Worldstates, localStorageService, $timeout, Context) {
             'use strict';
 
             var createChartModels, getIndicators;
@@ -227,6 +229,30 @@ angular.module(
             $scope.indicatorVector = [];
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
+            });
+            
+            $scope.backendUrls = [{
+                    url: 'http://localhost:8890',
+                    name: 'ICMS Pilot B'
+            },{
+                url: 'http://localhost:8990',
+                    name: 'ICMS Pilot C'
+            }];
+        
+            $scope.selectedIcms = $scope.backendUrls[0];
+            $scope.updateSelectedIcms = function(index){
+                $scope.selectedIcms = $scope.backendUrls[index];
+            };
+            $scope.$watch('selectedIcms',function(newVal, oldVal){
+                if(newVal !== oldVal){
+                    Context.setIcmmApi($scope.selectedIcms.url);
+                }
+            });
+            Context.addApiListener(function (newURl) {
+                console.log('iccm url has changed to ' + newURl)
+                Worldstates.query();
+                $scope.treeNodes = Nodes.query(function () {
+                });
             });
         }
     ]
