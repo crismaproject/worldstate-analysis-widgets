@@ -230,21 +230,21 @@ angular.module(
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
             });
-            
+
             $scope.backendUrls = [{
                     url: 'http://localhost:8890',
                     name: 'ICMS Pilot B'
-            },{
-                url: 'http://localhost:8990',
+                }, {
+                    url: 'http://localhost:8990',
                     name: 'ICMS Pilot C'
-            }];
-        
+                }];
+
             $scope.selectedIcms = $scope.backendUrls[0];
-            $scope.updateSelectedIcms = function(index){
+            $scope.updateSelectedIcms = function (index) {
                 $scope.selectedIcms = $scope.backendUrls[index];
             };
-            $scope.$watch('selectedIcms',function(newVal, oldVal){
-                if(newVal !== oldVal){
+            $scope.$watch('selectedIcms', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
                     Context.setIcmmApi($scope.selectedIcms.url);
                 }
             });
@@ -253,6 +253,8 @@ angular.module(
                 Worldstates.query();
                 $scope.treeNodes = Nodes.query(function () {
                 });
+                $scope.treeSelection = [];
+                $scope.worldstates = [];
             });
         }
     ]
