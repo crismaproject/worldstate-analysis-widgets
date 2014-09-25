@@ -225,6 +225,7 @@ angular.module(
             };
 
             $scope.indicatorVector = [];
+            $scope.activeItem={};
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
             });
