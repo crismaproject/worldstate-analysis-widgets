@@ -99,6 +99,9 @@ angular.module(
 
             this.dataChangedWatchCallback = function () {
                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
+                    if(!$scope.criteriaFunction){
+                        return;
+                    }
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates());
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {

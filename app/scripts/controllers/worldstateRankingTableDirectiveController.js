@@ -288,15 +288,21 @@ angular.module(
 
             ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
                 var ws, newTableItem, i = 0, newTableData = [];
-                if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+                if (!angular.equals(newVal, oldVal) && $scope.worldstates && $scope.worldstates.length > 0) {
                     if ($scope.criteriaFunction && $scope.decisionStrategy) {
-                        // we need to re-calculate and re-index the tableData...
-                        for (i = 0; i < $scope.tableData.length; i++) {
-                            ws = $scope.tableData[i].ws;
-                            newTableItem = ctrl.createTableItem(ws);
-                            ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+                        if(!$scope.tableData){
+                            for(i=0;i<$scope.worldstates.length;i++){
+                                ctrl.addWorldstateToTableData($scope.worldstates[i]);
+                            }
+                        }else{
+                            // we need to re-calculate and re-index the tableData...
+                            for (i = 0; i < $scope.tableData.length; i++) {
+                                ws = $scope.tableData[i].ws;
+                                newTableItem = ctrl.createTableItem(ws);
+                                ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+                            }
+                            $scope.tableData = newTableData;
                         }
-                        $scope.tableData = newTableData;
                         ctrl.refreshTable();
                     }
                 }
