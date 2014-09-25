@@ -1,6 +1,6 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.criteriaEmphasesController',
     [
         '$scope',
@@ -12,12 +12,12 @@ angular.module(
 
             this.updateCriteriaEmphases = function () {
                 var i, item;
-                if($scope.critEmphInternal){
+                if ($scope.critEmphInternal) {
                     for (i = 0; i < $scope.critEmphInternal.length; i++) {
                         item = $scope.critEmphInternal[i];
-                        if($scope.criteriaEmphases[i]){
+                        if ($scope.criteriaEmphases[i]) {
                             $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
-                        }else{
+                        } else {
                             $scope.criteriaEmphases.push({
                                 indicator : item.indicator,
                                 criteriaEmphasis : item.criteriaEmphasis
@@ -55,11 +55,11 @@ angular.module(
                 $scope.critEmphInternal = newCritEmphInternal;
             };
 
-                $scope.$watch('critEmphInternal', function () {
-                    if(!angular.equals($scope.criteriaEmphases,$scope.critEmphInternal)){
-                        ctrl.updateCriteriaEmphases();
-                    }
-                }, true);
+            $scope.$watch('critEmphInternal', function () {
+                if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
+                    ctrl.updateCriteriaEmphases();
+                }
+            }, true);
 
             $scope.knobMax = 100;
             $scope.knobOptions = {
@@ -79,13 +79,13 @@ angular.module(
             }, true);
 
             $scope.$watch('criteriaEmphases', function () {
-                if (!angular.equals($scope.criteriaEmphases,$scope.critEmphInternal)) {
+                if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
                     ctrl.updateInternalCriteriaEmphases();
                     $scope.criteriaEmphases = $scope.critEmphInternal;
                 }
             }, true);
         }
     ]
-    );
+);
 
 
