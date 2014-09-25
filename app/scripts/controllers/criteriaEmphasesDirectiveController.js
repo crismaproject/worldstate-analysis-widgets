@@ -12,15 +12,17 @@ angular.module(
 
             this.updateCriteriaEmphases = function () {
                 var i, item;
-                for (i = 0; i < $scope.critEmphInternal.length; i++) {
-                    item = $scope.critEmphInternal[i];
-                    if($scope.criteriaEmphases[i]){
-                        $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
-                    }else{
-                        $scope.criteriaEmphases.push({
-                            indicator : item.indicator,
-                            criteriaEmphasis : item.criteriaEmphasis
-                        });
+                if($scope.critEmphInternal){
+                    for (i = 0; i < $scope.critEmphInternal.length; i++) {
+                        item = $scope.critEmphInternal[i];
+                        if($scope.criteriaEmphases[i]){
+                            $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
+                        }else{
+                            $scope.criteriaEmphases.push({
+                                indicator : item.indicator,
+                                criteriaEmphasis : item.criteriaEmphasis
+                            });
+                        }
                     }
                 }
             };
