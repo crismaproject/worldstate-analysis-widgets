@@ -53,8 +53,8 @@ angular.module(
                 $scope.critEmphInternal = newCritEmphInternal;
             };
 
-                $scope.$watch('critEmphInternal', function (newVal,oldVal) {
-                    if(!angular.equals(newVal,oldVal)){
+                $scope.$watch('critEmphInternal', function () {
+                    if(!angular.equals($scope.criteriaEmphases,$scope.critEmphInternal)){
                         ctrl.updateCriteriaEmphases();
                     }
                 }, true);
@@ -76,7 +76,7 @@ angular.module(
                 }
             }, true);
 
-            $scope.$watch('criteriaEmphases', function (newVal, oldVal) {
+            $scope.$watch('criteriaEmphases', function () {
                 if (!angular.equals($scope.criteriaEmphases,$scope.critEmphInternal)) {
                     ctrl.updateInternalCriteriaEmphases();
                     $scope.criteriaEmphases = $scope.critEmphInternal;
