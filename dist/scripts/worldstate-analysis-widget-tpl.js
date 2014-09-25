@@ -43,6 +43,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
     "                           bs-tooltip=\"tooltipAdd.title\"\n" +
+    "                           ng-style=\"getButtonStyle()\"\n" +
     "                           ng-click=\"addCriteriaFunction()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
     "                    <a ng-click=\"setSelectedCriteriaFunction($index)\"\n" +
@@ -145,6 +146,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
     "                           bs-tooltip=\"tooltipAdd.title\"\n" +
+    "                           ng-style=\"getButtonStyle()\"\n" +
     "                           ng-click=\"addDecisionStrategy()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
     "                    </a>\n" +
     "                    <a ng-click=\"setSelectedDecisionStrategy($index)\"\n" +
@@ -194,7 +196,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                </div>   \n" +
     "            </div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" ng-if=\"!listItemDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
+    "        <div class=\"col-lg-9\" ng-if=\"!listItemsDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
     "            <decision-strategy worldstates=\"worldstates\" decision-strategy=\"currentDecisionStrategy\">\n" +
     "\n" +
     "            </decision-strategy>\n" +
@@ -740,15 +742,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "\n" +
     "                    <div class=\"input-group \">\n" +
     "                        <div class=\"input-group-btn \" style=\"display: block\" ng-click=\"persistDecisionStrategies()\">\n" +
-    "                            <button\n" +
-    "                                type =\"button\" \n" +
-    "                                class=\"btn btn-success btn-sm\">\n" +
-    "                                Persist\n" +
-    "                            </button>\n" +
-    "                            <button type=\"button\" class=\"btn btn-success btn-sm\" >\n" +
-    "                                <i ng-if=\"!showDsPersistSpinner && !showDsPersistDone\" class=\"glyphicon glyphicon-floppy-disk\"></i>\n" +
-    "                                <i ng-if=\"showDsPersistSpinner\" class=\"spin glyphicon glyphicon-refresh\" ></i>\n" +
-    "                                <i ng-if=\"showDsPersistDone\" class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                            <button type=\"button\" class=\"btn btn-success btn-sm\" style=\"min-width: 80px;\">\n" +
+    "                                <span style=\"display:block;float:left\">\n" +
+    "                                    <i ng-if=\"!showDsPersistSpinner && !showDsPersistDone\" class=\"glyphicon glyphicon-floppy-disk\"></i>\n" +
+    "                                    <i ng-if=\"showDsPersistSpinner\" class=\"spin glyphicon glyphicon-refresh\" ></i>\n" +
+    "                                    <i ng-if=\"showDsPersistDone\" class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                                </span>\n" +
+    "                                <span style=\"display:block;float:right\">\n" +
+    "                                    Persist\n" +
+    "                                </span>\n" +
     "                            </button>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
@@ -769,15 +771,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "\n" +
     "                    <div class=\"input-group \">\n" +
     "                        <div class=\"input-group-btn \" style=\"display: block\" ng-click=\"persistCriteriaFunctions()\">\n" +
-    "                            <button\n" +
-    "                                type =\"button\" \n" +
-    "                                class=\"btn btn-success btn-sm\">\n" +
-    "                                Persist\n" +
-    "                            </button>\n" +
-    "                            <button type=\"button\" class=\"btn btn-success btn-sm\" >\n" +
-    "                                <i ng-if=\"!showPersistSpinner && !showPersistDone\" class=\"glyphicon glyphicon-floppy-disk\"></i>\n" +
-    "                                <i ng-if=\"showPersistSpinner\" class=\"spin glyphicon glyphicon-refresh\" ></i>\n" +
-    "                                <i ng-if=\"showPersistDone\" class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                            <button type=\"button\" class=\"btn btn-success btn-sm\" style=\"min-width: 80px;\">\n" +
+    "                                <span style=\"display:block;float:left\">\n" +
+    "                                    <i ng-if=\"!showPersistSpinner && !showPersistDone\" class=\"glyphicon glyphicon-floppy-disk\"></i>\n" +
+    "                                    <i ng-if=\"showPersistSpinner\" class=\"spin glyphicon glyphicon-refresh\" ></i>\n" +
+    "                                    <i ng-if=\"showPersistDone\" class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                                </span>\n" +
+    "                                <span style=\"display:block;float:right\">\n" +
+    "                                    Persist\n" +
+    "                                </span>\n" +
     "                            </button>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
@@ -785,7 +787,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "\n" +
     "            </div>\n" +
     "            <div class=\"panel-body\">\n" +
-    "                <criteria-function-manager indicators=\"indicatorVector\"  criteria-functions=\"criteriaFunctionSets\"></criteria-function-manager>\n" +
+    "                <criteria-function-manager worldstates=\"worldstates\"  criteria-functions=\"criteriaFunctionSets\"></criteria-function-manager>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +

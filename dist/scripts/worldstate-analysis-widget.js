@@ -1,3 +1,277 @@
+angular.module('eu.crismaproject.worldstateAnalysis.services', []).factory('eu.crismaproject.worldstateAnalysis.services.AnalysisService', [function () {
+    'use strict';
+    var owa;
+    owa = function () {
+      var checkVector, checkVectorRange, epsilon, equals, eFactor, publicApi, self;
+      // default tolerance
+      epsilon = 1e-7;
+      eFactor = 1000000;
+      self = this;
+      publicApi = {};
+      equals = function (a, b, e) {
+        return Math.abs(a - b) < e;
+      };
+      checkVectorRange = function (vector) {
+        var i;
+        for (i = 0; i < vector.length; ++i) {
+          if (vector[i] < 0 || vector[i] > 1) {
+            throw 'arg value not within range [0, 1]: arg[' + i + ']=' + vector[i];
+          }
+        }
+      };
+      checkVector = function (vector) {
+        var i, sum;
+        checkVectorRange(vector);
+        sum = 0;
+        for (i = 0; i < vector.length; ++i) {
+          sum += vector[i];
+        }
+        if (!equals(sum, 1, epsilon)) {
+          throw 'sum of vector is not 1: ' + sum;
+        }
+      };
+      publicApi.orness = function (weights) {
+        var i, n, orness;
+        checkVector(weights);
+        n = weights.length;
+        orness = 0;
+        for (i = 0; i < weights.length; ++i) {
+          orness += (n - (i + 1)) * weights[i];
+        }
+        orness *= 1 / (n - 1);
+        return orness;
+      };
+      publicApi.dispersion = function (weights) {
+        var i, dispersion;
+        checkVector(weights);
+        dispersion = 0;
+        for (i = 0; i < weights.length; ++i) {
+          if (weights[i] !== 0) {
+            dispersion += weights[i] * Math.log(weights[i]);
+          }
+        }
+        dispersion *= -1;
+        return dispersion;
+      };
+      // or in other words, emphasis on andness
+      // exponential gratification (i^e)
+      publicApi.lLSWeights = function (criteriaCount) {
+        var i, sum, weights;
+        sum = 0;
+        for (i = 1; i <= criteriaCount; ++i) {
+          sum = sum + Math.pow(i, Math.E);
+        }
+        weights = [];
+        for (i = 1; i <= criteriaCount; ++i) {
+          weights[i - 1] = Math.pow(i, Math.E) / sum;
+        }
+        checkVector(weights);
+        return weights;
+      };
+      // or in other words, emphasis on orness
+      publicApi.hLSWeights = function (criteriaCount) {
+        return owa.lLSWeights(criteriaCount).reverse();
+      };
+      publicApi.meanWeights = function (criteriaCount) {
+        var i, d, mean, weights;
+        mean = 1 / criteriaCount;
+        weights = [];
+        for (i = 0; i < criteriaCount; ++i) {
+          weights[i] = mean;
+        }
+        d = owa.dispersion(weights);
+        if (!equals(d, Math.log(criteriaCount), epsilon)) {
+          throw 'rounding error: [dispersion=' + d + '|log=' + Math.log(criteriaCount) + ']';
+        }
+        return weights;
+      };
+      publicApi.orderedArgs = function (vector) {
+        return vector.slice(0).sort().reverse();
+      };
+      publicApi.aggregateLS = function (criteria, weights, importance) {
+        var crit, i, ordered, res,
+          // only needed if importance is not null
+          andness, imp, multiplier, power, orness, sat;
+        checkVector(weights);
+        checkVectorRange(criteria);
+        if (criteria.length !== weights.length) {
+          throw 'criteria and weights must have the same amount of items';
+        }
+        if (importance) {
+          checkVectorRange(importance);
+          if (criteria.length !== importance.length) {
+            throw 'criteria and importance must have the same amount of items';
+          }
+          crit = [];
+          orness = owa.orness(weights);
+          andness = 1 - orness;
+          for (i = 0; i < importance.length; ++i) {
+            imp = importance[i];
+            sat = criteria[i];
+            multiplier = Math.max(imp, andness);
+            power = Math.max(imp, orness);
+            res = multiplier * Math.pow(sat, power);
+            crit[i] = res;
+          }
+        } else {
+          crit = criteria;
+        }
+        ordered = owa.orderedArgs(crit);
+        res = 0;
+        for (i = 0; i < ordered.length; ++i) {
+          res += ordered[i] * weights[i];
+        }
+        return res;
+      };
+      return publicApi;
+    }();
+    return {
+      getOwa: function () {
+        return owa;
+      }
+    };
+  }]);
+angular.module('eu.crismaproject.worldstateAnalysis.controllers', [
+  'nvd3ChartDirectives',
+  'eu.crismaproject.worldstateAnalysis.services',
+  'ngDialog'
+]).controller('eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController', [
+  '$scope',
+  '$filter',
+  'de.cismet.crisma.ICMM.Worldstates',
+  'ngTableParams',
+  'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
+  function ($scope, $filter, WorldstateService, NgTableParams, ccs) {
+    'use strict';
+    var getOrderedProperties = function (obj) {
+        var p, keys;
+        keys = [];
+        for (p in obj) {
+          if (obj.hasOwnProperty(p)) {
+            keys.push(p);
+          }
+        }
+        keys.sort();
+        return keys;
+      }, updateTable = function () {
+        var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val, criteriaFunction, k, unit, indicatorVector;
+        indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
+        if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
+          $scope.rows = [];
+          $scope.columns = [{
+              title: $scope.forCriteria ? 'Level of satisfaction (higher is better)' : 'Indicators',
+              field: 'f1',
+              visible: true
+            }];
+          j = 0;
+          iccData = indicatorVector[0].data;
+          keys_outer = getOrderedProperties(iccData);
+          for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
+            group = iccData[keys_outer[k_outer]];
+            $scope.rows[j++] = {
+              f1: {
+                name: group.displayName,
+                icon: group.iconResource
+              }
+            };
+            keys_inner = getOrderedProperties(group);
+            for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
+              prop = keys_inner[k_inner];
+              if (prop !== 'displayName' && prop !== 'iconResource') {
+                $scope.rows[j++] = {
+                  f1: {
+                    name: group[prop].displayName,
+                    icon: group[prop].iconResource
+                  }
+                };
+              }
+            }
+          }
+          for (i = 0; i < indicatorVector.length; ++i) {
+            field = 'f' + (i + 2);
+            $scope.columns.push({
+              title: indicatorVector[i].name,
+              field: field,
+              visible: true
+            });
+            iccData = indicatorVector[i].data;
+            j = 0;
+            keys_outer = getOrderedProperties(iccData);
+            for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
+              group = iccData[keys_outer[k_outer]];
+              $scope.rows[j++][field] = null;
+              keys_inner = getOrderedProperties(group);
+              for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
+                prop = keys_inner[k_inner];
+                unit = $scope.forCriteria ? '% LoS' : group[prop].unit;
+                if (prop !== 'displayName' && prop !== 'iconResource') {
+                  for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
+                    if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
+                      criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
+                      break;
+                    }
+                  }
+                  if ($scope.forCriteria) {
+                    val = ccs.calculateCriteria(group[prop].value, criteriaFunction);
+                  } else {
+                    val = group[prop].value;
+                  }
+                  if (val % 1 !== 0) {
+                    val = $filter('number')(val, 2);
+                  }
+                  $scope.rows[j++][field] = { name: val + ' ' + unit };
+                }
+              }
+            }
+          }
+        }
+        if ($scope.tableParams) {
+          $scope.tableParams.reload();
+        } else {
+          $scope.tableParams = new NgTableParams({
+            page: 1,
+            count: 10000
+          }, {
+            counts: [],
+            total: $scope.worldstates.length,
+            getData: function ($defer, params) {
+              if ($scope.worldstates.length <= 0) {
+                return null;
+              }
+              $defer.resolve($scope.rows.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+          });
+        }
+      };
+    $scope.tableVisibleSwitch = '0';
+    $scope.isGroupRow = function (row) {
+      return row.f2 === null;
+    };
+    $scope.getRowStyle = function (index) {
+      var row = $scope.rows[index], groupRowStyle = { 'font-weight': 'bold' };
+      return $scope.isGroupRow(row) ? groupRowStyle : '';
+    };
+    $scope.getCellStyle = function (index) {
+      var dataCellStyle = { 'text-align': 'right' };
+      return index > 0 ? dataCellStyle : '';
+    };
+    $scope.$watchCollection('worldstates', function () {
+      if ($scope.worldstates && $scope.criteriaFunction) {
+        updateTable();
+      }
+    });
+    $scope.$watch('forCriteria', function (newVal, oldVal) {
+      if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
+        updateTable();
+      }
+    });
+    $scope.$watch('criteriaFunction', function (newVal, oldVal) {
+      if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
+        updateTable();
+      }
+    }, true);
+  }
+]);
 angular.module('eu.crismaproject.worldstateAnalysis.directives', [
   'eu.crismaproject.worldstateAnalysis.controllers',
   'ngTable',
@@ -240,6 +514,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         }
       }
     };
+    $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
+    $scope.criteriaFunctionSets = $scope.criteriaFunctionSet;
+    $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
     $scope.persistCriteriaFunctions = function () {
       $scope.showPersistSpinner = true;
       $scope.showPersistDone = false;
@@ -249,6 +526,20 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         $scope.showPersistDone = true;
         $timeout(function () {
           $scope.showPersistDone = false;
+        }, 1500);
+      }, 500);
+    };
+    $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
+    $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
+    $scope.persistDecisionStrategies = function () {
+      $scope.showDsPersistSpinner = true;
+      $scope.showDsPersistDone = false;
+      $timeout(function () {
+        localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+        $scope.showDsPersistSpinner = false;
+        $scope.showDsPersistDone = true;
+        $timeout(function () {
+          $scope.showDsPersistDone = false;
         }, 1500);
       }, 500);
     };
@@ -274,19 +565,21 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
   '$scope',
   function ($scope) {
     'use strict';
-    var ctrl, criteriaEmpInternalWatch;
+    var ctrl;
     ctrl = this;
     this.updateCriteriaEmphases = function () {
       var i, item;
-      for (i = 0; i < $scope.critEmphInternal.length; i++) {
-        item = $scope.critEmphInternal[i];
-        if ($scope.criteriaEmphases[i]) {
-          $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
-        } else {
-          $scope.criteriaEmphases.push({
-            indicator: item.indicator,
-            criteriaEmphasis: item.criteriaEmphasis
-          });
+      if ($scope.critEmphInternal) {
+        for (i = 0; i < $scope.critEmphInternal.length; i++) {
+          item = $scope.critEmphInternal[i];
+          if ($scope.criteriaEmphases[i]) {
+            $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
+          } else {
+            $scope.criteriaEmphases.push({
+              indicator: item.indicator,
+              criteriaEmphasis: item.criteriaEmphasis
+            });
+          }
         }
       }
     };
@@ -317,14 +610,11 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
       }
       $scope.critEmphInternal = newCritEmphInternal;
     };
-    this.registerInternalWatch = function () {
-      //internal changes (knob) must be propagated...
-      criteriaEmpInternalWatch = $scope.$watch('critEmphInternal', function (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          ctrl.updateCriteriaEmphases();
-        }
-      }, true);
-    };
+    $scope.$watch('critEmphInternal', function () {
+      if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
+        ctrl.updateCriteriaEmphases();
+      }
+    }, true);
     $scope.knobMax = 100;
     $scope.knobOptions = {
       'width': 100,
@@ -340,16 +630,12 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         ctrl.updateInternalCriteriaEmphases();
       }
     }, true);
-    $scope.$watch('criteriaEmphases', function (newVal, oldVal) {
-      // we need to derigster the watch for the internal model, because it changes the external model
-      if (newVal !== oldVal) {
-        criteriaEmpInternalWatch();
+    $scope.$watch('criteriaEmphases', function () {
+      if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
         ctrl.updateInternalCriteriaEmphases();
         $scope.criteriaEmphases = $scope.critEmphInternal;
-        ctrl.registerInternalWatch();
       }
     }, true);
-    ctrl.registerInternalWatch();
   }
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.CriteriaFunctionManagerDirectiveController', [
@@ -362,12 +648,19 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.currentIntervalFunctions = [];
     $scope.selectedCriteriaFunctionIndex = -1;
     $scope.tooltipDelete = { title: 'Delete this criteria function' };
-    $scope.tooltipAdd = { title: 'Create a new criteria function' };
+    $scope.tooltipAdd = {
+      normaltitle: 'Create a new criteria function',
+      disabledTitle: 'Can not create criteria function. Select a worldstate first',
+      title: ''
+    };
     $scope.tooltipSave = { title: 'Save changes' };
     $scope.tooltipRename = { title: 'Rename criteria function' };
     $scope.tooltipRenameDone = { title: 'Done' };
     $scope.addCriteriaFunction = function () {
       var i, criteriaFunctions = [];
+      if ($scope.listItemsDisabled) {
+        return;
+      }
       for (i = 0; i < $scope.indicators.length; i++) {
         criteriaFunctions.push({
           indicator: $scope.indicators[i].displayName,
@@ -407,7 +700,11 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
       }
     };
+    $scope.getButtonStyle = function () {
+      return { 'color': $scope.listItemsDisabled ? '#CCC' : '#fff' };
+    };
     $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+    $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
     $scope.$watchCollection('worldstates', function (newVal, oldVal) {
       var indicatorGroup, indicatorProp, iccObject, group;
       if (newVal !== oldVal) {
@@ -431,6 +728,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
           }
         }
         $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+        $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
         if ($scope.listItemsDisaled) {
           $scope.selectedCriteriaFunctionIndex = -1;
         }
@@ -446,6 +744,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.legendItems = [];
     $scope.convertToChartDataStructure = function (indicatorVector) {
       var i, j, indicatorData, groupName, group, criteriaProp, indiactor, result, dataItem, legendItems, criteriaFunction;
+      if (!$scope.criteriaFunction) {
+        return;
+      }
       result = [];
       legendItems = [];
       for (i = 0; i < indicatorVector.length; i++) {
@@ -485,22 +786,38 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.decisionStrategyManagerDirectiveController', [
   '$scope',
   'de.cismet.crisma.ICMM.Worldstates',
-  function ($scope, Worldstates) {
+  'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
+  function ($scope, Worldstates, AnalysisService) {
     'use strict';
     $scope.editable = [];
     $scope.currentIntervalFunctions = [];
     $scope.selectedDecisionStrategyIndex = -1;
     $scope.tooltipDelete = { title: 'Delete this decision strategy' };
-    $scope.tooltipAdd = { title: 'Create a new decision strategy' };
+    $scope.tooltipAdd = {
+      normaltitle: 'Create a new decision strategy',
+      disabledTitle: 'Can not create Decision Strategy. Select a worldstate first',
+      title: ''
+    };
     $scope.tooltipSave = { title: 'Save changes' };
     $scope.tooltipRename = { title: 'Rename decision strategy' };
     $scope.tooltipRenameDone = { title: 'Done' };
     $scope.addDecisionStrategy = function () {
-      var i, decisionStrategy = [];
-      for (i = 0; i < $scope.worldstates.length; i++) {
-        decisionStrategy.push({ indicator: $scope.worldstates[i].displayName });
+      var i, indicator, criteriaEmphases = [];
+      if ($scope.listItemsDisabled) {
+        return;
       }
-      $scope.decisionStrategies.push({ name: 'Decision Strategy ' + ($scope.decisionStrategies.length + 1) });
+      for (i = 0; i < $scope.indicatorVector.length; i++) {
+        indicator = $scope.indicatorVector[i];
+        criteriaEmphases.push({
+          indicator: indicator,
+          criteriaEmphasis: 100
+        });
+      }
+      $scope.decisionStrategies.push({
+        name: 'Decision Strategy ' + ($scope.decisionStrategies.length + 1),
+        criteriaEmphases: criteriaEmphases,
+        satisfactionEmphasis: AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
+      });
       $scope.editable.push(false);
     };
     $scope.removeDecisionStrategy = function () {
@@ -541,11 +858,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         }
       }
     };
+    $scope.getButtonStyle = function () {
+      return { 'color': $scope.listItemsDisabled ? '#CCC' : '#fff' };
+    };
     $scope.worldstates = $scope.worldstates || [];
     $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
     $scope.$watch('worldstates', function () {
       $scope.updateModel();
       $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
+      $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
       if ($scope.listItemsDisabled) {
         $scope.selectedDecisionStrategyIndex = -1;
       }
@@ -924,147 +1245,6 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     });
   }
 ]);
-angular.module('eu.crismaproject.worldstateAnalysis.controllers', [
-  'nvd3ChartDirectives',
-  'eu.crismaproject.worldstateAnalysis.services',
-  'ngDialog'
-]).controller('eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController', [
-  '$scope',
-  '$filter',
-  'de.cismet.crisma.ICMM.Worldstates',
-  'ngTableParams',
-  'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-  function ($scope, $filter, WorldstateService, NgTableParams, ccs) {
-    'use strict';
-    var getOrderedProperties = function (obj) {
-        var p, keys;
-        keys = [];
-        for (p in obj) {
-          if (obj.hasOwnProperty(p)) {
-            keys.push(p);
-          }
-        }
-        keys.sort();
-        return keys;
-      }, updateTable = function () {
-        var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val, criteriaFunction, k, unit, indicatorVector;
-        indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
-        if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
-          $scope.rows = [];
-          $scope.columns = [{
-              title: $scope.forCriteria ? 'Level of satisfaction (higher is better)' : 'Indicators',
-              field: 'f1',
-              visible: true
-            }];
-          j = 0;
-          iccData = indicatorVector[0].data;
-          keys_outer = getOrderedProperties(iccData);
-          for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
-            group = iccData[keys_outer[k_outer]];
-            $scope.rows[j++] = {
-              f1: {
-                name: group.displayName,
-                icon: group.iconResource
-              }
-            };
-            keys_inner = getOrderedProperties(group);
-            for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
-              prop = keys_inner[k_inner];
-              if (prop !== 'displayName' && prop !== 'iconResource') {
-                $scope.rows[j++] = {
-                  f1: {
-                    name: group[prop].displayName,
-                    icon: group[prop].iconResource
-                  }
-                };
-              }
-            }
-          }
-          for (i = 0; i < indicatorVector.length; ++i) {
-            field = 'f' + (i + 2);
-            $scope.columns.push({
-              title: indicatorVector[i].name,
-              field: field,
-              visible: true
-            });
-            iccData = indicatorVector[i].data;
-            j = 0;
-            keys_outer = getOrderedProperties(iccData);
-            for (k_outer = 0; k_outer < keys_outer.length; ++k_outer) {
-              group = iccData[keys_outer[k_outer]];
-              $scope.rows[j++][field] = null;
-              keys_inner = getOrderedProperties(group);
-              for (k_inner = 0; k_inner < keys_inner.length; ++k_inner) {
-                prop = keys_inner[k_inner];
-                unit = $scope.forCriteria ? '% LoS' : group[prop].unit;
-                if (prop !== 'displayName' && prop !== 'iconResource') {
-                  for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
-                    if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
-                      criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
-                      break;
-                    }
-                  }
-                  if ($scope.forCriteria) {
-                    val = ccs.calculateCriteria(group[prop].value, criteriaFunction);
-                  } else {
-                    val = group[prop].value;
-                  }
-                  if (val % 1 !== 0) {
-                    val = $filter('number')(val, 2);
-                  }
-                  $scope.rows[j++][field] = { name: val + ' ' + unit };
-                }
-              }
-            }
-          }
-        }
-        if ($scope.tableParams) {
-          $scope.tableParams.reload();
-        } else {
-          $scope.tableParams = new NgTableParams({
-            page: 1,
-            count: 10000
-          }, {
-            counts: [],
-            total: $scope.worldstates.length,
-            getData: function ($defer, params) {
-              if ($scope.worldstates.length <= 0) {
-                return null;
-              }
-              $defer.resolve($scope.rows.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            }
-          });
-        }
-      };
-    $scope.tableVisibleSwitch = '0';
-    $scope.isGroupRow = function (row) {
-      return row.f2 === null;
-    };
-    $scope.getRowStyle = function (index) {
-      var row = $scope.rows[index], groupRowStyle = { 'font-weight': 'bold' };
-      return $scope.isGroupRow(row) ? groupRowStyle : '';
-    };
-    $scope.getCellStyle = function (index) {
-      var dataCellStyle = { 'text-align': 'right' };
-      return index > 0 ? dataCellStyle : '';
-    };
-    $scope.$watchCollection('worldstates', function () {
-      if ($scope.worldstates) {
-        updateTable();
-      }
-    });
-    $scope.$watch('forCriteria', function (newVal, oldVal) {
-      if (newVal !== oldVal && $scope.worldstates) {
-        updateTable();
-      }
-    });
-    $scope.$watch('criteriaFunction', function (newVal, oldVal) {
-      if (newVal !== oldVal && $scope.worldstates) {
-        updateTable();
-      }
-    }, true);
-  }
-]);
 angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
   'de.cismet.crisma.ICMM.Worldstates',
   'de.cismet.cids.rest.collidngNames.Nodes',
@@ -1277,6 +1457,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
       $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
     };
     $scope.indicatorVector = [];
+    $scope.activeItem = {};
     // Retrieve the top level nodes from the icmm api
     $scope.treeNodes = Nodes.query(function () {
     });
@@ -1368,6 +1549,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     this.dataChangedWatchCallback = function () {
       if ($scope.worldstates() && $scope.worldstates().length > 0) {
+        if (!$scope.criteriaFunction) {
+          return;
+        }
         $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates());
         $scope.iccObject = $scope.iccData[0];
         if ($scope.xAxis && $scope.yAxis) {
@@ -1671,15 +1855,21 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
       var ws, newTableItem, i = 0, newTableData = [];
-      if (newVal !== oldVal && $scope.worldstates && $scope.worldstates.length > 0) {
+      if (!angular.equals(newVal, oldVal) && $scope.worldstates && $scope.worldstates.length > 0) {
         if ($scope.criteriaFunction && $scope.decisionStrategy) {
-          // we need to re-calculate and re-index the tableData...
-          for (i = 0; i < $scope.tableData.length; i++) {
-            ws = $scope.tableData[i].ws;
-            newTableItem = ctrl.createTableItem(ws);
-            ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+          if (!$scope.tableData) {
+            for (i = 0; i < $scope.worldstates.length; i++) {
+              ctrl.addWorldstateToTableData($scope.worldstates[i]);
+            }
+          } else {
+            // we need to re-calculate and re-index the tableData...
+            for (i = 0; i < $scope.tableData.length; i++) {
+              ws = $scope.tableData[i].ws;
+              newTableItem = ctrl.createTableItem(ws);
+              ctrl.insertAtCorrectTablePosition(newTableData, newTableItem);
+            }
+            $scope.tableData = newTableData;
           }
-          $scope.tableData = newTableData;
           ctrl.refreshTable();
         }
       }
@@ -1876,6 +2066,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('crit
         var indicators, chartDataModel;
         elem.removeData();
         elem.empty();
+        if (!scope.criteriaFunction) {
+          return;
+        }
         if (scope.localModel() && scope.localModel().length > 0) {
           // we are only interest in criteria data
           indicators = WorldstateService.utils.stripIccData(scope.localModel(), false);
@@ -2482,139 +2675,6 @@ var RadarChart = {
       tooltip = g.append('text').style('opacity', 0).style('font-family', 'sans-serif').style('font-size', '13px');
     }
   };
-angular.module('eu.crismaproject.worldstateAnalysis.services', []).factory('eu.crismaproject.worldstateAnalysis.services.AnalysisService', [function () {
-    'use strict';
-    var owa;
-    owa = function () {
-      var checkVector, checkVectorRange, epsilon, equals, eFactor, publicApi, self;
-      // default tolerance
-      epsilon = 1e-7;
-      eFactor = 1000000;
-      self = this;
-      publicApi = {};
-      equals = function (a, b, e) {
-        return Math.abs(a - b) < e;
-      };
-      checkVectorRange = function (vector) {
-        var i;
-        for (i = 0; i < vector.length; ++i) {
-          if (vector[i] < 0 || vector[i] > 1) {
-            throw 'arg value not within range [0, 1]: arg[' + i + ']=' + vector[i];
-          }
-        }
-      };
-      checkVector = function (vector) {
-        var i, sum;
-        checkVectorRange(vector);
-        sum = 0;
-        for (i = 0; i < vector.length; ++i) {
-          sum += vector[i];
-        }
-        if (!equals(sum, 1, epsilon)) {
-          throw 'sum of vector is not 1: ' + sum;
-        }
-      };
-      publicApi.orness = function (weights) {
-        var i, n, orness;
-        checkVector(weights);
-        n = weights.length;
-        orness = 0;
-        for (i = 0; i < weights.length; ++i) {
-          orness += (n - (i + 1)) * weights[i];
-        }
-        orness *= 1 / (n - 1);
-        return orness;
-      };
-      publicApi.dispersion = function (weights) {
-        var i, dispersion;
-        checkVector(weights);
-        dispersion = 0;
-        for (i = 0; i < weights.length; ++i) {
-          if (weights[i] !== 0) {
-            dispersion += weights[i] * Math.log(weights[i]);
-          }
-        }
-        dispersion *= -1;
-        return dispersion;
-      };
-      // or in other words, emphasis on andness
-      // exponential gratification (i^e)
-      publicApi.lLSWeights = function (criteriaCount) {
-        var i, sum, weights;
-        sum = 0;
-        for (i = 1; i <= criteriaCount; ++i) {
-          sum = sum + Math.pow(i, Math.E);
-        }
-        weights = [];
-        for (i = 1; i <= criteriaCount; ++i) {
-          weights[i - 1] = Math.pow(i, Math.E) / sum;
-        }
-        checkVector(weights);
-        return weights;
-      };
-      // or in other words, emphasis on orness
-      publicApi.hLSWeights = function (criteriaCount) {
-        return owa.lLSWeights(criteriaCount).reverse();
-      };
-      publicApi.meanWeights = function (criteriaCount) {
-        var i, d, mean, weights;
-        mean = 1 / criteriaCount;
-        weights = [];
-        for (i = 0; i < criteriaCount; ++i) {
-          weights[i] = mean;
-        }
-        d = owa.dispersion(weights);
-        if (!equals(d, Math.log(criteriaCount), epsilon)) {
-          throw 'rounding error: [dispersion=' + d + '|log=' + Math.log(criteriaCount) + ']';
-        }
-        return weights;
-      };
-      publicApi.orderedArgs = function (vector) {
-        return vector.slice(0).sort().reverse();
-      };
-      publicApi.aggregateLS = function (criteria, weights, importance) {
-        var crit, i, ordered, res,
-          // only needed if importance is not null
-          andness, imp, multiplier, power, orness, sat;
-        checkVector(weights);
-        checkVectorRange(criteria);
-        if (criteria.length !== weights.length) {
-          throw 'criteria and weights must have the same amount of items';
-        }
-        if (importance) {
-          checkVectorRange(importance);
-          if (criteria.length !== importance.length) {
-            throw 'criteria and importance must have the same amount of items';
-          }
-          crit = [];
-          orness = owa.orness(weights);
-          andness = 1 - orness;
-          for (i = 0; i < importance.length; ++i) {
-            imp = importance[i];
-            sat = criteria[i];
-            multiplier = Math.max(imp, andness);
-            power = Math.max(imp, orness);
-            res = multiplier * Math.pow(sat, power);
-            crit[i] = res;
-          }
-        } else {
-          crit = criteria;
-        }
-        ordered = owa.orderedArgs(crit);
-        res = 0;
-        for (i = 0; i < ordered.length; ++i) {
-          res += ordered[i] * weights[i];
-        }
-        return res;
-      };
-      return publicApi;
-    }();
-    return {
-      getOwa: function () {
-        return owa;
-      }
-    };
-  }]);
 angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService', [function () {
     'use strict';
     var calculateCriteria, interpolateValue, getColor, getColorForCriteria;
