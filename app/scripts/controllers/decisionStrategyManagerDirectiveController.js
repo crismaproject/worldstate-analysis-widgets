@@ -46,7 +46,7 @@ angular.module(
                     criteriaEmphases:criteriaEmphases,
                     satisfactionEmphasis:AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
                 });
-                
+
                 $scope.editable.push(false);
             };
 
@@ -74,7 +74,7 @@ angular.module(
             };
 
             $scope.updateModel = function () {
-                var i, indicatorGroup, indicatorProp, iccObject, group;
+                var i, indicatorGroup, indicatorProp, iccObject, group,alreadyExists;
                 $scope.indicatorVector = [];
                 for (i = 0; i < $scope.worldstates.length; i++) {
 
@@ -85,7 +85,20 @@ angular.module(
                             for (indicatorProp in group) {
                                 if (group.hasOwnProperty(indicatorProp)) {
                                     if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                                        $scope.indicatorVector.push(group[indicatorProp]);
+                                        if ($scope.indicatorVector) {
+                                            alreadyExists = false;
+                                            /*jshint -W083 */
+                                            $scope.indicatorVector.forEach(function (item) {
+                                                if (item.displayName === group[indicatorProp].displayName) {
+                                                    alreadyExists = true;
+                                                }
+                                            });
+                                            if(!alreadyExists){
+                                                $scope.indicatorVector.push(group[indicatorProp]);
+                                            }
+                                        }else{
+                                            $scope.indicatorVector.push(group[indicatorProp]);
+                                        }
                                     }
                                 }
                             }
@@ -99,7 +112,7 @@ angular.module(
                     'color':$scope.listItemsDisabled ? '#CCC':'#fff'
                 };
             };
-            
+
             $scope.worldstates = $scope.worldstates || [];
             $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
             $scope.$watch('worldstates', function () {
