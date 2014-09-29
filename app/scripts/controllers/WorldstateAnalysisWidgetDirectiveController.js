@@ -68,6 +68,9 @@ angular.module(
                 }
             };
 
+            $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
+            $scope.criteriaFunctionSets = $scope.criteriaFunctionSet;
+            $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
             $scope.persistCriteriaFunctions = function () {
                 $scope.showPersistSpinner = true;
                 $scope.showPersistDone = false;
@@ -82,7 +85,22 @@ angular.module(
 
             };
 
-            Worldstates.query({level:2},function (data) {
+            $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
+            $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
+            $scope.persistDecisionStrategies = function () {
+                $scope.showDsPersistSpinner = true;
+                $scope.showDsPersistDone = false;
+                $timeout(function () {
+                    localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+                    $scope.showDsPersistSpinner = false;
+                    $scope.showDsPersistDone = true;
+                    $timeout(function () {
+                        $scope.showDsPersistDone = false;
+                    }, 1500);
+                }, 500);
+            };
+
+            Worldstates.query({level: 2}, function (data) {
                 $scope.allWorldstates = data;
             });
 
@@ -102,7 +120,7 @@ angular.module(
             $scope.indicatorVector = [];
         }
     ]
-);
+    );
 
 
 

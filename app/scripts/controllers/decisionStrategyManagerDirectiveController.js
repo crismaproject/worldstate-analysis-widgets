@@ -5,7 +5,8 @@ angular.module(
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Worldstates) {
+        'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
+        function ($scope, Worldstates, AnalysisService) {
             'use strict';
             $scope.editable = [];
             $scope.currentIntervalFunctions = [];
@@ -14,7 +15,9 @@ angular.module(
                 title: 'Delete this decision strategy'
             };
             $scope.tooltipAdd = {
-                title: 'Create a new decision strategy'
+                normaltitle: 'Create a new decision strategy',
+                disabledTitle: 'Can not create Decision Strategy. Select a worldstate first',
+                title:''
             };
             $scope.tooltipSave = {
                 title: 'Save changes'
@@ -27,15 +30,23 @@ angular.module(
             };
 
             $scope.addDecisionStrategy = function () {
-                var i, decisionStrategy = [];
-                for (i = 0; i < $scope.worldstates.length; i++) {
-                    decisionStrategy.push({
-                        indicator: $scope.worldstates[i].displayName,
+                var i, indicator, criteriaEmphases = [];
+                if($scope.listItemsDisabled){
+                    return;
+                }
+                for (i=0;i<$scope.indicatorVector.length;i++) {
+                    indicator = $scope.indicatorVector[i];
+                    criteriaEmphases.push({
+                        indicator: indicator,
+                        criteriaEmphasis:100
                     });
                 }
                 $scope.decisionStrategies.push({
                     name: 'Decision Strategy ' + ($scope.decisionStrategies.length + 1),
+                    criteriaEmphases:criteriaEmphases,
+                    satisfactionEmphasis:AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
                 });
+                
                 $scope.editable.push(false);
             };
 
@@ -82,11 +93,19 @@ angular.module(
                     }
                 }
             };
+            
+            $scope.getButtonStyle = function(){
+                return {
+                    'color':$scope.listItemsDisabled ? '#CCC':'#fff'
+                };
+            };
+            
             $scope.worldstates = $scope.worldstates || [];
             $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
             $scope.$watch('worldstates', function () {
                 $scope.updateModel();
                 $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
+                $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
                 if($scope.listItemsDisabled){
                     $scope.selectedDecisionStrategyIndex = -1;
                 }

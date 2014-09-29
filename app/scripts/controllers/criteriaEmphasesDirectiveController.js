@@ -1,26 +1,28 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
-    ).controller(
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.criteriaEmphasesController',
     [
         '$scope',
         function ($scope) {
             'use strict';
-            var ctrl, criteriaEmpInternalWatch;
+            var ctrl;
 
             ctrl = this;
 
             this.updateCriteriaEmphases = function () {
                 var i, item;
-                for (i = 0; i < $scope.critEmphInternal.length; i++) {
-                    item = $scope.critEmphInternal[i];
-                    if($scope.criteriaEmphases[i]){
-                        $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
-                    }else{
-                        $scope.criteriaEmphases.push({
-                            indicator : item.indicator,
-                            criteriaEmphasis : item.criteriaEmphasis
-                        });
+                if ($scope.critEmphInternal) {
+                    for (i = 0; i < $scope.critEmphInternal.length; i++) {
+                        item = $scope.critEmphInternal[i];
+                        if ($scope.criteriaEmphases[i]) {
+                            $scope.criteriaEmphases[i].criteriaEmphasis = item.criteriaEmphasis;
+                        } else {
+                            $scope.criteriaEmphases.push({
+                                indicator : item.indicator,
+                                criteriaEmphasis : item.criteriaEmphasis
+                            });
+                        }
                     }
                 }
             };
@@ -53,14 +55,11 @@ angular.module(
                 $scope.critEmphInternal = newCritEmphInternal;
             };
 
-            this.registerInternalWatch = function () {
-                //internal changes (knob) must be propagated...
-                criteriaEmpInternalWatch = $scope.$watch('critEmphInternal', function (newVal,oldVal) {
-                    if(newVal !== oldVal){
-                        ctrl.updateCriteriaEmphases();
-                    }
-                }, true);
-            };
+            $scope.$watch('critEmphInternal', function () {
+                if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
+                    ctrl.updateCriteriaEmphases();
+                }
+            }, true);
 
             $scope.knobMax = 100;
             $scope.knobOptions = {
@@ -79,20 +78,14 @@ angular.module(
                 }
             }, true);
 
-            $scope.$watch('criteriaEmphases', function (newVal, oldVal) {
-                // we need to derigster the watch for the internal model, because it changes the external model
-                if (newVal !== oldVal) {
-                    criteriaEmpInternalWatch();
+            $scope.$watch('criteriaEmphases', function () {
+                if (!angular.equals($scope.criteriaEmphases, $scope.critEmphInternal)) {
                     ctrl.updateInternalCriteriaEmphases();
                     $scope.criteriaEmphases = $scope.critEmphInternal;
-                    ctrl.registerInternalWatch();
                 }
             }, true);
-
-            ctrl.registerInternalWatch();
-
         }
     ]
-    );
+);
 
 

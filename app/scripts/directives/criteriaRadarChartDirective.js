@@ -138,6 +138,9 @@ angular.module(
                     var indicators, chartDataModel;
                     elem.removeData();
                     elem.empty();
+                    if(!scope.criteriaFunction){
+                        return;
+                    }
                     if (scope.localModel() && scope.localModel().length > 0) {
                         // we are only interest in criteria data
                         indicators = WorldstateService.utils.stripIccData(scope.localModel(), false);

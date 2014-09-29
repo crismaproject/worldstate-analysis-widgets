@@ -12,6 +12,9 @@ angular.module(
             $scope.convertToChartDataStructure = function (indicatorVector) {
                 var i, j, indicatorData, groupName, group, criteriaProp,
                     indiactor, result, dataItem,legendItems, criteriaFunction;
+                if(!$scope.criteriaFunction){
+                    return;
+                }
                 result = [];
                 legendItems = [];
                 for (i = 0; i < indicatorVector.length; i++) {

@@ -11,6 +11,7 @@
                            data-container="body"
                            data-animation="am-fade-and-scale" 
                            bs-tooltip="tooltipAdd.title"
+                           ng-style="getButtonStyle()"
                            ng-click="addDecisionStrategy()" class="pull-right glyphicon glyphicon-plus-sign"></i>
                     </a>
                     <a ng-click="setSelectedDecisionStrategy($index)"
@@ -60,7 +61,7 @@
                 </div>   
             </div>
         </div>
-        <div class="col-lg-9" ng-if="!listItemDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]">
+        <div class="col-lg-9" ng-if="!listItemsDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]">
             <decision-strategy worldstates="worldstates" decision-strategy="currentDecisionStrategy">
 
             </decision-strategy>

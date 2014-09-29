@@ -11,6 +11,7 @@
                            data-container="body"
                            data-animation="am-fade-and-scale" 
                            bs-tooltip="tooltipAdd.title"
+                           ng-style="getButtonStyle()"
                            ng-click="addCriteriaFunction()" class="pull-right glyphicon glyphicon-plus-sign"></i>
                     </a>
                     <a ng-click="setSelectedCriteriaFunction($index)"
