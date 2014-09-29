@@ -141,18 +141,18 @@ angular.module(
             };
 
             $scope.$watchCollection('worldstates', function () {
-                if ($scope.worldstates) {
+                if ($scope.worldstates && $scope.criteriaFunction) {
                     updateTable();
                 }
             });
             $scope.$watch('forCriteria', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
                     updateTable();
                 }
             });
 
             $scope.$watch('criteriaFunction', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates) {
+                if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
                     updateTable();
                 }
             },true);

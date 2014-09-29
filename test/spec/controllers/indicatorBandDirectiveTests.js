@@ -377,7 +377,7 @@ describe('IndicatorBandDirective Test Suite', function () {
                 indicatorValue: 0
             });
             scope.$apply();
-            spyOn(scope, '$broadcast').andCallThrough();
+            spyOn(scope, '$broadcast').and.callThrough();
             scope.$broadcast('band-item-removed', {
                 criteriaValue: 10,
                 indicatorValue: 0
@@ -553,7 +553,7 @@ describe('IndicatorBandDirective Test Suite', function () {
                 indicatorValue: 0
             });
             scope.$apply();
-            spyOn(scope, '$broadcast').andCallThrough();
+            spyOn(scope, '$broadcast').and.callThrough();
             scope.$broadcast('band-item-removed', {
                 criteriaValue: 10,
                 indicatorValue: 0

@@ -15,7 +15,9 @@ angular.module(
                 title: 'Delete this criteria function'
             };
             $scope.tooltipAdd = {
-                title: 'Create a new criteria function'
+                normaltitle: 'Create a new criteria function',
+                disabledTitle: 'Can not create criteria function. Select a worldstate first',
+                title:''
             };
             $scope.tooltipSave = {
                 title: 'Save changes'
@@ -29,6 +31,9 @@ angular.module(
 
             $scope.addCriteriaFunction = function () {
                 var i, criteriaFunctions = [];
+                if($scope.listItemsDisabled){
+                    return;
+                }
                 for (i = 0; i < $scope.indicators.length; i++) {
                     criteriaFunctions.push({
                         indicator: $scope.indicators[i].displayName,
@@ -71,9 +76,15 @@ angular.module(
                     $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
                 }
             };
+            
+            $scope.getButtonStyle = function(){
+                return {
+                    'color':$scope.listItemsDisabled ? '#CCC':'#fff'
+                };
+            };
 
             $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
-
+            $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
             $scope.$watchCollection('worldstates', function (newVal, oldVal) {
                 var indicatorGroup, indicatorProp, iccObject, group;
                 if (newVal !== oldVal) {
@@ -98,6 +109,7 @@ angular.module(
                         }
                     }
                     $scope.listItemsDisabled = $scope.indicators && $scope.indicators.length <= 0 ? true : false;
+                    $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
                     if ($scope.listItemsDisaled) {
                         $scope.selectedCriteriaFunctionIndex = -1;
                     }

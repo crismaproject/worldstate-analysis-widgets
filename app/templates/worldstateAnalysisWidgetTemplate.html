@@ -182,15 +182,15 @@
 
                     <div class="input-group ">
                         <div class="input-group-btn " style="display: block" ng-click="persistDecisionStrategies()">
-                            <button
-                                type ="button" 
-                                class="btn btn-success btn-sm">
-                                Persist
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm" >
-                                <i ng-if="!showDsPersistSpinner && !showDsPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
-                                <i ng-if="showDsPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
-                                <i ng-if="showDsPersistDone" class="glyphicon glyphicon-ok"></i>
+                            <button type="button" class="btn btn-success btn-sm" style="min-width: 80px;">
+                                <span style="display:block;float:left">
+                                    <i ng-if="!showDsPersistSpinner && !showDsPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
+                                    <i ng-if="showDsPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
+                                    <i ng-if="showDsPersistDone" class="glyphicon glyphicon-ok"></i>
+                                </span>
+                                <span style="display:block;float:right">
+                                    Persist
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -211,15 +211,15 @@
 
                     <div class="input-group ">
                         <div class="input-group-btn " style="display: block" ng-click="persistCriteriaFunctions()">
-                            <button
-                                type ="button" 
-                                class="btn btn-success btn-sm">
-                                Persist
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm" >
-                                <i ng-if="!showPersistSpinner && !showPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
-                                <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
-                                <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
+                            <button type="button" class="btn btn-success btn-sm" style="min-width: 80px;">
+                                <span style="display:block;float:left">
+                                    <i ng-if="!showPersistSpinner && !showPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
+                                    <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
+                                    <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
+                                </span>
+                                <span style="display:block;float:right">
+                                    Persist
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -227,7 +227,7 @@
 
             </div>
             <div class="panel-body">
-                <criteria-function-manager indicators="indicatorVector"  criteria-functions="criteriaFunctionSets"></criteria-function-manager>
+                <criteria-function-manager worldstates="worldstates"  criteria-functions="criteriaFunctionSets"></criteria-function-manager>
             </div>
         </div>
     </div>

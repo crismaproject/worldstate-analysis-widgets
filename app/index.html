@@ -34,7 +34,7 @@
         <div class="container" ng-controller="eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController">
            <div class="row" style="margin-bottom:20px;">
                 <div class="col-lg-6">
-                    <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" ></catalogue-tree>
+                    <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
                 </div>
                 <div class="col-lg-6">
                     <div class="row">
@@ -47,7 +47,7 @@
                                     <button type="button" 
                                             class="btn btn-default btn-sm"
                                             style="width:80%">
-                                        {{selectedCriteriaFunction.name}}
+                                        {{selectedCriteriaFunction ? selectedCriteriaFunction.name : "Please select a criteria function"}}
                                     </button>
                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                                         <span class="caret"></span>
@@ -70,7 +70,7 @@
                                     <button type="button" 
                                             class="btn btn-default btn-sm"
                                             style="width: 80%">
-                                        {{selectedDecisionStrategy.name}}
+                                        {{selectedDecisionStrategy ? selectedDecisionStrategy.name : "Please select a decision strategy"}}
                                     </button>
                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                                         <span class="caret"></span>
@@ -108,15 +108,15 @@
 
                                         <div class="input-group ">
                                             <div class="input-group-btn " style="display: block" ng-click="persistDecisionStrategies()">
-                                                <button
-                                                    type ="button" 
-                                                    class="btn btn-success btn-sm">
-                                                    Persist
-                                                </button>
-                                                <button type="button" class="btn btn-success btn-sm" >
-                                                    <i ng-if="!showDsPersistSpinner && !showDsPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
-                                                    <i ng-if="showDsPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
-                                                    <i ng-if="showDsPersistDone" class="glyphicon glyphicon-ok"></i>
+                                                <button type="button" class="btn btn-success btn-sm" style="min-width: 80px;">
+                                                    <span style="display:block;float:left">
+                                                        <i ng-if="!showDsPersistSpinner && !showDsPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
+                                                        <i ng-if="showDsPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
+                                                        <i ng-if="showDsPersistDone" class="glyphicon glyphicon-ok"></i>
+                                                    </span>
+                                                    <span style="display:block;float:right">
+                                                        Persist
+                                                    </span>
                                                 </button>
                                             </div>
                                         </div>
@@ -137,15 +137,15 @@
 
                                         <div class="input-group ">
                                             <div class="input-group-btn " style="display: block" ng-click="persistCriteriaFunctions()">
-                                                <button
-                                                    type ="button" 
-                                                    class="btn btn-success btn-sm">
-                                                    Persist
-                                                </button>
-                                                <button type="button" class="btn btn-success btn-sm" >
-                                                    <i ng-if="!showPersistSpinner && !showPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
-                                                    <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
-                                                    <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
+                                                <button type="button" class="btn btn-success btn-sm" style="min-width: 80px">
+                                                    <span style="display:block;float:left">
+                                                        <i ng-if="!showPersistSpinner && !showPersistDone" class="glyphicon glyphicon-floppy-disk"></i>
+                                                        <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
+                                                        <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
+                                                    </span>
+                                                    <span style="display:block;float:right">
+                                                        Persist
+                                                    </span>
                                                 </button>
                                             </div>
                                         </div>
@@ -359,7 +359,7 @@
         <script src="bower_components/es5-shim/es5-shim.js"></script>
         <script src="bower_components/json3/lib/json3.min.js"></script>
         <![endif]-->
-        <script src="bower_components/jquery/jquery.js"></script>
+        <script src="bower_components/jquery/dist/jquery.js"></script>
         <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
         <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
         <script src="bower_components/jquery-knob/js/jquery.knob.js"></script>
@@ -375,7 +375,7 @@
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
         <script src="bower_components/d3/d3.js"></script>
-        <script src="scripts/lib/radar-chart-d3/src/radar-chart.js"></script>
+        <script src="bower_components/radar-chart-d3/src/radar-chart.js"></script>
         <script src="bower_components/nvd3/nv.d3.js"></script>
         <script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
         <script src="bower_components/ngDialog/js/ngDialog.js"></script>
@@ -424,7 +424,8 @@
                                                             'use strict';
                                                             $provide.constant('DEBUG', 'true');
                                                             $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+//                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
                                                         }
                                                     ]
                                                     );</script>
