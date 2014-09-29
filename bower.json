@@ -1,6 +1,6 @@
 {
   "name": "worldstate-analysis-widgets",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "main": [
     "dist/scripts/worldstate-analysis-widget.js",
     "dist/scripts/worldstate-analysis-widget-tpl.js"
@@ -13,9 +13,7 @@
     "test",
     "Gruntfile.js",
     "karma*",
-    "package.json",
-    "images",
-    "styles"
+    "package.json"
   ],
   "dependencies": {
     "angular": "1.2.25",
