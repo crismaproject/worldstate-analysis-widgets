@@ -13,9 +13,7 @@
     "test",
     "Gruntfile.js",
     "karma*",
-    "package.json",
-    "images",
-    "styles"
+    "package.json"
   ],
   "dependencies": {
     "angular": "1.2.25",
