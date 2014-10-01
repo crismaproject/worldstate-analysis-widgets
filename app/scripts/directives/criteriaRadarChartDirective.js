@@ -152,6 +152,8 @@ angular.module(
                             .attr('style', 'display:block;margin: 0 auto;')
                             .node();
 
+                        cfg.w =  width = elem.width ? elem.width() : 200;
+                        cfg.h =  width = elem.width ? elem.width() : 200;
                         RadarChart.draw(divNode, scope.chartData, cfg);
                         if (scope.showLegend) {
                             drawLegend(elem, cfg, scope.legendItems);
