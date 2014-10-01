@@ -16,6 +16,11 @@ angular.module(
                 if (!iccData || !xAxis || !yAxis) {
                     throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):' + iccData + ' , ' + xAxis + ' , ' + yAxis;
                 }
+                
+                if(forCriteria && !(xAxisCF && yAxisCf)){
+                    return;
+                }
+                
                 var firstValueX = 0;
                 for (i = 0; i < iccData.length; i++) {
                     iccItem = iccData[i];
@@ -99,9 +104,6 @@ angular.module(
 
             this.dataChangedWatchCallback = function () {
                 if ($scope.worldstates() && $scope.worldstates().length > 0) {
-                    if(!$scope.criteriaFunction){
-                        return;
-                    }
                     $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates());
                     $scope.iccObject = $scope.iccData[0];
                     if ($scope.xAxis && $scope.yAxis) {
