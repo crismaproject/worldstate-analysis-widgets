@@ -111,16 +111,18 @@ angular.module(
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
-                    criteriaValue: parseFloat($scope.popOverItem.criteriaValue),
-                    indicatorValue: parseFloat($scope.popOverItem.indicatorValue)
+                    criteriaValue: $scope.popOverItem.criteriaValue,
+                    indicatorValue: $scope.popOverItem.indicatorValue
                 });
                 $scope.hidePopover();
                 //this is necessary to avoid poping up the poover for the new created interval
                 event.stopPropagation();
-                $scope.tooltip = {
-                    title: $scope.getTooltipTitle(),
-                    checked: false
-                };
+                $timeout(function(){
+                    $scope.tooltip = {
+                        title: $scope.getTooltipTitle(),
+                        checked: false
+                    };
+                });
             };
             $scope.getTooltipTitle = function () {
                 var title = '';
@@ -132,7 +134,7 @@ angular.module(
                 } else {
                     title += ($scope.previousInterval.criteriaValue || '0') + '% -' + $scope.interval.criteriaValue + '%';
                 }
-                title += 'Indicator Values: ';
+                title += '\n Indicator Values: ';
                 if ($scope.lowerBoundary) {
                     title += '<= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else if ($scope.upperBoundary) {
