@@ -264,22 +264,46 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
 
   $templateCache.put('templates/indicatorBandPopoverContentTemplate.html',
-    "<form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
+    "<form role=\"form\" name=\"form\">\n" +
+    "    <div class=\"form-group\" ng-class=\"{'has-error has-feedback': form.losVal.$error.gpercent}\">\n" +
     "        <label for=\"exampleInputEmail1\">Level of satisfaction</label>\n" +
     "        <input ng-model=\"popOverItem.criteriaValue\"\n" +
     "               ng-disabled=\"lowerBoundary || upperBoundary\"\n" +
+    "               gpercent\n" +
+    "               name=\"losVal\"\n" +
+    "               id=\"losVal\"\n" +
     "               type=\"text\" class=\"form-control\"\n" +
     "               placeholder=\"Level of satisfactory\">\n" +
+    "        <span class=\"glyphicon glyphicon-warning-sign form-control-feedback\"\n" +
+    "              ng-show=\"form.losVal.$error.gpercent\" \n" +
+    "              style=\"line-height: 34px; font-size: 16px;\"\n" +
+    "              data-toggle=\"tooltip\" data-placement=\"left\" title=\"Invalid level of satisfaction. Must be a percent value between 0 and 100.\"\n" +
+    "              >\n" +
+    "        </span>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label for=\"exampleInputPassword1\">Indicator value</label>\n" +
-    "        <input ng-model=\"popOverItem.indicatorValue\" \n" +
+    "    <div class=\"form-group\" ng-class=\"{'has-error has-feedback': form.indicatorVal.$error.gnumber}\">\n" +
+    "        <label class=\"control-label\" for=\"indicatorVal\">Indicator value</label>\n" +
+    "        <input ng-model=\"popOverItem.indicatorValue\"\n" +
+    "               gnumber\n" +
+    "               name=\"indicatorVal\"\n" +
+    "               id=\"indicatorVal\"\n" +
     "               type=\"text\" class=\"form-control\"  \n" +
     "               placeholder=\"Indicator Value\">\n" +
+    "        <span class=\"glyphicon glyphicon-warning-sign form-control-feedback\"\n" +
+    "              ng-show=\"form.indicatorVal.$error.gnumber\" \n" +
+    "              style=\"line-height: 34px; font-size: 16px;\"\n" +
+    "              data-toggle=\"tooltip\" data-placement=\"left\" title=\"Invalid indicator value.\"\n" +
+    "              >\n" +
+    "        </span>\n" +
     "    </div>\n" +
-    "    <button type=\"submit\" class=\"btn btn-default\" ng-click=\"updateInterval($event);\n" +
-    "                $hide()\">Save</button>\n" +
+    "    <button \n" +
+    "        type=\"submit\" \n" +
+    "        class=\"btn btn-default\" \n" +
+    "        ng-disabled=\"form.indicatorVal.$error.gnumber || form.losVal.$error.gpercent\"\n" +
+    "        ng-click=\"updateInterval($event);\n" +
+    "        $hide()\">\n" +
+    "        Save\n" +
+    "    </button>\n" +
     "</form>"
   );
 
@@ -434,24 +458,29 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "    <table ng-hide=\"worldstates.length <= 0\" data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\">\n" +
-    "        <thead>\n" +
-    "            <tr>\n" +
-    "                <th ng-repeat=\"column in columns\" class=\"text-left\" ng-style=\"getCellStyle($index)\">\n" +
-    "                    {{column.title}}\n" +
-    "                </th>\n" +
-    "            </tr>\n" +
-    "        </thead>\n" +
-    "        <tbody>\n" +
-    "            <tr data-ng-repeat=\"row in $data\" ng-class=\"{'info':isGroupRow(row)}\" \n" +
-    "                ng-style=\"getRowStyle($index)\">\n" +
-    "                <td data-ng-repeat=\"col in columns\" ng-style=\"getCellStyle($index)\">\n" +
-    "                    <img ng-if=\"isGroupRow(row) || detailIcons\" ng-src=\"{{row[col.field].icon}}\"/>\n" +
-    "                    {{row[col.field].name}}\n" +
-    "                </td>\n" +
-    "            </tr>\n" +
-    "        </tbody>\n" +
-    "    </table>  \n" +
+    "    <div ng-show=\"forCriteria && !criteriaFunction\" class=\"alert alert-warning\">\n" +
+    "        <strong>Warning: </strong>No criteria function selected.\n" +
+    "    </div>\n" +
+    "    <div ng-hide=\"worldstates.length <= 0 || (forCriteria && !criteriaFunction)\">\n" +
+    "        <table  data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\">\n" +
+    "            <thead>\n" +
+    "                <tr>\n" +
+    "                    <th ng-repeat=\"column in columns\" class=\"text-left\" ng-style=\"getCellStyle($index)\">\n" +
+    "                        {{column.title}}\n" +
+    "                    </th>\n" +
+    "                </tr>\n" +
+    "            </thead>\n" +
+    "            <tbody>\n" +
+    "                <tr data-ng-repeat=\"row in $data\" ng-class=\"{'info':isGroupRow(row)}\" \n" +
+    "                    ng-style=\"getRowStyle($index)\">\n" +
+    "                    <td data-ng-repeat=\"col in columns\" ng-style=\"getCellStyle($index)\">\n" +
+    "                        <img ng-if=\"isGroupRow(row) || detailIcons\" ng-src=\"{{row[col.field].icon}}\"/>\n" +
+    "                        {{row[col.field].name}}\n" +
+    "                    </td>\n" +
+    "                </tr>\n" +
+    "            </tbody>\n" +
+    "        </table>  \n" +
+    "    </div>\n" +
     "</div>"
   );
 
@@ -525,32 +554,39 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            <strong>Warning: </strong>There are no worldstates selected.\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "    <div  ng-hide=\"!(worldstates() && worldstates().length>0)\" class=\"row\">\n" +
+    "    <div  ng-hide=\"!(worldstates() && worldstates().length > 0)\" class=\"row\">\n" +
     "        <!--two dropdowns for x and y axis-->\n" +
     "        <div style=\"float: right;margin-bottom: 10px;\">\n" +
     "            <indicator-criteria-axis-chooser is-x-axis=\"false\" icc-object=\"iccObject\" selected-axis=\"yAxis\"></indicator-criteria-axis-chooser>\n" +
     "            <indicator-criteria-axis-chooser is-x-axis=\"true\" icc-object=\"iccObject\" selected-axis=\"xAxis\"></indicator-criteria-axis-chooser>\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "    <div  ng-hide=\"!(worldstates() && worldstates().length>0)\" class=\"row\"> \n" +
+    "    <div  ng-hide=\"!(worldstates() && worldstates().length > 0)\" class=\"row\"> \n" +
     "        <!--chart-->\n" +
-    "        <div class=\"col-lg-12\" nvd3-scatter-chart\n" +
-    "             data=\"chartdata\"\n" +
-    "             showLegend=\"true\"\n" +
-    "             interactive=\"true\"\n" +
-    "             tooltips=\"true\"\n" +
-    "             sizerange=\"[80,80]\"\n" +
-    "             zscale=\"zScale\"\n" +
-    "             showDistX=\"true\"\n" +
-    "             showDistY=\"true\"\n" +
-    "             xaxislabel=\"{{xAxis.name}}\"\n" +
-    "             yaxislabel=\"{{yAxis.name}}\"\n" +
-    "             margin='{left:90,top:0,bottom:50,right:50}'\n" +
-    "             yAxisTickFormat=\"yAxisTickFormatFunction()\"\n" +
-    "             xAxisTickFormat=\"xAxisTickFormatFunction()\"\n" +
-    "             height=\"{{chartHeight}}\"\n" +
-    "             >\n" +
-    "            <svg></svg>\n" +
+    "        <div class=\"col-lg-12\" ng-hide=\"forCriteria && !(yAxisCriteriaFunction && xAxisCriteriaFunction)\">\n" +
+    "            <div nvd3-scatter-chart\n" +
+    "                 data=\"chartdata\"\n" +
+    "                 showLegend=\"true\"\n" +
+    "                 interactive=\"true\"\n" +
+    "                 tooltips=\"true\"\n" +
+    "                 sizerange=\"[80,80]\"\n" +
+    "                 zscale=\"zScale\"\n" +
+    "                 showDistX=\"true\"\n" +
+    "                 showDistY=\"true\"\n" +
+    "                 xaxislabel=\"{{xAxis.name}}\"\n" +
+    "                 yaxislabel=\"{{yAxis.name}}\"\n" +
+    "                 margin='{left:90,top:0,bottom:50,right:50}'\n" +
+    "                 yAxisTickFormat=\"yAxisTickFormatFunction()\"\n" +
+    "                 xAxisTickFormat=\"xAxisTickFormatFunction()\"\n" +
+    "                 height=\"{{chartHeight}}\"\n" +
+    "                 >\n" +
+    "                <svg></svg>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"col-lg-12\" ng-hide=\"!forCriteria || (yAxisCriteriaFunction && xAxisCriteriaFunction)\" >\n" +
+    "            <div class=\"alert alert-warning\">\n" +
+    "                <strong>Warning: </strong>No criteria function selected.\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</div>"
@@ -800,8 +836,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/worldstateRankingTableTemplate.html',
     "<div id=\"worldstateRankingTable\" style=\"overflow-x: auto\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0 && criteriaFunction && decisionStrategy\" class=\"alert alert-warning\">\n" +
+    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
+    "    </div>\n" +
+    "    <div ng-hide=\"criteriaFunction || worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
+    "        <strong>Warning: </strong>No criteria function selected.\n" +
+    "    </div>\n" +
+    "    <div ng-hide=\"decisionStrategy|| worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
+    "        <strong>Warning: </strong>No decision strategy elected.\n" +
     "    </div>\n" +
     "    <table ng-hide=\"worldstates.length <= 0 || !criteriaFunction || !decisionStrategy\" \n" +
     "           ng-table=\"tableParams\" \n" +

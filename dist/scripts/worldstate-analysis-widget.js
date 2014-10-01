@@ -205,13 +205,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers', [
                 prop = keys_inner[k_inner];
                 unit = $scope.forCriteria ? '% LoS' : group[prop].unit;
                 if (prop !== 'displayName' && prop !== 'iconResource') {
-                  for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
-                    if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
-                      criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
-                      break;
-                    }
-                  }
                   if ($scope.forCriteria) {
+                    for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
+                      if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
+                        criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
+                        break;
+                      }
+                    }
                     val = ccs.calculateCriteria(group[prop].value, criteriaFunction);
                   } else {
                     val = group[prop].value;
@@ -256,12 +256,18 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers', [
       return index > 0 ? dataCellStyle : '';
     };
     $scope.$watchCollection('worldstates', function () {
-      if ($scope.worldstates && $scope.criteriaFunction) {
+      if ($scope.worldstates) {
+        if ($scope.forCriteria && !$scope.criteriaFunction) {
+          return;
+        }
         updateTable();
       }
     });
     $scope.$watch('forCriteria', function (newVal, oldVal) {
-      if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
+      if (newVal !== oldVal && $scope.worldstates) {
+        if ($scope.forCriteria && !$scope.criteriaFunction) {
+          return;
+        }
         updateTable();
       }
     });
@@ -888,8 +894,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController', [
   '$scope',
+  '$timeout',
   'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-  function ($scope, ccs) {
+  function ($scope, $timeout, ccs) {
     'use strict';
     var initData, criteriaSortFunction;
     initData = {
@@ -1050,13 +1057,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     $scope.$on('tooltip.show.before', function () {
       $scope.popOverItem.criteriaValue = $scope.getCriteriaSuggestion();
-      $scope.popOverItem.indicatorValue = $filter('number')($scope.interval.indicatorValue || 0);
+      $scope.popOverItem.indicatorValue = $scope.interval.indicatorValue || 0;
     });
     $scope.minWidth = 80;
     var indicatorVal = $scope.interval ? $scope.interval.indicatorValue || 0 : 0;
     $scope.popOverItem = {
       criteriaValue: $scope.getCriteriaSuggestion(),
-      indicatorValue: $filter('number')(indicatorVal)
+      indicatorValue: indicatorVal
     };
     $scope.getPercent = function () {
       var sumBefore = 0;
@@ -1093,15 +1100,25 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     $scope.del = function (interval) {
       $scope.$emit('band-item-removed', interval);
+      $scope.tooltip = {
+        title: $scope.getTooltipTitle(),
+        checked: false
+      };
     };
     $scope.updateInterval = function (event) {
       $scope.onIntervalChanged({
-        criteriaValue: parseFloat($scope.popOverItem.criteriaValue),
-        indicatorValue: parseFloat($scope.popOverItem.indicatorValue)
+        criteriaValue: $scope.popOverItem.criteriaValue,
+        indicatorValue: $scope.popOverItem.indicatorValue
       });
       $scope.hidePopover();
       //this is necessary to avoid poping up the poover for the new created interval
       event.stopPropagation();
+      $timeout(function () {
+        $scope.tooltip = {
+          title: $scope.getTooltipTitle(),
+          checked: false
+        };
+      });
     };
     $scope.getTooltipTitle = function () {
       var title = '';
@@ -1113,7 +1130,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
       } else {
         title += ($scope.previousInterval.criteriaValue || '0') + '% -' + $scope.interval.criteriaValue + '%';
       }
-      title += 'Indicator Values: ';
+      title += '\n Indicator Values: ';
       if ($scope.lowerBoundary) {
         title += '<= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
       } else if ($scope.upperBoundary) {
@@ -1488,6 +1505,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
       if (!iccData || !xAxis || !yAxis) {
         throw 'Invalid configuration. Can no determine chart data for (iccData, xAxis, yaxis):' + iccData + ' , ' + xAxis + ' , ' + yAxis;
       }
+      if (forCriteria && !(xAxisCF && yAxisCf)) {
+        return;
+      }
       var firstValueX = 0;
       for (i = 0; i < iccData.length; i++) {
         iccItem = iccData[i];
@@ -1562,9 +1582,6 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     this.dataChangedWatchCallback = function () {
       if ($scope.worldstates() && $scope.worldstates().length > 0) {
-        if (!$scope.criteriaFunction) {
-          return;
-        }
         $scope.iccData = WorldstateService.utils.stripIccData($scope.worldstates());
         $scope.iccObject = $scope.iccData[0];
         if ($scope.xAxis && $scope.yAxis) {
@@ -2089,6 +2106,8 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('crit
           scope.chartData = chartDataModel[0];
           scope.legendItems = chartDataModel[1];
           var divNode = d3.select(elem[0]).append('div').attr('style', 'display:block;margin: 0 auto;').node();
+          cfg.w = width = elem.width ? elem.width() : 200;
+          cfg.h = width = elem.width ? elem.width() : 200;
           RadarChart.draw(divNode, scope.chartData, cfg);
           if (scope.showLegend) {
             drawLegend(elem, cfg, scope.legendItems);
@@ -2194,6 +2213,66 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('indi
         scope.hidePopover = function () {
           popover.$promise.then(popover.hide);
         };
+      }
+    };
+  }
+]).directive().directive('gnumber', [
+  '$filter',
+  function ($filter) {
+    'use strict';
+    return {
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ctrl) {
+        // the view value is formatted with angular number filter
+        // the local is en_us, so it is sufficient to remove all ,
+        ctrl.$parsers.unshift(function (viewValue) {
+          var number;
+          if (!viewValue.match(/^[\d.,]*$/)) {
+            ctrl.$setValidity('gnumber', false);
+            return undefined;
+          }
+          number = parseFloat(viewValue.replace(/,/g, ''));
+          if (!isNaN(number)) {
+            ctrl.$setValidity('gnumber', true);
+            return number;
+          } else {
+            ctrl.$setValidity('gnumber', false);
+            return undefined;
+          }
+        });
+        ctrl.$formatters.unshift(function (value) {
+          return $filter('number')(value);
+        });
+      }
+    };
+  }
+]).directive('gpercent', [
+  '$filter',
+  function ($filter) {
+    'use strict';
+    return {
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ctrl) {
+        // the view value is formatted with angular number filter
+        // the local is en_us, so it is sufficient to remove all ,
+        ctrl.$parsers.unshift(function (viewValue) {
+          var number;
+          if (!viewValue.match(/^[\d.,]*$/)) {
+            ctrl.$setValidity('gpercent', false);
+            return undefined;
+          }
+          number = parseFloat(viewValue.replace(/,/g, ''));
+          if (!isNaN(number) && number >= 0 && number <= 100) {
+            ctrl.$setValidity('gpercent', true);
+            return number;
+          } else {
+            ctrl.$setValidity('gpercent', false);
+            return undefined;
+          }
+        });
+        ctrl.$formatters.unshift(function (value) {
+          return $filter('number')(value);
+        });
       }
     };
   }
