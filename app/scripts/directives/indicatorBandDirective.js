@@ -64,10 +64,15 @@ angular.module(
         }
     ]
     ).directive(
+).directive(
+
     'gnumber',
     [
         '$filter',
         function ($filter) {
+            'use strict';
+            
+
             return {
                 require: 'ngModel',
                 link: function (scope, elm, attrs, ctrl) {
@@ -108,6 +113,9 @@ angular.module(
     [
         '$filter',
         function ($filter) {
+            'use strict';
+            
+
             return {
                 require: 'ngModel',
                 link: function (scope, elm, attrs, ctrl) {
@@ -142,4 +150,4 @@ angular.module(
             };
         }
     ]
-);
+    ]
