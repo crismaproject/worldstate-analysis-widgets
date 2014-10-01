@@ -59,13 +59,13 @@ angular.module(
             };
             $scope.$on('tooltip.show.before', function () {
                 $scope.popOverItem.criteriaValue = $scope.getCriteriaSuggestion();
-                $scope.popOverItem.indicatorValue= $filter('number')($scope.interval.indicatorValue || 0);
+                $scope.popOverItem.indicatorValue= $scope.interval.indicatorValue || 0;
             });
             $scope.minWidth = 80;
             var indicatorVal = $scope.interval ? $scope.interval.indicatorValue || 0 : 0;
             $scope.popOverItem = {
                 criteriaValue: $scope.getCriteriaSuggestion(),
-                indicatorValue: $filter('number')(indicatorVal)
+                indicatorValue: indicatorVal
             };
             $scope.getPercent = function () {
                 var sumBefore = 0;
@@ -104,15 +104,25 @@ angular.module(
             };
             $scope.del = function (interval) {
                 $scope.$emit('band-item-removed', interval);
+                $scope.tooltip = {
+                    title: $scope.getTooltipTitle(),
+                    checked: false
+                };
             };
             $scope.updateInterval = function (event) {
                 $scope.onIntervalChanged({
-                    criteriaValue: parseFloat($scope.popOverItem.criteriaValue),
-                    indicatorValue: parseFloat($scope.popOverItem.indicatorValue)
+                    criteriaValue: $scope.popOverItem.criteriaValue,
+                    indicatorValue: $scope.popOverItem.indicatorValue
                 });
                 $scope.hidePopover();
                 //this is necessary to avoid poping up the poover for the new created interval
                 event.stopPropagation();
+                $timeout(function(){
+                    $scope.tooltip = {
+                        title: $scope.getTooltipTitle(),
+                        checked: false
+                    };
+                });
             };
             $scope.getTooltipTitle = function () {
                 var title = '';
@@ -124,7 +134,7 @@ angular.module(
                 } else {
                     title += ($scope.previousInterval.criteriaValue || '0') + '% -' + $scope.interval.criteriaValue + '%';
                 }
-                title += 'Indicator Values: ';
+                title += '\n Indicator Values: ';
                 if ($scope.lowerBoundary) {
                     title += '<= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else if ($scope.upperBoundary) {

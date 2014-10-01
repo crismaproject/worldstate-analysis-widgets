@@ -13,7 +13,7 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'ngTableParams',
         'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-        function ($scope, $filter, WorldstateService, NgTableParams,ccs) {
+        function ($scope, $filter, WorldstateService, NgTableParams, ccs) {
             'use strict';
             var getOrderedProperties = function (obj) {
                 var p, keys;
@@ -29,9 +29,9 @@ angular.module(
                 updateTable = function () {
                     var field, group, i, iccData, j, k_outer, k_inner, keys_outer, keys_inner, prop, val,
                         criteriaFunction, k, unit, indicatorVector;
-                    
+
                     indicatorVector = WorldstateService.utils.stripIccData($scope.worldstates);
-                  
+
                     if (!(!$scope.worldstates || $scope.worldstates.length === 0)) {
                         $scope.rows = [];
                         $scope.columns = [{
@@ -81,15 +81,15 @@ angular.module(
                                     prop = keys_inner[k_inner];
                                     unit = $scope.forCriteria ? '% LoS' : group[prop].unit;
                                     if (prop !== 'displayName' && prop !== 'iconResource') {
-                                        for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
-                                            if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
-                                                criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
-                                                break;
+                                        if ($scope.forCriteria) {
+                                            for (k = 0; k < $scope.criteriaFunction.criteriaFunctions.length; k++) {
+                                                if ($scope.criteriaFunction.criteriaFunctions[k].indicator === group[prop].displayName) {
+                                                    criteriaFunction = $scope.criteriaFunction.criteriaFunctions[k];
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if($scope.forCriteria){
-                                            val = ccs.calculateCriteria(group[prop].value,criteriaFunction);
-                                        }else{
+                                            val = ccs.calculateCriteria(group[prop].value, criteriaFunction);
+                                        } else {
                                             val = group[prop].value;
                                         }
                                         if (val % 1 !== 0) {
@@ -141,12 +141,18 @@ angular.module(
             };
 
             $scope.$watchCollection('worldstates', function () {
-                if ($scope.worldstates && $scope.criteriaFunction) {
+                if ($scope.worldstates) {
+                    if ($scope.forCriteria && !$scope.criteriaFunction) {
+                        return;
+                    }
                     updateTable();
                 }
             });
             $scope.$watch('forCriteria', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
+                if (newVal !== oldVal && $scope.worldstates) {
+                    if ($scope.forCriteria && !$scope.criteriaFunction) {
+                        return;
+                    }
                     updateTable();
                 }
             });
@@ -155,7 +161,7 @@ angular.module(
                 if (newVal !== oldVal && $scope.worldstates && $scope.criteriaFunction) {
                     updateTable();
                 }
-            },true);
+            }, true);
         }
     ]
     );

@@ -4,8 +4,9 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController',
     [
         '$scope',
+        '$timeout',
         'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-        function ($scope, ccs) {
+        function ($scope, $timeout, ccs) {
             'use strict';
             var initData, criteriaSortFunction;
             initData = {
