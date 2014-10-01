@@ -150,4 +150,4 @@ angular.module(
             };
         }
     ]
-    ]
+);
