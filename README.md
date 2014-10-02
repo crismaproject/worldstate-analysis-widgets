@@ -16,7 +16,7 @@ Simply pull in the libraries and all the dependencies via [bower](http://bower.i
 There is a number of directives that are useful for the different parts of the worldstate analysis. Currently the best way to get a grip on the usage, see the <code>index.html</code> of this repo. Pull in and wire toghether the directives that you want to use in your application accordingly.
 
 
-However, this will only work correctly if you provide info where to finde the ICMM instance to use:
+However, this will only work correctly if you provide info where to find the ICMM instance to use:
 
 ```javascript
 angular.module(
@@ -36,7 +36,7 @@ angular.module(
 
 ```
 
-## demo
+## Demo
 Simply checkout the project and put the app folder in your favourite web server, or even more simple, use grunt to fire up a web server for you
 
 ```sh
