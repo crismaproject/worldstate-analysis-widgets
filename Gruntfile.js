@@ -23,7 +23,7 @@ module.exports = function (grunt) {
                 files: {
 //                    'po/worldstateRankingTable.pot': ['app/scripts/controllers/worldstateRankingTableDirectiveController.js','app/templates/worldstateRankingTableTemplate.html'],
 //                    'po/index.pot': ['app/index.html'],
-                    'po/*.pot': ['app/**/*.html','app/scripts/controllers/*.js','app/scripts/directives/*.js']
+                    'po/message_catalogue.pot': ['app/**/*.html','app/scripts/controllers/*.js','app/scripts/directives/*.js']
                 }
             }
         }, 
