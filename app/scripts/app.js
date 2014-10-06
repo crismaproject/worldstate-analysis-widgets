@@ -9,6 +9,8 @@ angular.module(
         'mgcrea.ngStrap',
         'gettext'
     ]
-    ).run(function (I18nizer) {
-        I18nizer.setLocale('en');
+).run(function (I18nizer) {
+    'use strict';
+    
+    I18nizer.setLocale('en');
 });
