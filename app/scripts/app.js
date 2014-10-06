@@ -10,7 +10,7 @@ angular.module(
         'gettext'
     ]
 ).run(function (I18nizer) {
-    'use strict';
-    
-    I18nizer.setLocale('en');
-});
+        'use strict';
+        I18nizer.setLocale('en');
+    }
+);

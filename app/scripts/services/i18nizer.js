@@ -13,7 +13,7 @@ angular.module(
             setLocale = function (loc) {
 //                gettextCatalog.debug = true;
                 gettextCatalog.setCurrentLanguage(loc);
-                gettextCatalog.loadRemote("i18n/" + loc + ".json");
+                gettextCatalog.loadRemote('i18n/' + loc + '.json');
                 locale = loc;
             };
 
