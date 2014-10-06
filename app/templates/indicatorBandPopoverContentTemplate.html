@@ -1,32 +1,32 @@
 <form role="form" name="form">
     <div class="form-group" ng-class="{'has-error has-feedback': form.losVal.$error.gpercent}">
-        <label for="exampleInputEmail1">Level of satisfaction</label>
+        <label for="exampleInputEmail1" translate>Level of satisfaction</label>
         <input ng-model="popOverItem.criteriaValue"
                ng-disabled="lowerBoundary || upperBoundary"
                gpercent
                name="losVal"
                id="losVal"
                type="text" class="form-control"
-               placeholder="Level of satisfactory">
+               placeholder="{{'Level of satisfactory'|translate}}">
         <span class="glyphicon glyphicon-warning-sign form-control-feedback"
               ng-show="form.losVal.$error.gpercent" 
               style="line-height: 34px; font-size: 16px;"
-              data-toggle="tooltip" data-placement="left" title="Invalid level of satisfaction. Must be a percent value between 0 and 100."
+              data-toggle="tooltip" data-placement="left" title="{{'Invalid level of satisfaction. Must be a percent value between 0 and 100.'|translate}}"
               >
         </span>
     </div>
     <div class="form-group" ng-class="{'has-error has-feedback': form.indicatorVal.$error.gnumber}">
-        <label class="control-label" for="indicatorVal">Indicator value</label>
+        <label class="control-label" for="indicatorVal" translate>Indicator value</label>
         <input ng-model="popOverItem.indicatorValue"
                gnumber
                name="indicatorVal"
                id="indicatorVal"
                type="text" class="form-control"  
-               placeholder="Indicator Value">
+               placeholder="{{'Indicator Value'|translate}}">
         <span class="glyphicon glyphicon-warning-sign form-control-feedback"
               ng-show="form.indicatorVal.$error.gnumber" 
               style="line-height: 34px; font-size: 16px;"
-              data-toggle="tooltip" data-placement="left" title="Invalid indicator value."
+              data-toggle="tooltip" data-placement="left" title="{{'Invalid indicator value.'|translate}}"
               >
         </span>
     </div>
@@ -35,7 +35,7 @@
         class="btn btn-default" 
         ng-disabled="form.indicatorVal.$error.gnumber || form.losVal.$error.gpercent"
         ng-click="updateInterval($event);
-        $hide()">
+        $hide()" translate>
         Save
     </button>
 </form>

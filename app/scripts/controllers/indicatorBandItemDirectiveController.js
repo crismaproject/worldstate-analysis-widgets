@@ -7,7 +7,8 @@ angular.module(
         '$filter',
         '$element',
         '$timeout',
-        function ($scope, $filter, $element, $timeout) {
+        'gettextCatalog',
+        function ($scope, $filter, $element, $timeout, gettextCatalog) {
             'use strict';
             $scope.actualHeightExceeded = false;
             $scope.getElementHeight = function () {
@@ -126,7 +127,7 @@ angular.module(
             };
             $scope.getTooltipTitle = function () {
                 var title = '';
-                title += 'Criteria: ';
+                title += gettextCatalog.getString('Criteria')+': ';
                 if ($scope.lowerBoundary) {
                     title += '0%';
                 } else if ($scope.upperBoundary) {
@@ -134,7 +135,7 @@ angular.module(
                 } else {
                     title += ($scope.previousInterval.criteriaValue || '0') + '% -' + $scope.interval.criteriaValue + '%';
                 }
-                title += '\n Indicator Values: ';
+                title += '\n ' + gettextCatalog.getString('Indicator Values') + ': ';
                 if ($scope.lowerBoundary) {
                     title += '<= ' + ($scope.interval ? $scope.interval.indicatorValue || 0 : 0);
                 } else if ($scope.upperBoundary) {

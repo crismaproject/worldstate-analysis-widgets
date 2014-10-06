@@ -1,9 +1,9 @@
 <div id="indicatorCriteriaTable">
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
-        <strong>Warning: </strong>There are no worldstates selected.
+        <strong translate>Warning</strong>: {{'There are no worldstates selected.'|translate}}
     </div>
     <div ng-show="forCriteria && !criteriaFunction" class="alert alert-warning">
-        <strong>Warning: </strong>No criteria function selected.
+        <strong translate>Warning</strong>: {{'No criteria function selected.'|translate}}
     </div>
     <div ng-hide="worldstates.length <= 0 || (forCriteria && !criteriaFunction)">
         <table  data-ng-table="tableParams" class="table" template-pagination="templates/nopager.html">

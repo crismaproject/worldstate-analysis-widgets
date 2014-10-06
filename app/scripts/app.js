@@ -6,6 +6,9 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.directives',
         'eu.crismaproject.worldstateAnalysis.services',
         'de.cismet.crisma.widgets.worldstateTreeWidget',
-        'mgcrea.ngStrap'
+        'mgcrea.ngStrap',
+        'gettext'
     ]
-);
+    ).run(function (I18nizer) {
+        I18nizer.setLocale('en');
+});

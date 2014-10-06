@@ -23,7 +23,8 @@ angular.module(
     'indicatorBandItem',
     [
         '$popover',
-        function ($popover) {
+        'gettextCatalog',
+        function ($popover, gettextCatalog) {
             'use strict';
             var scope;
             scope = {
@@ -45,7 +46,7 @@ angular.module(
                 link: function (scope, elem, attrs) {
                     var popover = $popover(elem.find('#popover-target'), {
                         scope: scope,
-                        title: attrs.title || 'Create a new interval',
+                        title: attrs.title || gettextCatalog.getString('Create a new interval'),
                         template: 'templates/indicatorBandPopoverTemplate.html',
                         contentTemplate: 'templates/indicatorBandPopoverContentTemplate.html',
                         placement: 'bottom',

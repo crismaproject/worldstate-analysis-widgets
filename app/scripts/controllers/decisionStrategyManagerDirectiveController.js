@@ -6,27 +6,28 @@ angular.module(
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
         'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
-        function ($scope, Worldstates, AnalysisService) {
+        'gettextCatalog',
+        function ($scope, Worldstates, AnalysisService, gettextCatalog) {
             'use strict';
             $scope.editable = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedDecisionStrategyIndex = -1;
             $scope.tooltipDelete = {
-                title: 'Delete this decision strategy'
+                title: gettextCatalog.getString('Delete this decision strategy')
             };
             $scope.tooltipAdd = {
-                normaltitle: 'Create a new decision strategy',
-                disabledTitle: 'Can not create Decision Strategy. Select a worldstate first',
+                normaltitle: gettextCatalog.getString('Create a new decision strategy'),
+                disabledTitle: gettextCatalog.getString('Can not create Decision Strategy. Select a worldstate first'),
                 title:''
             };
             $scope.tooltipSave = {
-                title: 'Save changes'
+                title: gettextCatalog.getString('Save changes')
             };
             $scope.tooltipRename = {
-                title: 'Rename decision strategy'
+                title: gettextCatalog.getString('Rename decision strategy')
             };
             $scope.tooltipRenameDone = {
-                title: 'Done'
+                title: gettextCatalog.getString('Done')
             };
 
             $scope.addDecisionStrategy = function () {
@@ -42,7 +43,7 @@ angular.module(
                     });
                 }
                 $scope.decisionStrategies.push({
-                    name: 'Decision Strategy ' + ($scope.decisionStrategies.length + 1),
+                    name: gettextCatalog.getString('Decision Strategy') + ' ' + ($scope.decisionStrategies.length + 1),
                     criteriaEmphases:criteriaEmphases,
                     satisfactionEmphasis:AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
                 });

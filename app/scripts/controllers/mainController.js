@@ -13,12 +13,14 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'localStorageService',
         '$timeout',
-        function ($scope, Nodes, Worldstates, localStorageService, $timeout) {
+        'I18nizer',
+        function ($scope, Nodes, Worldstates, localStorageService, $timeout, i18nizer) {
             'use strict';
 
             var createChartModels, getIndicators;
             $scope.forCriteriaTable = false;
             $scope.chartModels = [];
+            $scope.i18nizer=i18nizer;
 
             createChartModels = function () {
                 var j, modelArr;

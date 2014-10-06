@@ -5,28 +5,29 @@ angular.module(
     [
         '$scope',
         'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Worldstates) {
+        'gettextCatalog',
+        function ($scope, Worldstates, gettextCatalog) {
             'use strict';
             $scope.editable = [];
             $scope.indicators = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedCriteriaFunctionIndex = -1;
             $scope.tooltipDelete = {
-                title: 'Delete this criteria function'
+                title: gettextCatalog.getString('Delete this criteria function')
             };
             $scope.tooltipAdd = {
-                normaltitle: 'Create a new criteria function',
-                disabledTitle: 'Can not create criteria function. Select a worldstate first',
+                normaltitle: gettextCatalog.getString('Create a new criteria function'),
+                disabledTitle: gettextCatalog.getString('Can not create criteria function. Select a worldstate first'),
                 title:''
             };
             $scope.tooltipSave = {
-                title: 'Save changes'
+                title: gettextCatalog.getString('Save changes')
             };
             $scope.tooltipRename = {
-                title: 'Rename criteria function'
+                title: gettextCatalog.getString('Rename criteria function')
             };
             $scope.tooltipRenameDone = {
-                title: 'Done'
+                title: gettextCatalog.getString('Done')
             };
 
             $scope.addCriteriaFunction = function () {
@@ -49,7 +50,7 @@ angular.module(
                     });
                 }
                 $scope.criteriaFunctionSet.push({
-                    name: 'Criteria function ' + ($scope.criteriaFunctionSet.length + 1),
+                    name: gettextCatalog.getString('Criteria function') + ' ' + ($scope.criteriaFunctionSet.length + 1),
                     criteriaFunctions: criteriaFunctions
                 });
                 $scope.editable.push(false);

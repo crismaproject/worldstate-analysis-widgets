@@ -4,13 +4,14 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaAxisChooserDirectiveController',
     [
         '$scope',
-        function ($scope) {
+        'gettextCatalog',
+        function ($scope, gettextCatalog) {
             'use strict';
 
             var getAxisProperties, xAxis, defaultAxis;
             xAxis = $scope.isXAxis === 'true';
             defaultAxis = {
-                name: xAxis ? 'Select a x-axis' : 'Select a y-axis'
+                name: xAxis ? gettextCatalog.getString('Select a x-axis') : gettextCatalog.getString('Select a y-axis')
             };
             getAxisProperties = function (iccData) {
                 var group, axesGroup, prop, res = [];

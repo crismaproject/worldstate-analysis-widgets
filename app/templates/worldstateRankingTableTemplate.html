@@ -1,12 +1,12 @@
 <div id="worldstateRankingTable" style="overflow-x: auto">
     <div ng-hide="worldstates.length > 0" class="alert alert-warning">
-        <strong>Warning: </strong>There are no worldstates selected.
+        <strong translate>Warning </strong>: {{'There are no worldstates selected.'|translate}}
     </div>
     <div ng-hide="criteriaFunction || worldstates.length <= 0" class="alert alert-warning">
-        <strong>Warning: </strong>No criteria function selected.
+        <strong translate>Warning</strong>:{{'No criteria function selected.'|translate}}
     </div>
     <div ng-hide="decisionStrategy|| worldstates.length <= 0" class="alert alert-warning">
-        <strong>Warning: </strong>No decision strategy elected.
+        <strong translate>Warning</strong>:{{'No decision strategy selected.'|translate}}
     </div>
     <table ng-hide="worldstates.length <= 0 || !criteriaFunction || !decisionStrategy" 
            ng-table="tableParams" 

@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading" style=" white-space: nowrap;
          overflow: hidden;
-         text-overflow: ellipsis;">
+         text-overflow: ellipsis;" translate>
         Level of satisfaction emphasis {{model.lse}}
     </div>
     <div class="panel-body" >
@@ -11,37 +11,37 @@
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="2">
-                        only positive
+                        {{'only positive'|translate}}
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="1">
-                        over-emphasise positives
+                        {{'over-emphasise positives'|translate}}
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="0" checked="true">
-                        neutral
+                        {{'neutral'|translate}}
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse"  value="-1">
-                        over-emphasise negatives
+                        {{'over-emphasise negatives'|translate}}
                     </label>
                 </div>
                 <div class="radio">
                     <label>
                         <input type="radio" ng-model="model.lse" value="-2">
-                        only negative
+                        {{'only negative'|translate}}
                     </label>
                 </div>
             </form>
         </div>
         <div ng-if="expertMode">
-            <div class="alert alert-warning" role="alert">Expert Mode not yet implemented!</div>    
+            <div class="alert alert-warning" role="alert" translate>Expert Mode not yet implemented!</div>    
         </div>
     </div>
 </div>

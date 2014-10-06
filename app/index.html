@@ -32,7 +32,37 @@
 
         <!-- Add your site or application content here -->
         <div class="container" ng-controller="eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController">
-           <div class="row" style="margin-bottom:20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="dropdown pull-right" >
+                        <button class="btn btn-default dropdown-toggle" 
+                                type="button" 
+                                data-toggle="dropdown">
+                            {{"Choose Language" | translate}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a ng-click="i18nizer.setLocale('en')">
+                                    <i ng-show="i18nizer.getLocale() === 'en'" class="glyphicon glyphicon-ok-circle"></i> 
+                                    <span ng-style="{
+                                                        'padding-left'
+                                                        : i18nizer.getLocale() === 'en' ? '0px': '19px'}" translate>Englisch</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a ng-click="i18nizer.setLocale('de')">
+                                    <i ng-show="i18nizer.getLocale() === 'de'" class="glyphicon glyphicon-ok-circle"></i> 
+                                    <span ng-style="{
+                                                        'padding-left'
+                                                        : i18nizer.getLocale() === 'de' ? '0px': '19px'}" translate>German</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom:20px;">
                 <div class="col-lg-6">
                     <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
                 </div>
@@ -40,14 +70,19 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="row">
-                                <label>Criteria function</label>        
+                                <label translate>Criteria function</label>        
                             </div>
                             <div class="row">
                                 <div class="btn-group" style="width:100%">
                                     <button type="button" 
                                             class="btn btn-default btn-sm"
                                             style="width:80%">
-                                        {{selectedCriteriaFunction ? selectedCriteriaFunction.name : "Please select a criteria function"}}
+                                        <span ng-if="selectedCriteriaFunction">
+                                            selectedCriteriaFunction.name 
+                                        </span>
+                                        <span ng-if="!selectedCriteriaFunction">
+                                            {{"Please select a criteria function"| translate }}
+                                        </span>
                                     </button>
                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                                         <span class="caret"></span>
@@ -63,14 +98,19 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="row">
-                                <label>Decision strategy</label>        
+                                <label translate>Decision strategy</label>        
                             </div>
                             <div class="row">
                                 <div class="btn-group" style="width: 100%">
                                     <button type="button" 
                                             class="btn btn-default btn-sm"
                                             style="width: 80%">
-                                        {{selectedDecisionStrategy ? selectedDecisionStrategy.name : "Please select a decision strategy"}}
+                                        <span ng-if="selectedDecisionStrategy">
+                                            {{selectedDecisionStrategy.name}} 
+                                        </span>
+                                        <span ng-if="!selectedDecisionStrategy">
+                                            {{"Please select a decision strategy"| translate}}
+                                        </span>
                                     </button>
                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                                         <span class="caret"></span>
@@ -87,11 +127,11 @@
                     </div>
                 </div>
             </div>
- 
+
             <div class="row">
                 <ul class="nav nav-tabs" role="tablist" id="myTab">
-                    <li class="active"><a href="#home" role="tab" data-toggle="tab">Configure analysis</a></li>
-                    <li><a href="#profile" role="tab" data-toggle="tab">Analysis</a></li>
+                    <li class="active"><a href="#home" role="tab" data-toggle="tab" translate>Configure analysis</a></li>
+                    <li><a href="#profile" role="tab" data-toggle="tab" translate>Analysis</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade in active" id="home" style="border-left: 1px solid #ddd;
@@ -103,7 +143,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" style="display:table;width:100%">
                                     <h3 style="display:table-cell;vertical-align: middle
-                                        " class="panel-title">Decision strategies</h3>
+                                        " class="panel-title" translate>Decision strategies</h3>
                                     <div class="pull-right">
 
                                         <div class="input-group ">
@@ -114,7 +154,7 @@
                                                         <i ng-if="showDsPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
                                                         <i ng-if="showDsPersistDone" class="glyphicon glyphicon-ok"></i>
                                                     </span>
-                                                    <span style="display:block;float:right">
+                                                    <span style="display:block;float:right" translate>
                                                         Persist
                                                     </span>
                                                 </button>
@@ -132,7 +172,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" style="display:table;width:100%">
                                     <h3 style="display:table-cell;vertical-align: middle
-                                        " class="panel-title">Criteria functions</h3>
+                                        " class="panel-title" translate>Criteria functions</h3>
                                     <div class="pull-right">
 
                                         <div class="input-group ">
@@ -143,7 +183,7 @@
                                                         <i ng-if="showPersistSpinner" class="spin glyphicon glyphicon-refresh" ></i>
                                                         <i ng-if="showPersistDone" class="glyphicon glyphicon-ok"></i>
                                                     </span>
-                                                    <span style="display:block;float:right">
+                                                    <span style="display:block;float:right" translate>
                                                         Persist
                                                     </span>
                                                 </button>
@@ -168,18 +208,22 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" style="display:table;width:100%">
                                     <h3 style="display:table-cell;vertical-align: middle
-                                        " class="panel-title">Worldstate ranking table</h3>
+                                        " class="panel-title" translate>Worldstate ranking table</h3>
                                     <div class="pull-right">
                                         <div class="input-group ">
                                             <div class="input-group-btn " style="display: block" ng-click="persistDecisionStrategies()">
-                                                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="disabled">
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-primary dropdown-toggle" 
+                                                        data-toggle="dropdown" 
+                                                        ng-disabled="disabled"
+                                                        translate>
                                                     Change Mode <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <li style="padding-left: 10px;"> 
+                                                    <li style="padding-left: 10px;" translate> 
                                                         <input type="checkbox" ng-model="showTableIndicators"> Show Indicators
                                                     </li>
-                                                    <li style="padding-left: 10px;"> 
+                                                    <li style="padding-left: 10px;" translate> 
                                                         <input type="checkbox" ng-model="showTableRadarChart"> Show radar chart
                                                     </li>
                                                 </ul>
@@ -203,21 +247,21 @@
                                 <div class="panel-heading">
                                     <span class="pull-left">
                                         <i class="glyphicon glyphicon-list-alt"></i>
-                                        <h3 style="display:inline" class="panel-title" ng-if="!forCriteriaTable">Indicator table</h3>
-                                        <h3 style="display:inline" class="panel-title" ng-if="forCriteriaTable">Criteria table</h3>
+                                        <h3 style="display:inline" class="panel-title" ng-if="!forCriteriaTable" translate>Indicator table</h3>
+                                        <h3 style="display:inline" class="panel-title" ng-if="forCriteriaTable" translate>Criteria table</h3>
                                     </span>
                                     <span class="pull-right">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="disabled">
+                                            <button translate type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="disabled">
                                                 Change Mode <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
                                                 <li><a ng-click="forCriteriaTable = false"><i ng-show="!forCriteriaTable" class="glyphicon glyphicon-ok-circle"></i> <span ng-style="{
                                                         'padding-left'
-                                                        : !forCriteriaTable? '0px': '19px'}">Indicator</span></a></li>
+                                                        : !forCriteriaTable? '0px': '19px'}" translate>Indicator</span></a></li>
                                                 <li><a ng-click="forCriteriaTable = true"><i ng-show="forCriteriaTable" class="glyphicon glyphicon-ok-circle"> </i>  <span ng-style="{
                                                         'padding-left'
-                                                        : forCriteriaTable? '0px': '19px'}">Criteria</span></a></li>
+                                                        : forCriteriaTable? '0px': '19px'}" translate>Criteria</span></a></li>
                                             </ul>
                                         </div>
                                     </span>
@@ -237,7 +281,9 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <i class="glyphicon glyphicon-list-alt"></i>
-                                    <h3 style="display:inline" class="panel-title" ng-if="!forCriteriaTable">Indicator bar charts</h3>
+                                    <h3 style="display:inline" class="panel-title" ng-if="!forCriteriaTable" translate>
+                                        Indicator bar charts
+                                    </h3>
                                 </div>
                                 <div class="panel-body">
                                     <indicator-bar-charts
@@ -248,27 +294,27 @@
                                 </div>
                             </div>
                         </div>
-                         end widget 
+                        <!--end widget--> 
 
                         <div class="row">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <span class="pull-left">
                                         <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                                        <h3 style="display:inline" class="panel-title">Worldstate relation analysis chart</h3>
+                                        <h3 style="display:inline" class="panel-title" translate>Worldstate relation analysis chart</h3>
                                     </span>
                                     <span class="pull-right">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="disabled">
+                                            <button translate type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="disabled">
                                                 Change Mode <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
                                                 <li><a ng-click="isCriteria = false"><i ng-show="!isCriteria" class="glyphicon glyphicon-ok-circle"></i> <span ng-style="{
                                                         'padding-left'
-                                                        : !isCriteria? '0px': '19px'}">Indicator</span></a></li>
+                                                        : !isCriteria? '0px': '19px'}" translate>Indicator</span></a></li>
                                                 <li><a ng-click="isCriteria = true"><i ng-show="isCriteria" class="glyphicon glyphicon-ok-circle"> </i>  <span ng-style="{
                                                         'padding-left'
-                                                        : isCriteria? '0px': '19px'}">Criteria</span></a></li>
+                                                        : isCriteria? '0px': '19px'}" translate>Criteria</span></a></li>
                                             </ul>
                                         </div>
                                     </span>
@@ -290,7 +336,7 @@
                                 <div class="panel-heading">
                                     <span class="pull-left">
                                         <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                                        <h3 style="display:inline" class="panel-title">Criteria radar chart comparison</h3>
+                                        <h3 style="display:inline" class="panel-title" translate>Criteria radar chart comparison</h3>
                                     </span>
                                     <span class="pull-right">
 
@@ -300,7 +346,7 @@
                                 <div class="panel-body">
                                     <div class="col-lg-3">
                                         <div class="row">
-                                            <label>Reference Worldstate</label>
+                                            <label translate>Reference Worldstate</label>
                                         </div>
                                         <div class="row">
 
@@ -343,15 +389,15 @@
 
             </div>
 
-<!--                        <div class="row">
-                            <worldstate-analysis-widget
-                                worldstates="worldstates"
-                                criteria-function-sets="criteriaFunctionSet"
-                                selected-criteria-function="selectedCriteriaFunction"
-                                decision-strategies="decisionStrategies"
-                                selected-decision-strategy="selectedDecisionStrategy"
-                                ></worldstate-analysis-widget>
-                        </div>-->
+            <!--                        <div class="row">
+                                        <worldstate-analysis-widget
+                                            worldstates="worldstates"
+                                            criteria-function-sets="criteriaFunctionSet"
+                                            selected-criteria-function="selectedCriteriaFunction"
+                                            decision-strategies="decisionStrategies"
+                                            selected-decision-strategy="selectedDecisionStrategy"
+                                            ></worldstate-analysis-widget>
+                                    </div>-->
 
         </div>
 
@@ -371,6 +417,7 @@
         <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
         <script src="bower_components/angular-local-storage/angular-local-storage.js"></script>
         <script src="bower_components/angular-commons/dist/scripts/angular-commons.js"></script>
+        <script src="bower_components/angular-gettext/dist/angular-gettext.min.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular-tpl.js"></script>
@@ -398,6 +445,7 @@
         <script src="scripts/controllers/criteriaFunctionManagerDirectiveController.js"></script>
         <script src="scripts/directives/criteriaFunctionManagerDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
+        <script src="scripts/services/i18nizer.js"></script>
         <script src="scripts/services/criteriaCalculationService.js"></script>
         <script src="scripts/controllers/WorldstateAnalysisWidgetDirectiveController.js"></script>
         <script src="scripts/directives/worldstateAnalysisWidget.js"></script>
@@ -417,17 +465,17 @@
 
         <!-- demo only -->
         <script>
-                                                angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                                    [
-                                                        '$provide',
-                                                        function ($provide) {
-                                                            'use strict';
-                                                            $provide.constant('DEBUG', 'true');
-                                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-//                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
-                                                        }
-                                                    ]
-                                                    );</script>
+                                                                        angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                                                            [
+                                                                                '$provide',
+                                                                                function ($provide) {
+                                                                                    'use strict';
+                                                                                    $provide.constant('DEBUG', 'true');
+                                                                                    $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+                                                                                }
+                                                                            ]
+                                                                            );</script>
     </body>
 </html>

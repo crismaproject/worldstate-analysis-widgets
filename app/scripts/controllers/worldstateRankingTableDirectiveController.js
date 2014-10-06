@@ -10,7 +10,8 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
         'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
         'ngDialog',
-        function ($scope, $filter, NgTableParams, Worldstates, ccs, as, ngDialog) {
+        'gettextCatalog',
+        function ($scope, $filter, NgTableParams, Worldstates, ccs, as, ngDialog,gettextCatalog) {
             'use strict';
             var ctrl;
 
@@ -318,13 +319,13 @@ angular.module(
             };
 
             $scope.columns = [{
-                    title: 'Rank',
+                    title: gettextCatalog.getString('Rank'),
                     field: 'rank'
                 }, {
-                    title: 'Worldstate',
+                    title: gettextCatalog.getString('Worldstate'),
                     field: 'worldstate'
                 }, {
-                    title: 'Score',
+                    title: gettextCatalog.getString('Score'),
                     field: 'score'
                 }];
 
