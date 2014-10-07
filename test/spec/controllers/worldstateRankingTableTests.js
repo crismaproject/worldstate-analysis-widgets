@@ -690,6 +690,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
             module('ngDialog');
+            module('gettext');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
             module('templates/worldstateRankingTableTemplate.html');
@@ -713,7 +714,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain(' <div ng-hide="worldstates.length > 0" class="alert alert-warning">');
+            expect(element.html()).toContain('There are no worldstates selected.');
         });
         it('replaces the element with a warn badge when no criteriaFunction is provided ', function () {
             $rootScope.worldstates = [ws];
@@ -722,7 +723,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="criteriaFunction || worldstates.length <= 0" class="alert alert-warning">');
+            expect(element.html()).toContain('No criteria function selected.');
         });
         it('replaces the element with a warn badge when no decisionstrategy is provided ', function () {
             $rootScope.criteriaFunction = cf;
@@ -731,7 +732,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="decisionStrategy|| worldstates.length <= 0" class="alert alert-warning">');
+            expect(element.html()).toContain('No decision strategy selected.');
         });
         it('replaces the element with a table when worldstates, critFunc, decStrat is provided', function () {
             $rootScope.criteriaFunction = cf;
@@ -755,7 +756,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
         });
     });
     describe('IndiciatorCriteriaTable Controller Tests', function () {
-        var WorldstateService, controller, scope, filter, tableParams, critCalcService, analysisService, ngDialog;
+        var WorldstateService, controller, scope, filter, tableParams, critCalcService, analysisService, ngDialog,
+        gtc;
         // load the controller's module
         beforeEach(function () {
             // we mock the constants necessary for the Worldstates Service
@@ -765,6 +767,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             });
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
+            module('gettext');
             module('eu.crismaproject.worldstateAnalysis.controllers');
             module('eu.crismaproject.worldstateAnalysis.services');
         });
@@ -778,7 +781,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                 'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
                 'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
                 'ngDialog',
-                function (c, r, f, wsService, tp, criteriaCalculator, as, dialog) {
+                'gettextCatalog',
+                function (c, r, f, wsService, tp, criteriaCalculator, as, dialog, gettextCatalog) {
                     scope = r.$new();
                     controller = c;
                     WorldstateService = wsService;
@@ -787,6 +791,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     critCalcService = criteriaCalculator;
                     analysisService = as;
                     ngDialog = dialog;
+                    gtc = gettextCatalog;
                 }
             ]
             ));
@@ -803,7 +808,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     WorldstateService: WorldstateService,
                     ccs: critCalcService,
                     as: analysisService,
-                    dialog: ngDialog
+                    dialog: ngDialog,
+                    gettextCatalog:gtc
                 }
             );
             //we need to call digets to fire the watch that listens on worldstate changes
@@ -922,7 +928,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     WorldstateService: WorldstateService,
                     ccs: critCalcService,
                     as: analysisService,
-                    dialog: ngDialog
+                    dialog: ngDialog,
+                    gettextCatalog:gtc
                 });
 
             result = [{
@@ -994,7 +1001,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     WorldstateService: WorldstateService,
                     ccs: critCalcService,
                     as: analysisService,
-                    dialog: ngDialog
+                    dialog: ngDialog,
+                    gettextCatalog:gtc
                 }
             );
 
@@ -1173,7 +1181,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     WorldstateService: WorldstateService,
                     ccs: critCalcService,
                     as: analysisService,
-                    dialog: ngDialog
+                    dialog: ngDialog,
+                    gettextCatalog:gtc
                 }
             );
             newTableItem = {
@@ -1230,7 +1239,8 @@ describe('Worldstate Ranking Table Test Suite', function () {
                     WorldstateService: WorldstateService,
                     ccs: critCalcService,
                     as: analysisService,
-                    dialog: ngDialog
+                    dialog: ngDialog,
+                    gettextCatalog:gtc
                 }
             );
             newTableItem = {

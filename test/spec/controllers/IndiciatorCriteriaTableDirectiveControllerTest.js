@@ -619,6 +619,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             });
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
+            module('gettext');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
             module('templates/indicatorCriteriaTableTemplate.html', 'templates/nopager.html');
@@ -643,7 +644,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0" class="alert alert-warning">');
+            expect(element.html()).toContain('There are no worldstates selected.');
         });
 
         it('Replaces the element with a table when worldstates are provided ', function () {
@@ -688,7 +689,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
     });
 
     describe('IndiciatorCriteriaTable Controller Tests', function () {
-        var WorldstateService, controller, scope, filter, tableParams, critCalcService;
+        var WorldstateService, controller, scope, filter, tableParams, critCalcService, gtc;
 
         // load the controller's module
         beforeEach(function () {
@@ -699,6 +700,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             });
             module('de.cismet.crisma.ICMM.Worldstates');
             module('ngTable');
+            module('gettext');
             module('eu.crismaproject.worldstateAnalysis.controllers');
             module('eu.crismaproject.worldstateAnalysis.services');
         });
@@ -711,13 +713,15 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                 'de.cismet.crisma.ICMM.Worldstates',
                 'ngTableParams',
                 'eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService',
-                function (c, r, f, wsService, tp, criteriaCalculator) {
+                'gettextCatalog',
+                function (c, r, f, wsService, tp, criteriaCalculator, gettextCatalog) {
                     scope = r.$new();
                     controller = c;
                     WorldstateService = wsService;
                     filter = f;
                     tableParams = tp;
                     critCalcService = criteriaCalculator;
+                    gtc = gettextCatalog;
                 }
             ]
             ));
@@ -737,7 +741,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     $ilter: filter,
                     WorldstateService: WorldstateService,
                     NgTableParams: tableParams,
-                    ccs: critCalcService
+                    ccs: critCalcService,
+                    gettextCatalog:gtc
                 }
             );
 
@@ -782,7 +787,8 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
                     $ilter: filter,
                     WorldstateService: WorldstateService,
                     NgTableParams: tableParams,
-                    ccs: critCalcService
+                    ccs: critCalcService,
+                    gettextCatalog:gtc
                 }
             );
 

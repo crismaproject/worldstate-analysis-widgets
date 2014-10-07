@@ -10,6 +10,7 @@ describe('IndicatorBandDirective Test Suite', function () {
         module('de.cismet.crisma.ICMM.Worldstates');
         module('ngTable');
         module('mgcrea.ngStrap.popover');
+        module('gettext');
         module('eu.crismaproject.worldstateAnalysis.directives');
         module('eu.crismaproject.worldstateAnalysis.controllers');
     });
@@ -41,7 +42,7 @@ describe('IndicatorBandDirective Test Suite', function () {
     });
 
     describe('IndiciatorBandItem Controller Tests', function () {
-        var scope, controller, filter, timeout;
+        var scope, controller, filter, timeout, gtc;
 
         beforeEach(inject(
             [
@@ -49,11 +50,13 @@ describe('IndicatorBandDirective Test Suite', function () {
                 '$rootScope',
                 '$filter',
                 '$timeout',
-                function (c, r, f, t) {
+                'gettextCatalog',
+                function (c, r, f, t, gettextCatalog) {
                     scope = r.$new();
                     controller = c;
                     filter = f;
                     timeout = t;
+                    gtc = gettextCatalog
                 }
             ]
         ));
@@ -76,7 +79,8 @@ describe('IndicatorBandDirective Test Suite', function () {
                     $scope: scope,
                     $filter: filter,
                     $element: null,
-                    $timeout: timeout
+                    $timeout: timeout,
+                    gettextCatalog: gtc
                 }
             );
             expect(scope.getCriteriaSuggestion()).toEqual(75);
@@ -114,7 +118,8 @@ describe('IndicatorBandDirective Test Suite', function () {
                     $scope: scope,
                     $filter: filter,
                     $element: null,
-                    $timeout: timeout
+                    $timeout: timeout,
+                    gettextCatalog: gtc
                 }
             );
             scope.upperBoundary = true;
@@ -175,7 +180,8 @@ describe('IndicatorBandDirective Test Suite', function () {
                     $scope: scope,
                     $filter: filter,
                     $element: null,
-                    $timeout: timeout
+                    $timeout: timeout,
+                    gettextCatalog: gtc
                 }
             );
 
@@ -206,7 +212,8 @@ describe('IndicatorBandDirective Test Suite', function () {
                     $scope: scope,
                     $filter: filter,
                     $element: null,
-                    $timeout: timeout
+                    $timeout: timeout,
+                    gettextCatalog: gtc
                 }
             );
 

@@ -618,6 +618,7 @@ describe('RelationAnalysisChartDirective Test Suite', function () {
             });
             module('de.cismet.crisma.ICMM.Worldstates');
             module('eu.crismaproject.worldstateAnalysis.directives');
+            module('gettext');
             module('templates/relationAnalysisChartTemplate.html', 'templates/indicatorCriteriaAxisChooserTemplate.html');
         });
 
@@ -640,7 +641,7 @@ describe('RelationAnalysisChartDirective Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div class="alert alert-warning">');
+            expect(element.html()).toContain('There are no worldstates selected.');
         });
 
         it('contains at least an svg element if correct data is provided', function () {
