@@ -13,14 +13,14 @@
 
             <span ng-if="lowerBoundary">0%</span>
             <span ng-if="upperBoundary">100%</span>
-            <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.criteriaValue||'0' | number}}% - {{interval.criteriaValue| number}}% </span>
+            <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.criteriaValue || 0 | localeNumber:i18nizer.getLocale()}}% - {{interval.criteriaValue| localeNumber:i18nizer.getLocale()}}% </span>
             <br/> 
             <span ng-if="lowerBoundary && interval.indicatorValue>=previousInterval.indicatorValue">&gt;=</span>
             <span ng-if="lowerBoundary && interval.indicatorValue<previousInterval.indicatorValue">&lt;=</span>
             <span ng-if="upperBoundary && interval.indicatorValue>previousInterval.indicatorValue">&gt;=</span>
             <span ng-if="upperBoundary && interval.indicatorValue<=previousInterval.indicatorValue">&lt;=</span>
-            <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.indicatorValue||'0' | number}} -</span>
-            <span>{{interval.indicatorValue| number}}</span>
+            <span ng-if="!lowerBoundary && !upperBoundary">{{previousInterval.indicatorValue || 0 | localeNumber:i18nizer.getLocale()}} -</span>
+            <span>{{interval.indicatorValue| localeNumber:i18nizer.getLocale()}}</span>
         </div>
         <div ng-hide="!actualHeightExceeded">
             <i class="glyphicon glyphicon-info-sign " style="color:black" data-placement="top" data-type="info" data-animation="am-fade-and-scale" bs-tooltip="tooltip"></i>

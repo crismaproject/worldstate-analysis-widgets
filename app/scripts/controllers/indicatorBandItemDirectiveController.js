@@ -8,8 +8,10 @@ angular.module(
         '$element',
         '$timeout',
         'gettextCatalog',
-        function ($scope, $filter, $element, $timeout, gettextCatalog) {
+        'I18nizer',
+        function ($scope, $filter, $element, $timeout, gettextCatalog, I18nizer) {
             'use strict';
+            $scope.i18nizer = I18nizer;
             $scope.actualHeightExceeded = false;
             $scope.getElementHeight = function () {
                 return $element.height();

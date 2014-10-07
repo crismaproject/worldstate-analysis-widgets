@@ -9,8 +9,13 @@ angular.module(
         'mgcrea.ngStrap',
         'gettext'
     ]
-).run(function (I18nizer) {
-        'use strict';
+    ).run(function (I18nizer, $http) {
+    'use strict';
+    $http.get('i18n/cldr/supplemental/likelySubtags.json').success(function (data) {
+        Globalize.load(data);
+        //set the default locale
+            Globalize.locale('en');
         I18nizer.setLocale('en');
-    }
+    });
+}
 );

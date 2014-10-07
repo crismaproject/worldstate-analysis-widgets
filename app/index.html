@@ -38,24 +38,24 @@
                         <button class="btn btn-default dropdown-toggle" 
                                 type="button" 
                                 data-toggle="dropdown">
-                            {{"Choose Language" | translate}}
+                            {{"Choose Language"| translate}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a ng-click="i18nizer.setLocale('en')">
-                                    <i ng-show="i18nizer.getLocale() === 'en'" class="glyphicon glyphicon-ok-circle"></i> 
+                                <a ng-click="i18nizer.setLocale('en-US')">
+                                    <i ng-show="i18nizer.getLocale() === 'en-US'" class="glyphicon glyphicon-ok-circle"></i> 
                                     <span ng-style="{
                                                         'padding-left'
-                                                        : i18nizer.getLocale() === 'en' ? '0px': '19px'}" translate>Englisch</span>
+                                                        : i18nizer.getLocale() === 'en-US' ? '0px': '19px'}" translate>Englisch</span>
                                 </a>
                             </li>
                             <li>
-                                <a ng-click="i18nizer.setLocale('de')">
-                                    <i ng-show="i18nizer.getLocale() === 'de'" class="glyphicon glyphicon-ok-circle"></i> 
+                                <a ng-click="i18nizer.setLocale('de-DE')">
+                                    <i ng-show="i18nizer.getLocale() === 'de-DE'" class="glyphicon glyphicon-ok-circle"></i> 
                                     <span ng-style="{
                                                         'padding-left'
-                                                        : i18nizer.getLocale() === 'de' ? '0px': '19px'}" translate>German</span>
+                                                        : i18nizer.getLocale() === 'de-DE' ? '0px': '19px'}" translate>German</span>
                                 </a>
                             </li>
                         </ul>
@@ -426,6 +426,11 @@
         <script src="bower_components/nvd3/nv.d3.js"></script>
         <script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
         <script src="bower_components/ngDialog/js/ngDialog.js"></script>
+        <script src="bower_components/cldrjs/dist/cldr.js"></script>
+        <script src="bower_components/cldrjs/dist/cldr/event.js"></script>
+        <script src="bower_components/cldrjs/dist/cldr/supplemental.js"></script>
+        <script src="bower_components/globalize/dist/globalize.js"></script>
+        <script src="bower_components/globalize/dist/globalize/number.js"></script>
 
         <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
         <script src="scripts/app.js"></script>
@@ -465,17 +470,18 @@
 
         <!-- demo only -->
         <script>
-                                                                        angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                                                            [
-                                                                                '$provide',
-                                                                                function ($provide) {
-                                                                                    'use strict';
-                                                                                    $provide.constant('DEBUG', 'true');
-                                                                                    $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
-                                                                                }
-                                                                            ]
-                                                                            );</script>
+            angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                [
+                    '$provide',
+                    function ($provide) {
+                        'use strict';
+                        $provide.constant('DEBUG', 'true');
+                        $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+//                      $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                        $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+                    }
+                ]
+            );
+        </script>
     </body>
 </html>
