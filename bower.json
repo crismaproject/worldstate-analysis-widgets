@@ -22,7 +22,7 @@
     "angular-resource": "1.2.7",
     "ng-table": "0.3.3",
     "bootstrap": "3.2.0",
-    "icmm_js": "0.1.5",
+    "icmm_js": "1.0.0",
     "crisma-worldstate-tree-widget-angular": "1.0.5",
     "d3": "3.3.6",
     "angularjs-nvd3-directives": "0.0.7",
@@ -42,6 +42,7 @@
     "angular": "1.2.25",
     "bootstrap": "3.2.0",
     "d3": "3.3.6",
-    "angular-resource": "1.2.25"
+    "angular-resource": "1.2.25",
+    "icmm_js": "1.0.0"
   }
 }
