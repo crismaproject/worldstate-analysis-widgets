@@ -18,7 +18,8 @@ angular.module(
                 $http.get('i18n/cldr/main/' + l + '/numbers.json').success(function (data) {
                     Globalize.load(data);
                     Globalize.locale(l);
-                    glob = new Globalize(l);
+                    glob = new Globalize(l).numberFormatter();
+//                    glob = new Globalize(l);
                 });
                 gettextCatalog.setCurrentLanguage(l);
                 gettextCatalog.loadRemote('i18n/' + l + '.json');
@@ -47,8 +48,8 @@ angular.module(
         function (i18nizer) {
             var count=0;
             function foo (number) {
-                console.log('localeNumber filter: '+(++count));
-                return i18nizer.getGlobObj().formatNumber(number);
+                return i18nizer.getGlobObj()(number);
+//                return i18nizer.getGlobObj().formatNumber(number);
             };
             
             foo.$stateful = true;
