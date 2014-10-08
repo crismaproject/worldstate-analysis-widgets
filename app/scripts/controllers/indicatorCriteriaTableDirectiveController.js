@@ -92,7 +92,11 @@ angular.module(
                                         } else {
                                             val = group[prop].value;
                                         }
-                                        if (val % 1 !== 0) {
+                                        
+                                        // check if val is an integer.
+                                        if (val % 1 === 0) {
+                                            val = $filter('number')(val, 0);
+                                        }else{
                                             val = $filter('number')(val, 2);
                                         }
                                         $scope.rows[j++][field] = {name: val + ' ' + unit};

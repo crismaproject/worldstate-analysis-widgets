@@ -216,7 +216,10 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers', [
                   } else {
                     val = group[prop].value;
                   }
-                  if (val % 1 !== 0) {
+                  // check if val is an integer.
+                  if (val % 1 === 0) {
+                    val = $filter('number')(val, 0);
+                  } else {
                     val = $filter('number')(val, 2);
                   }
                   $scope.rows[j++][field] = { name: val + ' ' + unit };
@@ -1278,14 +1281,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
 angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
   'de.cismet.crisma.ICMM.Worldstates',
   'de.cismet.cids.rest.collidngNames.Nodes',
-  'LocalStorageModule'
+  'LocalStorageModule',
+  'de.cismet.crisma.ICMM.services'
 ]).controller('eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController', [
   '$scope',
   'de.cismet.collidingNameService.Nodes',
   'de.cismet.crisma.ICMM.Worldstates',
   'localStorageService',
   '$timeout',
-  function ($scope, Nodes, Worldstates, localStorageService, $timeout) {
+  'de.cismet.crisma.ICMM.services.icmm',
+  function ($scope, Nodes, Worldstates, localStorageService, $timeout, Icmm) {
     'use strict';
     var createChartModels, getIndicators;
     $scope.forCriteriaTable = false;
@@ -1318,7 +1323,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
       };
       if ($scope.worldstates && $scope.worldstates.length > 0) {
         for (j = 0; j < $scope.worldstates.length; j++) {
-          iccObject = Worldstates.utils.stripIccData([$scope.worldstates[j]], false)[0];
+          iccObject = Worldstates.utils.stripIccData([Icmm.convertToCorrectIccDataFormat($scope.worldstates[j])], false)[0];
           for (indicatorGroup in iccObject.data) {
             if (iccObject.data.hasOwnProperty(indicatorGroup)) {
               group = iccObject.data[indicatorGroup];
@@ -1353,7 +1358,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
         }, 1500);
       }, 500);
     };
-    Worldstates.query({ level: 2 }, function (data) {
+    Worldstates.query({
+      level: 3,
+      fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
+      deduplicate: false
+    }, function (data) {
+      data.forEach(function (ws) {
+        ws = Icmm.convertToCorrectIccDataFormat(ws);
+      });
       $scope.allWorldstates = data;
     });
     $scope.$watch('worldstateRef', function (newVal, oldVal) {
@@ -1416,7 +1428,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
           wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
           Worldstates.get({ 'wsId': wsId }, function (ws) {
             var indicatorGroup, indicatorProp, iccObject, group;
-            iccObject = Worldstates.utils.stripIccData([ws], false)[0];
+            iccObject = Worldstates.utils.stripIccData([Icmm.convertToCorrectIccDataFormat(ws)], false)[0];
             for (indicatorGroup in iccObject.data) {
               if (iccObject.data.hasOwnProperty(indicatorGroup)) {
                 group = iccObject.data[indicatorGroup];
@@ -1449,12 +1461,12 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
               wsId = objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length);
               /*jshint -W083 */
               Worldstates.get({
-                level: 2,
-                fields: 'id,name,iccdata,actualaccessinfo, actualaccessinfocontenttype',
+                level: 3,
+                fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
                 deduplicate: false,
                 'wsId': wsId
               }, function (tmpWs) {
-                $scope.worldstates.push(tmpWs);
+                $scope.worldstates.push(Icmm.convertToCorrectIccDataFormat(tmpWs));
               });
               break;
             }
