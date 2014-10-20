@@ -233,7 +233,7 @@ angular.module(
             };
 
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
-                var isContained, i, ws;
+                var isContained, i, ws, oldlength;
                 if (newVal === oldVal || !oldVal) {
                     return;
                 }
@@ -241,23 +241,26 @@ angular.module(
                     return;
                 }
                 if ($scope.worldstates) {
-                    if (newVal.length > oldVal.length) {
+                    oldlength = oldVal ? oldVal.length : 0;
+                    if (newVal.length > oldlength) {
 //                        a new worldstate was added, we need to calculate the row model for it
                         for (i = $scope.worldstates.length - 1; i >= 0; i--) {
                             ws = $scope.worldstates[i];
                             isContained = false;
                             /*jshint -W083 */
-                            oldVal.forEach(function (val) {
-                                if (parseInt(val.id) === parseInt(ws.id)) {
-                                    isContained = true;
+                            if (oldVal) {
+                                oldVal.forEach(function (val) {
+                                    if (parseInt(val.id) === parseInt(ws.id)) {
+                                        isContained = true;
+                                    }
+                                });
+                                if (!isContained) {
+                                    ctrl.addWorldstateToTableData(ws);
+                                    break;
                                 }
-                            });
-                            if (!isContained) {
-                                ctrl.addWorldstateToTableData(ws);
-                                break;
                             }
                         }
-                    } else if (newVal.length < oldVal.length) {
+                    } else if (newVal.length < oldlength) {
                         //a worldstate was removed. we need to remove the row model.
                         for (i = oldVal.length - 1; i >= 0; i--) {
                             ws = oldVal[i];
@@ -290,11 +293,11 @@ angular.module(
                 var ws, newTableItem, i = 0, newTableData = [];
                 if (!angular.equals(newVal, oldVal) && $scope.worldstates && $scope.worldstates.length > 0) {
                     if ($scope.criteriaFunction && $scope.decisionStrategy) {
-                        if(!$scope.tableData){
-                            for(i=0;i<$scope.worldstates.length;i++){
+                        if (!$scope.tableData) {
+                            for (i = 0; i < $scope.worldstates.length; i++) {
                                 ctrl.addWorldstateToTableData($scope.worldstates[i]);
                             }
-                        }else{
+                        } else {
                             // we need to re-calculate and re-index the tableData...
                             for (i = 0; i < $scope.tableData.length; i++) {
                                 ws = $scope.tableData[i].ws;
