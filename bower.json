@@ -1,6 +1,6 @@
 {
   "name": "worldstate-analysis-widgets",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": [
     "dist/scripts/worldstate-analysis-widget.js",
     "dist/scripts/worldstate-analysis-widget-tpl.js"
@@ -23,7 +23,7 @@
     "ng-table": "0.3.3",
     "bootstrap": "3.2.0",
     "icmm_js": "1.0.0",
-    "crisma-worldstate-tree-widget-angular": "1.0.5",
+    "crisma-worldstate-tree-widget-angular": "1.0.8",
     "d3": "3.3.6",
     "angularjs-nvd3-directives": "0.0.7",
     "angular-strap": "2.0.3",
