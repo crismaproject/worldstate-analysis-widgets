@@ -8,6 +8,7 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
         function ($scope, Worldstates, AnalysisService) {
             'use strict';
+            var onloadDsFile;
             $scope.editable = [];
             $scope.currentIntervalFunctions = [];
             $scope.selectedDecisionStrategyIndex = -1;
@@ -17,7 +18,7 @@ angular.module(
             $scope.tooltipAdd = {
                 normaltitle: 'Create a new decision strategy',
                 disabledTitle: 'Can not create Decision Strategy. Select a worldstate first',
-                title:''
+                title: ''
             };
             $scope.tooltipSave = {
                 title: 'Save changes'
@@ -28,23 +29,26 @@ angular.module(
             $scope.tooltipRenameDone = {
                 title: 'Done'
             };
+            $scope.tooltipImportFromFile = {
+                title: 'Import Criteria Function from File'
+            };
 
             $scope.addDecisionStrategy = function () {
                 var i, indicator, criteriaEmphases = [];
-                if($scope.listItemsDisabled){
+                if ($scope.listItemsDisabled) {
                     return;
                 }
-                for (i=0;i<$scope.indicatorVector.length;i++) {
+                for (i = 0; i < $scope.indicatorVector.length; i++) {
                     indicator = $scope.indicatorVector[i];
                     criteriaEmphases.push({
                         indicator: indicator,
-                        criteriaEmphasis:100
+                        criteriaEmphasis: 100
                     });
                 }
                 $scope.decisionStrategies.push({
                     name: 'Decision Strategy ' + ($scope.decisionStrategies.length + 1),
-                    criteriaEmphases:criteriaEmphases,
-                    satisfactionEmphasis:AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
+                    criteriaEmphases: criteriaEmphases,
+                    satisfactionEmphasis: AnalysisService.getOwa().meanWeights($scope.indicatorVector.length <= 1 ? 1 : $scope.indicatorVector.length)
                 });
 
                 $scope.editable.push(false);
@@ -59,22 +63,22 @@ angular.module(
                 if ($scope.selectedDecisionStrategyIndex === index) {
                     c += ' list-group-item-info';
                 }
-                if($scope.listItemsDisabled){
-                    c+= ' disabled';
+                if ($scope.listItemsDisabled) {
+                    c += ' disabled';
                 }
-                
+
                 return c;
             };
 
             $scope.setSelectedDecisionStrategy = function (index) {
-                if(!$scope.listItemsDisabled){
+                if (!$scope.listItemsDisabled) {
                     $scope.selectedDecisionStrategyIndex = index;
                     $scope.currentDecisionStrategy = $scope.decisionStrategies[$scope.selectedDecisionStrategyIndex];
                 }
             };
 
             $scope.updateModel = function () {
-                var i, indicatorGroup, indicatorProp, iccObject, group,alreadyExists;
+                var i, indicatorGroup, indicatorProp, iccObject, group, alreadyExists;
                 $scope.indicatorVector = [];
                 for (i = 0; i < $scope.worldstates.length; i++) {
 
@@ -93,10 +97,10 @@ angular.module(
                                                     alreadyExists = true;
                                                 }
                                             });
-                                            if(!alreadyExists){
+                                            if (!alreadyExists) {
                                                 $scope.indicatorVector.push(group[indicatorProp]);
                                             }
-                                        }else{
+                                        } else {
                                             $scope.indicatorVector.push(group[indicatorProp]);
                                         }
                                     }
@@ -106,26 +110,68 @@ angular.module(
                     }
                 }
             };
-            
-            $scope.getButtonStyle = function(){
+
+            $scope.getButtonStyle = function () {
                 return {
-                    'color':$scope.listItemsDisabled ? '#CCC':'#fff'
+                    'color': $scope.listItemsDisabled ? '#CCC' : '#fff'
                 };
             };
 
             $scope.worldstates = $scope.worldstates || [];
-            $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
+            $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
             $scope.$watch('worldstates', function () {
                 $scope.updateModel();
-                $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length>0);
+                $scope.listItemsDisabled = !($scope.worldstates && $scope.worldstates.length > 0);
                 $scope.tooltipAdd.title = $scope.listItemsDisabled ? $scope.tooltipAdd.disabledTitle : $scope.tooltipAdd.normaltitle;
-                if($scope.listItemsDisabled){
+                if ($scope.listItemsDisabled) {
                     $scope.selectedDecisionStrategyIndex = -1;
                 }
             }, true);
+
+            //Import of decision strategies from file
+            //check if the File API is available
+            $scope.fileAPIAvailable = (window.File && window.FileReader && window.FileList && window.Blob) ? true : false;
+
+            onloadDsFile = function (theFile) {
+                return function (e) {
+                    var ds;
+                    try {
+                        ds = JSON.parse(e.target.result);
+
+                        $scope.decisionStrategies.push(ds);
+                        $scope.$apply();
+                    } catch (err) {
+                        // show an error in the gui...
+                        console.error('Could not read Decision Strat File: ' + theFile.name);
+                    }
+                };
+            };
+
+            $scope.$watch('decisionStrategyFile', function (newVal, oldVal) {
+                var i, file, reader;
+                if (!angular.equals(newVal, oldVal) && newVal) {
+
+                    for (i = 0; i < $scope.decisionStrategyFiles.length; i++) {
+
+                        file = $scope.decisionStrategyFiles[i];
+
+                        reader = new FileReader();
+                        reader.onload = onloadDsFile(file);
+                        try {
+                            //we assume that the file is utf-8 encoded
+                            reader.readAsText(file);
+                        } catch (err) {
+                            // show an error in the gui...
+                            console.error('Could not read Decision Strat File: ' + file.name);
+                        }
+                    }
+
+                }
+
+            });
         }
     ]
-    );
+);
 
 
 

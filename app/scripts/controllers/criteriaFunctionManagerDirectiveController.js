@@ -7,6 +7,7 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         function ($scope, Worldstates) {
             'use strict';
+            var onloadDsFile;
             $scope.editable = [];
             $scope.indicators = [];
             $scope.currentIntervalFunctions = [];
@@ -17,7 +18,7 @@ angular.module(
             $scope.tooltipAdd = {
                 normaltitle: 'Create a new criteria function',
                 disabledTitle: 'Can not create criteria function. Select a worldstate first',
-                title:''
+                title: ''
             };
             $scope.tooltipSave = {
                 title: 'Save changes'
@@ -28,10 +29,13 @@ angular.module(
             $scope.tooltipRenameDone = {
                 title: 'Done'
             };
+            $scope.tooltipImportFromFile = {
+                title: 'Import Criteria Function from File'
+            };
 
             $scope.addCriteriaFunction = function () {
                 var i, criteriaFunctions = [];
-                if($scope.listItemsDisabled){
+                if ($scope.listItemsDisabled) {
                     return;
                 }
                 for (i = 0; i < $scope.indicators.length; i++) {
@@ -76,10 +80,10 @@ angular.module(
                     $scope.currentCriteriaFunction = $scope.criteriaFunctionSet[$scope.selectedCriteriaFunctionIndex];
                 }
             };
-            
-            $scope.getButtonStyle = function(){
+
+            $scope.getButtonStyle = function () {
                 return {
-                    'color':$scope.listItemsDisabled ? '#CCC':'#fff'
+                    'color': $scope.listItemsDisabled ? '#CCC' : '#fff'
                 };
             };
 
@@ -116,6 +120,49 @@ angular.module(
                 }
             });
 
+
+            //Import of criteria functions from file
+            //check if the File API is available
+            $scope.fileAPIAvailable = (window.File && window.FileReader && window.FileList && window.Blob) ? true : false;
+
+            onloadDsFile = function (theFile) {
+                return function (e) {
+                    var cf;
+                    try {
+                        cf = JSON.parse(e.target.result);
+
+                        $scope.criteriaFunctionSet.push(cf);
+                        $scope.$apply();
+                    } catch (err) {
+                        // show an error in the gui...
+                        console.error('Could not read CriteriaFunction File: ' + theFile.name);
+                    }
+                };
+            };
+
+            $scope.$watch('criteriaFunctionFile', function (newVal, oldVal) {
+                var i, file, reader;
+                if (!angular.equals(newVal, oldVal) && newVal) {
+                    //visualize file loading with an spinner or something else...
+                    for (i = 0; i < $scope.criteriaFunctionFile.length; i++) {
+
+                        file = $scope.criteriaFunctionFile[i];
+
+                        reader = new FileReader();
+                        reader.onload = onloadDsFile(file);
+
+                        try {
+                            //we assume that the file is utf-8 encoded
+                            reader.readAsText(file);
+                        } catch (err) {
+                            // show an error in the gui...
+                            console.error('Could not read CriteriaFunction File: ' + file.name);
+                        }
+                    }
+
+                }
+
+            });
         }
     ]
     );
