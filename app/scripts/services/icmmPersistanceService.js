@@ -1,19 +1,20 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.services'
-).factory(
+    ).factory(
     'eu.crismaproject.worldstateAnalysis.services.IcmmPersistanceService',
     [
-        'localStorageService',
-        function (localStorageService) {
+        'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
+        'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
+        function (CF, DS) {
             'use strict';
             var persistCriteriaFunctions, persistDecisionStrategies;
 
             persistCriteriaFunctions = function (criteriaFunctions) {
-                localStorageService.add('criteriaFunctionSet', criteriaFunctions);
+                CF.update(criteriaFunctions);
             };
 
             persistDecisionStrategies = function (decisionStrategies) {
-                localStorageService.add('decisionStrategies', decisionStrategies);
+                DS.update(decisionStrategies);
             };
 
             return {
@@ -22,4 +23,4 @@ angular.module(
             };
         }
     ]
-);
+    );
