@@ -200,7 +200,7 @@ angular.module(
 
                     for (i = 0; i < $scope.iccObjects.length; i++) {
 
-                        file = $scope.foo[i];
+                        file = $scope.iccObjects[i];
 
                         reader = new FileReader();
                         reader.onload = onloadIccObjects(file);
@@ -225,7 +225,7 @@ angular.module(
                     file = $scope.cfConfigFile[0];
 
                     var reader = new FileReader();
-                    reader.onload = onloadCfFile()(file);
+                    reader.onload = onloadCfFile(file);
 
                     try {
                         //we assume that the file is utf-8 encoded
