@@ -3,7 +3,6 @@ angular.module(
     [
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes',
-        'LocalStorageModule',
         'de.cismet.crisma.ICMM.services'
     ]
     ).controller(
@@ -61,7 +60,7 @@ angular.module(
                 $scope.showPersistDone = false;
                 $timeout(function () {
                     if ($scope.icmmTabVisible) {
-                        IcmmPersistanceService.persistCriteriaFunctions('criteriaFunctions', $scope.criteriaFunctions);
+                        IcmmPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
                     } else {
                         FilesPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
                     }
