@@ -32,11 +32,47 @@
 
         <!-- Add your site or application content here -->
         <div class="container" ng-controller="eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController">
-           <div class="row" style="margin-bottom:20px;">
+            <div class="row" style="margin-bottom: 20px;">
                 <div class="col-lg-6">
-                    <catalogue-tree options="treeOptions" nodes="treeNodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        <li class="active" ng-click="switchToIcmmTab()"><a href="#icmm" role="tab" data-toggle="tab">ICMM based</a></li>
+                        <li ng-click="switchToFilesTab()"><a href="#file" role="tab" data-toggle="tab">File based</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="icmm" 
+                             style="border-left: 1px solid #ddd;
+                             border-right: 1px solid #ddd;
+                             border-bottom: 1px solid #ddd;
+                             padding: 20px 30px;">
+                            <icmm-context-provider
+                                worldstates="refWorldstatesIcmm"
+                                selected-worldstates="worldstatesIcmm"
+                                decision-strategies="decisionStrategiesIcmm"
+                                selected-decision-strategy="selectedDecisionStrategyIcmm"
+                                criteria-functions="criteriaFunctionsIcmm"
+                                selected-criteria-function="selectedCriteriaFunctionIcmm"
+                                >
+                            </icmm-context-provider>
+                        </div>
+
+                        <div class="tab-pane fade" id="file" style="border-left: 1px solid #ddd;
+                             border-right: 1px solid #ddd;
+                             border-bottom: 1px solid #ddd;
+                             padding: 20px 30px;
+                             ">
+                            <file-context-provider 
+                                worldstates="refWorldstatesFiles"
+                                selected-worldstates="worldstatesFiles"
+                                decision-strategies="decisionStrategiesFiles"
+                                selected-decision-strategy="selectedDecisionStrategyFiles"
+                                criteria-functions="criteriaFunctionsFiles"
+                                selected-criteria-function="selectedCriteriaFunctionFiles"
+                                >
+                            </file-context-provider>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6" style="margin-top: 15px;">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="row">
@@ -54,7 +90,7 @@
                                         <span class="sr-only">Toggle dropdown</span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu" >
-                                        <li ng-repeat="cf in criteriaFunctionSet" role="presentation" ng-click="updateSelectedCriteriaFunction($index)">
+                                        <li ng-repeat="cf in criteriaFunctions" role="presentation" ng-click="updateSelectedCriteriaFunction($index)">
                                             <a>{{cf.name}}</a>
                                         </li>
                                     </ul>
@@ -87,7 +123,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <div class="row">
                 <ul class="nav nav-tabs" role="tablist" id="myTab">
                     <li class="active"><a href="#home" role="tab" data-toggle="tab">Configure analysis</a></li>
@@ -153,7 +189,7 @@
 
                                 </div>
                                 <div class="panel-body">
-                                    <criteria-function-manager worldstates="worldstates"  criteria-functions="criteriaFunctionSets"></criteria-function-manager>
+                                    <criteria-function-manager worldstates="worldstates"  criteria-functions="criteriaFunctions"></criteria-function-manager>
                                 </div>
                             </div>
                         </div>
@@ -248,7 +284,7 @@
                                 </div>
                             </div>
                         </div>
-                         end widget 
+                        end widget 
 
                         <div class="row">
                             <div class="panel panel-default">
@@ -305,7 +341,7 @@
                                         <div class="row">
 
                                             <select multiple="" ng-model="worldstateRef" 
-                                                    ng-options="ws.name for ws in allWorldstates"
+                                                    ng-options="ws.name for ws in refWorldstates"
                                                     style="width: 100%;height: 100%">
                                             </select>
                                         </div>
@@ -343,15 +379,15 @@
 
             </div>
 
-<!--                        <div class="row">
-                            <worldstate-analysis-widget
-                                worldstates="worldstates"
-                                criteria-function-sets="criteriaFunctionSet"
-                                selected-criteria-function="selectedCriteriaFunction"
-                                decision-strategies="decisionStrategies"
-                                selected-decision-strategy="selectedDecisionStrategy"
-                                ></worldstate-analysis-widget>
-                        </div>-->
+            <!--                        <div class="row">
+                                        <worldstate-analysis-widget
+                                            worldstates="worldstates"
+                                            criteria-function-sets="criteriaFunctionSet"
+                                            selected-criteria-function="selectedCriteriaFunction"
+                                            decision-strategies="decisionStrategies"
+                                            selected-decision-strategy="selectedDecisionStrategy"
+                                            ></worldstate-analysis-widget>
+                                    </div>-->
 
         </div>
 
@@ -413,21 +449,30 @@
         <script src="scripts/directives/worldstateRankingTableDirective.js"></script>
         <script src="scripts/controllers/indicatorBarChartDirectiveController.js"></script>
         <script src="scripts/directives/indicatorBarChartDirective.js"></script>
+        <script src="scripts/directives/fileReader.js"></script>
+        <script src="scripts/controllers/FileContextProviderDirectiveController.js"></script>
+        <script src="scripts/directives/fileBasedAnalysisContextProvider.js"></script>
+        <script src="scripts/services/filesPersistanceService.js"></script>
+        <script src="scripts/controllers/IcmmContextProviderDirectiveController.js"></script>
+        <script src="scripts/directives/icmmBasedAnalysisContextProvider.js"></script>
+        <script src="scripts/services/icmmPersistanceService.js"></script>
+
         <!-- endbuild -->
 
         <!-- demo only -->
         <script>
-                                                angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
-                                                    [
-                                                        '$provide',
-                                                        function ($provide) {
-                                                            'use strict';
-                                                            $provide.constant('DEBUG', 'true');
-                                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+                                                                        angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
+                                                                            [
+                                                                                '$provide',
+                                                                                function ($provide) {
+                                                                                    'use strict';
+                                                                                    $provide.constant('DEBUG', 'true');
+                                                                                    $provide.constant('CRISMA_DOMAIN', 'CRISMA');
 //                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
-                                                        }
-                                                    ]
-                                                    );</script>
+                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://fsdfd');
+                                                                                }
+                                                                            ]
+                                                                            );</script>
     </body>
 </html>
