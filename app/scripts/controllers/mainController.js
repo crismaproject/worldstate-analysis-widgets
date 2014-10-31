@@ -150,19 +150,6 @@ angular.module(
                 });
             }
 
-            function watchSelectedCfIcmm () {
-                return $scope.$watch('selectedCriteriaFunctionIcmm', function () {
-                    $scope.selectedCriteriaFunction = $scope.selectedCriteriaFunctionIcmm;
-                });
-            }
-            $scope.deregisterSelectedCfIcmm = watchSelectedCfIcmm();
-
-            function watchSelectedCfFiles () {
-                return $scope.$watch('selectedCriteriaFunctionFiles', function () {
-                    $scope.selectedCriteriaFunction = $scope.selectedCriteriaFunctionFiles;
-                });
-            }
-
             //decision strategy watches
             function watchDsIcmm () {
                 return $scope.$watch('decisionStrategiesIcmm', function () {
@@ -178,18 +165,6 @@ angular.module(
                 });
             }
 
-            function watchSelectedDsIcmm () {
-                return $scope.$watch('selectedDecisionStrategyIcmm', function () {
-                    $scope.selectedDecisionStrategy = $scope.selectedDecisionStrategyIcmm;
-                });
-            }
-            $scope.deregisterSelectedDsIcmm = watchSelectedDsIcmm();
-
-            function watchSelectedDsFiles () {
-                return $scope.$watch('selectedDecisionStrategyFiles', function () {
-                    $scope.selectedDecisionStrategy = $scope.selectedDecisionStrategyFiles;
-                });
-            }
 
             $scope.icmmTabVisible = true;
             $scope.switchToIcmmTab = function () {
@@ -202,13 +177,12 @@ angular.module(
 
                 $scope.derigsterCfFilesWatch();
                 $scope.derigsterCfIcmm = watchCfIcmm();
-                $scope.deregisterSelectedCfFiles();
-                $scope.deregisterSelectedCfIcmm = watchSelectedCfIcmm();
 
                 $scope.derigsterDsFilesWatch();
                 $scope.derigsterDsIcmm = watchDsIcmm();
-                $scope.deregisterSelectedDsFiles();
-                $scope.deregisterSelectedDsIcmm = watchSelectedDsIcmm();
+                
+                $scope.selectedCriteriaFunction = undefined;
+                $scope.selectedDecisionStrategy= undefined;
             };
 
 
@@ -223,13 +197,12 @@ angular.module(
 
                 $scope.derigsterCfIcmm();
                 $scope.derigsterCfFilesWatch = watchCfFiles();
-                $scope.deregisterSelectedCfIcmm();
-                $scope.deregisterSelectedCfFiles = watchSelectedCfFiles();
 
                 $scope.derigsterDsIcmm();
                 $scope.derigsterDsFilesWatch = watchDsFiles();
-                $scope.deregisterSelectedDsIcmm();
-                $scope.deregisterSelectedDsFiles = watchSelectedDsFiles();
+                
+                $scope.selectedCriteriaFunction = undefined;
+                $scope.selectedDecisionStrategy= undefined;
             };
 
         }

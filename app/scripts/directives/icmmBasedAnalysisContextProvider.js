@@ -12,9 +12,7 @@ angular.module(
                 'worldstates': '=',
                 'selectedWorldstates': '=',
                 'decisionStrategies': '=',
-                'selectedDecisionStrategy': '=',
                 'criteriaFunctions': '=',
-                'selectedCriteriaFunction': '='
             };
 
             return {
