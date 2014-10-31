@@ -351,6 +351,321 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     }, true);
   }
 ]);
+angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.FileContextProviderDirectiveController', [
+  '$scope',
+  'de.cismet.crisma.ICMM.services.icmm',
+  function ($scope, Icmm) {
+    'use strict';
+    var showFileLoadingError, showFileLoading, onloadIccObjects, onloadCfFile, onloadDsFile;
+    //initialize the bindings
+    $scope.selectedWorldstates = [];
+    $scope.worldstates = [];
+    $scope.criteriaFunctions = [];
+    $scope.decisionStrategies = [];
+    $scope.tooltipRename = { title: 'Rename criteria function' };
+    $scope.tooltipRenameDone = { title: 'Done' };
+    $scope.tooltipDeleteSelection = { title: 'Done' };
+    $scope.tooltipDeleteSelection = { title: 'Remove selection' };
+    $scope.tooltipAdd = { title: 'Add Icc Objects from file' };
+    $scope.editable = [];
+    $scope.toggleSelection = function (index) {
+      var wsToToggle, i, isSelected;
+      wsToToggle = $scope.worldstates[index];
+      //check if the worldstate is already contained in the selectedWorldstates array..
+      isSelected = -1;
+      for (i = 0; i < $scope.selectedWorldstates.length; i++) {
+        if ($scope.selectedWorldstates[i].id === wsToToggle.id) {
+          isSelected = i;
+          break;
+        }
+      }
+      if (isSelected >= 0) {
+        $scope.selectedWorldstates.splice(isSelected, 1);
+      } else {
+        $scope.selectedWorldstates.push(wsToToggle);
+      }
+    };
+    $scope.getItemStyle = function (index) {
+      var c = 'list-group-item';
+      var wsToToggle, i, isSelected;
+      wsToToggle = $scope.worldstates[index];
+      //check if the worldstate is already contained in the selectedWorldstates array..
+      isSelected = -1;
+      for (i = 0; i < $scope.selectedWorldstates.length; i++) {
+        if ($scope.selectedWorldstates[i].id === wsToToggle.id) {
+          isSelected = i;
+        }
+      }
+      if (isSelected >= 0) {
+        c += ' list-group-item-info';
+      }
+      return c;
+    };
+    //check if the File API is available
+    $scope.fileAPIAvailable = window.File && window.FileReader && window.FileList && window.Blob ? true : false;
+    $scope.removeSelectedDummyWS = function () {
+      var i, j, indexToRemove;
+      indexToRemove = [];
+      for (i = 0; i < $scope.selectedWorldstates.length; i++) {
+        for (j = 0; j < $scope.worldstates.length; j++) {
+          if (angular.equals($scope.worldstates[j], $scope.selectedWorldstates[i])) {
+            indexToRemove.push(j);
+          }
+        }
+      }
+      for (i = 0; i < indexToRemove.length; i++) {
+        $scope.worldstates.splice(indexToRemove[i], 1);
+      }
+      $scope.selectedWorldstates = [];
+    };
+    /*
+             * be carefull calling this function from angular contexts
+             * @param {type} file that could not be loaded properly...
+             * @returns {undefined}
+             */
+    showFileLoadingError = function (file, err) {
+      $scope.errorFile = file;
+      $scope.fileLoadError = true;
+      $scope.errorMessage = err.message;
+      $scope.$apply();
+    };
+    showFileLoading = function () {
+      $scope.fileLoadError = false;
+      $scope.fileLoading = true;
+    };
+    $scope.fileLoadError = false;
+    $scope.fileLoading = false;
+    onloadIccObjects = function (file) {
+      return function (e) {
+        var fileObj, worldstateDummy;
+        try {
+          fileObj = JSON.parse(e.target.result);
+          /*
+                         * accept two differnt kind of files. 
+                         * 1. A plain icc data object.
+                         * In that case we use apply a standard name to this object
+                         * 
+                         * 2. A worldstate Dummy object that already has a name
+                         */
+          if (fileObj.name && fileObj.iccdata) {
+            worldstateDummy = fileObj;
+          } else {
+            //generate a uniqe id...
+            worldstateDummy = {
+              name: 'Nonamed ICC data ' + ($scope.worldstates.length + 1),
+              iccdata: fileObj
+            };
+          }
+          // we need an id to distinc the icc objects. eg. the ranking table use this id
+          // to keep track of the icc objects
+          if (!worldstateDummy.id) {
+            worldstateDummy.id = Math.floor(Math.random() * 1000000 + 1);
+          }
+          Icmm.convertToCorrectIccDataFormat(worldstateDummy);
+          if ($scope.worldstates) {
+            $scope.worldstates.push(worldstateDummy);
+            $scope.editable.push(false);
+          } else {
+            $scope.editable.push(false);
+            $scope.worldstates = [worldstateDummy];
+          }
+          $scope.$apply();
+        } catch (err) {
+          // show an error in the gui...
+          showFileLoadingError(file);
+        }
+      };
+    };
+    onloadCfFile = function (theFile) {
+      return function (e) {
+        var cfSet;
+        try {
+          cfSet = JSON.parse(e.target.result);
+          if (Object.prototype.toString.call(cfSet) === '[object Array]') {
+            $scope.criteriaFunctions = cfSet;
+          }
+          $scope.$apply();
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read Criteria Function Config File: ' + theFile.name);
+        }
+      };
+    };
+    onloadDsFile = function (theFile) {
+      return function (e) {
+        var ds;
+        try {
+          ds = JSON.parse(e.target.result);
+          if (Object.prototype.toString.call(ds) === '[object Array]') {
+            $scope.decisionStrategies = ds;
+          }
+          $scope.$apply();
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read Decision Strategy Config File: ' + theFile.name);
+        }
+      };
+    };
+    /*
+             * When the newFile property has changed the User want's to add a new list of files..
+             */
+    $scope.$watch('iccObjects', function (newVal, oldVal) {
+      var i, file, reader;
+      if (!angular.equals(newVal, oldVal) && newVal) {
+        showFileLoading();
+        for (i = 0; i < $scope.iccObjects.length; i++) {
+          file = $scope.iccObjects[i];
+          reader = new FileReader();
+          reader.onload = onloadIccObjects(file);
+          try {
+            //we assume that the file is utf-8 encoded
+            reader.readAsText(file);
+          } catch (err) {
+            // show an error in the gui...
+            showFileLoadingError(file);
+          }
+        }
+      }
+    });
+    $scope.$watch('cfConfigFile', function (newVal, oldVal) {
+      var file;
+      if (!angular.equals(newVal, oldVal) && newVal) {
+        showFileLoading();
+        file = $scope.cfConfigFile[0];
+        var reader = new FileReader();
+        reader.onload = onloadCfFile(file);
+        try {
+          //we assume that the file is utf-8 encoded
+          reader.readAsText(file);
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read Criteria Function Config File: ' + file.name);
+        }
+      }
+    });
+    $scope.$watch('dsConfigFile', function (newVal, oldVal) {
+      var file;
+      if (!angular.equals(newVal, oldVal) && newVal) {
+        showFileLoading();
+        file = $scope.dsConfigFile[0];
+        var reader = new FileReader();
+        reader.onload = onloadDsFile(file);
+        try {
+          //we assume that the file is utf-8 encoded
+          reader.readAsText(file);
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read Decision Strategy Config File: ' + file.name);
+        }
+      }
+    });
+  }
+]);
+angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.IcmmContextProviderDirectiveController', [
+  '$scope',
+  'de.cismet.collidingNameService.Nodes',
+  'de.cismet.crisma.ICMM.Worldstates',
+  'de.cismet.crisma.ICMM.services.icmm',
+  'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
+  'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
+  function ($scope, Nodes, Worldstates, Icmm, CF, DS) {
+    'use strict';
+    // intialisation for the worldstate tree
+    $scope.activeItem = {};
+    $scope.treeOptions = {
+      checkboxClass: 'glyphicon glyphicon-unchecked',
+      folderIconClosed: 'icon-world.png',
+      folderIconOpen: 'icon-world.png',
+      leafIcon: 'icon-world.png',
+      imagePath: 'bower_components/crisma-worldstate-tree-widget-angular/dist/images/',
+      multiSelection: true
+    };
+    $scope.treeSelection = [];
+    $scope.selectedWorldstates = [];
+    Worldstates.query({
+      level: 3,
+      fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
+      deduplicate: false
+    }, function (data) {
+      data.forEach(function (ws) {
+        ws = Icmm.convertToCorrectIccDataFormat(ws);
+      });
+      $scope.worldstates = data;
+    });
+    $scope.criteriaFunctions = [];
+    CF.query(function (data) {
+      if (data.length > 0) {
+        $scope.criteriaFunctions = data;
+      }
+    });
+    $scope.selectedCriteriaFunction = $scope.criteriaFunctions[0];
+    $scope.showDsPersistSpinner = false;
+    $scope.showDsPersistDone = false;
+    $scope.decisionStrategies = [];
+    DS.query(function (data) {
+      $scope.decisionStrategies = data || [];
+    });
+    // every time the treeSelection changes, we need to determine the
+    // corresponding worldstates to the selected nodes. 
+    // we assume that the treeSelection watch is only fired as a result of selection
+    // or deselection events in the tree.
+    $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
+      var i, wsId, wsNode, ws, objectKey, isContained;
+      if (newVal !== oldVal) {
+        if ($scope.treeSelection.length > $scope.selectedWorldstates.length) {
+          //we need to find the new element in the treeSelection array.
+          for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
+            wsNode = $scope.treeSelection[i];
+            isContained = false;
+            /*jshint -W083 */
+            $scope.selectedWorldstates.forEach(function (val) {
+              objectKey = wsNode.objectKey;
+              wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
+              if (parseInt(val.id) === wsId) {
+                isContained = true;
+              }
+            });
+            if (!isContained) {
+              objectKey = wsNode.objectKey;
+              wsId = objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length);
+              /*jshint -W083 */
+              Worldstates.get({
+                level: 3,
+                fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
+                deduplicate: false,
+                'wsId': wsId
+              }, function (tmpWs) {
+                $scope.selectedWorldstates.push(Icmm.convertToCorrectIccDataFormat(tmpWs));
+              });
+              break;
+            }
+          }
+        } else if ($scope.treeSelection.length < $scope.selectedWorldstates.length) {
+          //we need to find the deleted element in the treeSelection array.
+          for (i = 0; i < $scope.selectedWorldstates.length; i++) {
+            ws = $scope.selectedWorldstates[i];
+            isContained = false;
+            /*jshint -W083 */
+            $scope.treeSelection.forEach(function (val) {
+              objectKey = val.objectKey;
+              wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
+              if (parseInt(ws.id) === wsId) {
+                isContained = true;
+              }
+            });
+            if (!isContained) {
+              $scope.selectedWorldstates.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }
+    });
+    // Retrieve the top level nodes from the icmm api
+    $scope.treeNodes = Nodes.query(function () {
+    });
+  }
+]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.levelOfEmphasisDirectiveController', [
   '$scope',
   'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
@@ -652,6 +967,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
   'de.cismet.crisma.ICMM.Worldstates',
   function ($scope, Worldstates) {
     'use strict';
+    var onloadDsFile;
     $scope.editable = [];
     $scope.indicators = [];
     $scope.currentIntervalFunctions = [];
@@ -665,6 +981,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.tooltipSave = { title: 'Save changes' };
     $scope.tooltipRename = { title: 'Rename criteria function' };
     $scope.tooltipRenameDone = { title: 'Done' };
+    $scope.tooltipImportFromFile = { title: 'Import Criteria Function from File' };
     $scope.addCriteriaFunction = function () {
       var i, criteriaFunctions = [];
       if ($scope.listItemsDisabled) {
@@ -743,6 +1060,40 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         }
       }
     });
+    //Import of criteria functions from file
+    //check if the File API is available
+    $scope.fileAPIAvailable = window.File && window.FileReader && window.FileList && window.Blob ? true : false;
+    onloadDsFile = function (theFile) {
+      return function (e) {
+        var cf;
+        try {
+          cf = JSON.parse(e.target.result);
+          $scope.criteriaFunctionSet.push(cf);
+          $scope.$apply();
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read CriteriaFunction File: ' + theFile.name);
+        }
+      };
+    };
+    $scope.$watch('criteriaFunctionFile', function (newVal, oldVal) {
+      var i, file, reader;
+      if (!angular.equals(newVal, oldVal) && newVal) {
+        //visualize file loading with an spinner or something else...
+        for (i = 0; i < $scope.criteriaFunctionFile.length; i++) {
+          file = $scope.criteriaFunctionFile[i];
+          reader = new FileReader();
+          reader.onload = onloadDsFile(file);
+          try {
+            //we assume that the file is utf-8 encoded
+            reader.readAsText(file);
+          } catch (err) {
+            // show an error in the gui...
+            console.error('Could not read CriteriaFunction File: ' + file.name);
+          }
+        }
+      }
+    });
   }
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.CriteriaRadarChartDirectiveController', [
@@ -798,6 +1149,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
   'eu.crismaproject.worldstateAnalysis.services.AnalysisService',
   function ($scope, Worldstates, AnalysisService) {
     'use strict';
+    var onloadDsFile;
     $scope.editable = [];
     $scope.currentIntervalFunctions = [];
     $scope.selectedDecisionStrategyIndex = -1;
@@ -810,6 +1162,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     $scope.tooltipSave = { title: 'Save changes' };
     $scope.tooltipRename = { title: 'Rename decision strategy' };
     $scope.tooltipRenameDone = { title: 'Done' };
+    $scope.tooltipImportFromFile = { title: 'Import Criteria Function from File' };
     $scope.addDecisionStrategy = function () {
       var i, indicator, criteriaEmphases = [];
       if ($scope.listItemsDisabled) {
@@ -893,6 +1246,39 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         $scope.selectedDecisionStrategyIndex = -1;
       }
     }, true);
+    //Import of decision strategies from file
+    //check if the File API is available
+    $scope.fileAPIAvailable = window.File && window.FileReader && window.FileList && window.Blob ? true : false;
+    onloadDsFile = function (theFile) {
+      return function (e) {
+        var ds;
+        try {
+          ds = JSON.parse(e.target.result);
+          $scope.decisionStrategies.push(ds);
+          $scope.$apply();
+        } catch (err) {
+          // show an error in the gui...
+          console.error('Could not read Decision Strat File: ' + theFile.name);
+        }
+      };
+    };
+    $scope.$watch('decisionStrategyFile', function (newVal, oldVal) {
+      var i, file, reader;
+      if (!angular.equals(newVal, oldVal) && newVal) {
+        for (i = 0; i < $scope.decisionStrategyFile.length; i++) {
+          file = $scope.decisionStrategyFile[i];
+          reader = new FileReader();
+          reader.onload = onloadDsFile(file);
+          try {
+            //we assume that the file is utf-8 encoded
+            reader.readAsText(file);
+          } catch (err) {
+            // show an error in the gui...
+            console.error('Could not read Decision Strat File: ' + file.name);
+          }
+        }
+      }
+    });
   }
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.IndicatorBandDirectiveController', [
@@ -1281,18 +1667,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
 angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
   'de.cismet.crisma.ICMM.Worldstates',
   'de.cismet.cids.rest.collidngNames.Nodes',
-  'LocalStorageModule',
   'de.cismet.crisma.ICMM.services'
 ]).controller('eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController', [
   '$scope',
-  'de.cismet.collidingNameService.Nodes',
-  'de.cismet.crisma.ICMM.Worldstates',
-  'localStorageService',
   '$timeout',
-  'de.cismet.crisma.ICMM.services.icmm',
-  function ($scope, Nodes, Worldstates, localStorageService, $timeout, Icmm) {
+  'eu.crismaproject.worldstateAnalysis.services.IcmmPersistanceService',
+  'eu.crismaproject.worldstateAnalysis.services.FilesPersistanceService',
+  function ($scope, $timeout, IcmmPersistanceService, FilesPersistanceService) {
     'use strict';
-    var createChartModels, getIndicators;
+    var createChartModels;
     $scope.forCriteriaTable = false;
     $scope.chartModels = [];
     createChartModels = function () {
@@ -1311,46 +1694,31 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
         }
       }
     };
-    getIndicators = function () {
-      var indicatorGroup, indicatorProp, iccObject, group, j, indicatorName, indicator, add, forEachFunc;
-      forEachFunc = function (value, index, arr) {
-        if (indicatorName === value.displayName) {
-          add = false;
-        }
-        if (index === arr.length - 1 && add) {
-          $scope.indicatorVector.push(indicator);
-        }
-      };
-      if ($scope.worldstates && $scope.worldstates.length > 0) {
-        for (j = 0; j < $scope.worldstates.length; j++) {
-          iccObject = Worldstates.utils.stripIccData([Icmm.convertToCorrectIccDataFormat($scope.worldstates[j])], false)[0];
-          for (indicatorGroup in iccObject.data) {
-            if (iccObject.data.hasOwnProperty(indicatorGroup)) {
-              group = iccObject.data[indicatorGroup];
-              for (indicatorProp in group) {
-                if (group.hasOwnProperty(indicatorProp)) {
-                  if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                    if ($scope.indicatorVector.length > 0) {
-                      indicatorName = group[indicatorProp].displayName;
-                      indicator = group[indicatorProp];
-                      add = true;
-                      $scope.indicatorVector.forEach(forEachFunc);
-                    } else {
-                      $scope.indicatorVector.push(group[indicatorProp]);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+    $scope.$watch('worldstateRef', function (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        createChartModels();
       }
+    });
+    $scope.$watchCollection('worldstates', function (newVal, oldVal) {
+      if (newVal !== oldVal && $scope.worldstates) {
+        createChartModels();
+      }
+    });
+    $scope.updateSelectedCriteriaFunction = function (index) {
+      $scope.selectedCriteriaFunction = $scope.criteriaFunctions[index];
+    };
+    $scope.updateSelectedDecisionStrategy = function (index) {
+      $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
     };
     $scope.persistCriteriaFunctions = function () {
       $scope.showPersistSpinner = true;
       $scope.showPersistDone = false;
       $timeout(function () {
-        localStorageService.add('criteriaFunctionSet', $scope.criteriaFunctionSets);
+        if ($scope.icmmTabVisible) {
+          IcmmPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+        } else {
+          FilesPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+        }
         $scope.showPersistSpinner = false;
         $scope.showPersistDone = true;
         $timeout(function () {
@@ -1358,46 +1726,18 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
         }, 1500);
       }, 500);
     };
-    Worldstates.query({
-      level: 3,
-      fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
-      deduplicate: false
-    }, function (data) {
-      data.forEach(function (ws) {
-        ws = Icmm.convertToCorrectIccDataFormat(ws);
-      });
-      $scope.allWorldstates = data;
-    });
-    $scope.$watch('worldstateRef', function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        createChartModels();
-        getIndicators();
-      }
-    });
-    $scope.$watchCollection('worldstates', function (newVal, oldVal) {
-      if (newVal !== oldVal && $scope.worldstates) {
-        createChartModels();
-        getIndicators();
-      }
-    });
     $scope.indicatorVector = [];
-    $scope.criteriaFunctionSet = localStorageService.get('criteriaFunctionSet') || [];
-    $scope.criteriaFunctionSets = $scope.criteriaFunctionSet;
-    $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[0];
-    $scope.$watch('criteriaFunctionSet', function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        console.log('received changes in criteria function');
-      }
-    }, true);
     $scope.showDsPersistSpinner = false;
     $scope.showDsPersistDone = false;
-    $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
-    $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
     $scope.persistDecisionStrategies = function () {
       $scope.showDsPersistSpinner = true;
       $scope.showDsPersistDone = false;
       $timeout(function () {
-        localStorageService.add('decisionStrategies', $scope.decisionStrategies);
+        if ($scope.icmmTabVisible) {
+          IcmmPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+        } else {
+          FilesPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+        }
         $scope.showDsPersistSpinner = false;
         $scope.showDsPersistDone = true;
         $timeout(function () {
@@ -1405,104 +1745,87 @@ angular.module('eu.crismaproject.worldstateAnalysis.demoApp.controllers', [
         }, 1500);
       }, 500);
     };
-    $scope.activeItem = {};
-    $scope.treeOptions = {
-      checkboxClass: 'glyphicon glyphicon-unchecked',
-      folderIconClosed: 'icon-world.png',
-      folderIconOpen: 'icon-world.png',
-      leafIcon: 'icon-world.png',
-      imagePath: 'bower_components/crisma-worldstate-tree-widget-angular/dist/images/',
-      multiSelection: true
-    };
-    $scope.treeSelection = [];
-    $scope.worldstates = [];
-    // every time the treeSelection changes, we need to determine the
-    // corresponding worldstates to the selected nodes. 
-    // we assume that the treeSelection watch is only fired as a result of selection
-    // or deselection events in the tree.
-    $scope.$watchCollection('treeSelection', function (newVal, oldVal) {
-      var i, wsId, wsNode, ws, objectKey, isContained;
-      if (newVal !== oldVal) {
-        if ($scope.indicatorVector.length === 0) {
-          wsNode = $scope.treeSelection[0].objectKey;
-          wsId = wsNode.substring(wsNode.lastIndexOf('/') + 1, wsNode.length);
-          Worldstates.get({ 'wsId': wsId }, function (ws) {
-            var indicatorGroup, indicatorProp, iccObject, group;
-            iccObject = Worldstates.utils.stripIccData([Icmm.convertToCorrectIccDataFormat(ws)], false)[0];
-            for (indicatorGroup in iccObject.data) {
-              if (iccObject.data.hasOwnProperty(indicatorGroup)) {
-                group = iccObject.data[indicatorGroup];
-                for (indicatorProp in group) {
-                  if (group.hasOwnProperty(indicatorProp)) {
-                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                      $scope.indicatorVector.push(group[indicatorProp]);
-                    }
-                  }
-                }
-              }
-            }
-          });
-        }
-        if ($scope.treeSelection.length > $scope.worldstates.length) {
-          //we need to find the new element in the treeSelection array.
-          for (i = $scope.treeSelection.length - 1; i >= 0; i++) {
-            wsNode = $scope.treeSelection[i];
-            isContained = false;
-            /*jshint -W083 */
-            $scope.worldstates.forEach(function (val) {
-              objectKey = wsNode.objectKey;
-              wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
-              if (parseInt(val.id) === wsId) {
-                isContained = true;
-              }
-            });
-            if (!isContained) {
-              objectKey = wsNode.objectKey;
-              wsId = objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length);
-              /*jshint -W083 */
-              Worldstates.get({
-                level: 3,
-                fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories',
-                deduplicate: false,
-                'wsId': wsId
-              }, function (tmpWs) {
-                $scope.worldstates.push(Icmm.convertToCorrectIccDataFormat(tmpWs));
-              });
-              break;
-            }
-          }
-        } else if ($scope.treeSelection.length < $scope.worldstates.length) {
-          //we need to find the deleted element in the treeSelection array.
-          for (i = 0; i < $scope.worldstates.length; i++) {
-            ws = $scope.worldstates[i];
-            isContained = false;
-            /*jshint -W083 */
-            $scope.treeSelection.forEach(function (val) {
-              objectKey = val.objectKey;
-              wsId = parseInt(objectKey.substring(objectKey.lastIndexOf('/') + 1, objectKey.length));
-              if (parseInt(ws.id) === wsId) {
-                isContained = true;
-              }
-            });
-            if (!isContained) {
-              $scope.worldstates.splice(i, 1);
-              break;
-            }
-          }
-        }
-      }
-    });
-    $scope.updateSelectedCriteriaFunction = function (index) {
-      $scope.selectedCriteriaFunction = $scope.criteriaFunctionSet[index];
-    };
-    $scope.updateSelectedDecisionStrategy = function (index) {
-      $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
-    };
     $scope.indicatorVector = [];
-    $scope.activeItem = {};
-    // Retrieve the top level nodes from the icmm api
-    $scope.treeNodes = Nodes.query(function () {
-    });
+    /*
+             * Since we want to showcase the icmm based context provider as well as the file based context provider
+             * we need to update the bindings for the analysis widgets everyt time the user switches between 
+             * the icmm and the file tab.
+             * The following code is not needed if only one of both context providers is used.
+             */
+    function watchIcmmWs() {
+      return $scope.$watch('worldstatesIcmm', function () {
+        $scope.worldstates = $scope.worldstatesIcmm;
+      });
+    }
+    $scope.derigsterIcmmWsWatch = watchIcmmWs();
+    function watchFilesWs() {
+      return $scope.$watch('worldstatesFiles', function () {
+        $scope.worldstates = $scope.worldstatesFiles;
+      });
+    }
+    // refWorldstate watches
+    function watchRefWsIcmm() {
+      return $scope.$watch('refWorldstatesIcmm', function () {
+        $scope.refWorldstates = $scope.refWorldstatesIcmm;
+      });
+    }
+    $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
+    function watchRefWsFiles() {
+      return $scope.$watch('refWorldstatesFiles', function () {
+        $scope.refWorldstates = $scope.refWorldstatesFiles;
+      });
+    }
+    // criteriaFunctions watches
+    function watchCfIcmm() {
+      return $scope.$watch('criteriaFunctionsIcmm', function () {
+        $scope.criteriaFunctions = $scope.criteriaFunctionsIcmm;
+      });
+    }
+    $scope.derigsterCfIcmm = watchCfIcmm();
+    function watchCfFiles() {
+      return $scope.$watch('criteriaFunctionsFiles', function () {
+        $scope.criteriaFunctions = $scope.criteriaFunctionsFiles;
+      });
+    }
+    //decision strategy watches
+    function watchDsIcmm() {
+      return $scope.$watch('decisionStrategiesIcmm', function () {
+        $scope.decisionStrategies = $scope.decisionStrategiesIcmm;
+      });
+    }
+    $scope.derigsterDsIcmm = watchDsIcmm();
+    function watchDsFiles() {
+      return $scope.$watch('decisionStrategiesFiles', function () {
+        $scope.decisionStrategies = $scope.decisionStrategiesFiles;
+      });
+    }
+    $scope.icmmTabVisible = true;
+    $scope.switchToIcmmTab = function () {
+      $scope.icmmTabVisible = true;
+      $scope.derigsterFilesWsWatch();
+      $scope.derigsterIcmmWsWatch = watchIcmmWs();
+      $scope.derigsterRefWsFilesWatch();
+      $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
+      $scope.derigsterCfFilesWatch();
+      $scope.derigsterCfIcmm = watchCfIcmm();
+      $scope.derigsterDsFilesWatch();
+      $scope.derigsterDsIcmm = watchDsIcmm();
+      $scope.selectedCriteriaFunction = undefined;
+      $scope.selectedDecisionStrategy = undefined;
+    };
+    $scope.switchToFilesTab = function () {
+      $scope.icmmTabVisible = false;
+      $scope.derigsterIcmmWsWatch();
+      $scope.derigsterFilesWsWatch = watchFilesWs();
+      $scope.derigsterRefWsIcmmWatch();
+      $scope.derigsterRefWsFilesWatch = watchRefWsFiles();
+      $scope.derigsterCfIcmm();
+      $scope.derigsterCfFilesWatch = watchCfFiles();
+      $scope.derigsterDsIcmm();
+      $scope.derigsterDsFilesWatch = watchDsFiles();
+      $scope.selectedCriteriaFunction = undefined;
+      $scope.selectedDecisionStrategy = undefined;
+    };
   }
 ]);
 angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu.crismaproject.worldstateAnalysis.controllers.RelationAnalysisChartDirectiveController', [
@@ -1712,9 +2035,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
     };
     ctrl.createTableItem = function (ws) {
       var i, crit, critWeight, score, newTableItem, item;
-      crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
-      critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
-      score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
+      if ($scope.criteriaFunction && $scope.decisionStrategy) {
+        crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
+        critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
+        score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
+      } else {
+        score = 0;
+      }
       newTableItem = {
         'rank': i,
         'worldstate': ws.name,
@@ -1722,13 +2049,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         'score': $filter('number')(score * 100, 2) + ' %',
         rawScore: score
       };
-      //we want to add the indicator and criteria....
-      for (i = 0; i < crit.length; i++) {
-        item = crit[i];
-        newTableItem[item.indicator.displayName] = {
-          indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
-          los: $filter('number')(item.criteria, 2) + ' % LoS'
-        };
+      if ($scope.criteriaFunction && $scope.decisionStrategy) {
+        //we want to add the indicator and criteria....
+        for (i = 0; i < crit.length; i++) {
+          item = crit[i];
+          newTableItem[item.indicator.displayName] = {
+            indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
+            los: $filter('number')(item.criteria, 2) + ' % LoS'
+          };
+        }
       }
       return newTableItem;
     };
@@ -1842,59 +2171,47 @@ angular.module('eu.crismaproject.worldstateAnalysis.controllers').controller('eu
         $scope.tableParams.settings().$scope = $scope;
       }
     };
+    ctrl.addMissingWoldstatesToTable = function (oldWorldStates) {
+      var i, ws, isContained;
+      for (i = $scope.worldstates.length - 1; i >= 0; i--) {
+        ws = $scope.worldstates[i];
+        isContained = false;
+        /*jshint -W083 */
+        if (oldWorldStates) {
+          oldWorldStates.forEach(function (val) {
+            if (parseInt(val.id) === parseInt(ws.id)) {
+              isContained = true;
+            }
+          });
+          if (!isContained) {
+            ctrl.addWorldstateToTableData(ws);
+          }
+        }
+      }
+    };
+    ctrl.removeMissingWorldstatesFromTable = function (oldWorldstates) {
+      var i, ws, isContained;
+      for (i = oldWorldstates.length - 1; i >= 0; i--) {
+        ws = oldWorldstates[i];
+        isContained = false;
+        /*jshint -W083 */
+        $scope.worldstates.forEach(function (val) {
+          if (parseInt(val.id) === parseInt(ws.id)) {
+            isContained = true;
+          }
+        });
+        if (!isContained) {
+          ctrl.removeWorldstateFromTableData(ws);
+        }
+      }
+    };
     ctrl.worldstateWatchCallback = function (newVal, oldVal) {
-      var isContained, i, ws, oldlength;
       if (newVal === oldVal || !oldVal) {
         return;
       }
-      if (!$scope.criteriaFunction || !$scope.decisionStrategy) {
-        return;
-      }
       if ($scope.worldstates) {
-        oldlength = oldVal ? oldVal.length : 0;
-        if (newVal.length > oldlength) {
-          //                        a new worldstate was added, we need to calculate the row model for it
-          for (i = $scope.worldstates.length - 1; i >= 0; i--) {
-            ws = $scope.worldstates[i];
-            isContained = false;
-            /*jshint -W083 */
-            if (oldVal) {
-              oldVal.forEach(function (val) {
-                if (parseInt(val.id) === parseInt(ws.id)) {
-                  isContained = true;
-                }
-              });
-              if (!isContained) {
-                ctrl.addWorldstateToTableData(ws);
-                break;
-              }
-            }
-          }
-        } else if (newVal.length < oldlength) {
-          //a worldstate was removed. we need to remove the row model.
-          for (i = oldVal.length - 1; i >= 0; i--) {
-            ws = oldVal[i];
-            isContained = false;
-            /*jshint -W083 */
-            $scope.worldstates.forEach(function (val) {
-              if (parseInt(val.id) === parseInt(ws.id)) {
-                isContained = true;
-              }
-            });
-            if (!isContained) {
-              ctrl.removeWorldstateFromTableData(ws);
-              break;
-            }
-          }
-        } else {
-          // a worldstate or the order has changed, check what worldstates have changed..
-          for (i = 0; i < $scope.worldstates.length; i++) {
-            if (!angular.equals($scope.worldstates[i], oldVal[i])) {
-              ws = $scope.worldstates[i];
-              ctrl.updateWorldstateTableData(ws);
-            }
-          }
-        }
+        ctrl.addMissingWoldstatesToTable(oldVal);
+        ctrl.removeMissingWorldstatesFromTable(oldVal);
       }
       ctrl.refreshTable();
     };
@@ -2182,6 +2499,53 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('deci
       controller: 'eu.crismaproject.worldstateAnalysis.controllers.decisionStrategyManagerDirectiveController'
     };
   }]);
+angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('fileContextProvider', [function () {
+    'use strict';
+    var scope;
+    scope = {
+      'worldstates': '=',
+      'selectedWorldstates': '=',
+      'decisionStrategies': '=',
+      'criteriaFunctions': '='
+    };
+    return {
+      scope: scope,
+      restrict: 'E',
+      templateUrl: 'templates/fileContextProviderTemplate.html',
+      controller: 'eu.crismaproject.worldstateAnalysis.controllers.FileContextProviderDirectiveController'
+    };
+  }]);
+angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('fileInput', [
+  '$parse',
+  function ($parse) {
+    'use strict';
+    return {
+      restrict: 'A',
+      link: function (scope, elem, attrs) {
+        elem.bind('change', function () {
+          $parse(attrs.fileInput).assign(scope, elem[0].files);
+          scope.$apply();
+        });
+      }
+    };
+  }
+]);
+angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('icmmContextProvider', [function () {
+    'use strict';
+    var scope;
+    scope = {
+      'worldstates': '=',
+      'selectedWorldstates': '=',
+      'decisionStrategies': '=',
+      'criteriaFunctions': '='
+    };
+    return {
+      scope: scope,
+      restrict: 'E',
+      templateUrl: 'templates/icmmContextProviderTemplate.html',
+      controller: 'eu.crismaproject.worldstateAnalysis.controllers.IcmmContextProviderDirectiveController'
+    };
+  }]);
 angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('indicatorBand', [function () {
     'use strict';
     var scope;
@@ -2386,6 +2750,122 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').directive('worl
       controller: 'eu.crismaproject.worldstateAnalysis.controllers.worldstateRankingTableDirectiveController'
     };
   }]);
+angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.CriteriaFunction', [
+  '$resource',
+  'CRISMA_ICMM_API',
+  'CRISMA_DOMAIN',
+  'de.cismet.crisma.ICMM.services.icmm',
+  function ($resource, CRISMA_ICMM_API, CRISMA_DOMAIN, Icmm) {
+    'use strict';
+    var cf, processResult;
+    processResult = function (cfDataObj) {
+      var wrapper;
+      if (cfDataObj) {
+        wrapper = JSON.parse(cfDataObj);
+        return JSON.parse(wrapper.criteriaFunctions);
+      }
+      return null;
+    };
+    cf = $resource(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.criteriafunctions/1', {
+      cfId: '@id',
+      deduplicate: false,
+      omitNullValues: 'false'
+    }, {
+      'get': {
+        method: 'GET',
+        transformResponse: processResult
+      },
+      'query': {
+        isArray: true,
+        method: 'GET',
+        params: {
+          level: '1',
+          omitNullValues: 'true'
+        },
+        transformResponse: processResult
+      },
+      'update': {
+        method: 'PUT',
+        transformRequest: function (data) {
+          var transformedData, wrapper;
+          wrapper = {
+            $self: '/CRISMA.criteriafunctions/1',
+            id: 1,
+            criteriaFunctions: angular.toJson(data)
+          };
+          transformedData = JSON.stringify(wrapper, function (k, v) {
+            // we have to take care of angular properties by ourselves
+            if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
+              return undefined;
+            }
+            return v;
+          });
+          return transformedData;
+        }
+      }
+    });
+    cf.getId = function () {
+      return Icmm.getNextId(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN, '.criteriafunctions');
+    };
+    return cf;
+  }
+]);
+angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.DecisionStrategies', [
+  '$resource',
+  'CRISMA_ICMM_API',
+  'CRISMA_DOMAIN',
+  'de.cismet.crisma.ICMM.services.icmm',
+  function ($resource, CRISMA_ICMM_API, CRISMA_DOMAIN, Icmm) {
+    'use strict';
+    var transformedData, processResult;
+    processResult = function (dsDataObj) {
+      var wrapper;
+      if (dsDataObj) {
+        wrapper = JSON.parse(dsDataObj);
+        return JSON.parse(wrapper.decisionStrategies);
+      }
+      return null;
+    };
+    transformedData = $resource(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.decisionstrategies/1', {
+      dsId: '@id',
+      deduplicate: false,
+      omitNullValues: 'false'
+    }, {
+      'query': {
+        method: 'GET',
+        isArray: true,
+        params: {
+          level: '1',
+          omitNullValues: 'true'
+        },
+        transformResponse: processResult
+      },
+      'update': {
+        method: 'PUT',
+        transformRequest: function (data) {
+          var transformedData, wrapper;
+          wrapper = {
+            $self: '/CRISMA.decisionstrategies/1',
+            id: 1,
+            decisionStrategies: angular.toJson(data)
+          };
+          transformedData = JSON.stringify(wrapper, function (k, v) {
+            // we have to take care of angular properties by ourselves
+            if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
+              return undefined;
+            }
+            return v;
+          });
+          return transformedData;
+        }
+      }
+    });
+    transformedData.getId = function () {
+      return Icmm.getNextId(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN, '.decisionstrategies');
+    };
+    return transformedData;
+  }
+]);
 angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.CriteriaCalculationService', [function () {
     'use strict';
     var calculateCriteria, interpolateValue, getColor, getColorForCriteria;
@@ -2561,3 +3041,41 @@ angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crism
       'getColorForCriteria': getColorForCriteria
     };
   }]);
+angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.FilesPersistanceService', [function () {
+    'use strict';
+    var persistCriteriaFunctions, persistDecisionStrategies;
+    function download(text) {
+      var bb;
+      bb = new Blob([text], { type: 'text/plain' });
+      //works in ff and in chrome
+      window.open(window.URL.createObjectURL(bb));
+    }
+    persistCriteriaFunctions = function (criteriaFunctions) {
+      download(angular.toJson(criteriaFunctions));
+    };
+    persistDecisionStrategies = function (decisionStrategies) {
+      download(angular.toJson(decisionStrategies));
+    };
+    return {
+      'persistCriteriaFunctions': persistCriteriaFunctions,
+      'persistDecisionStrategies': persistDecisionStrategies
+    };
+  }]);
+angular.module('eu.crismaproject.worldstateAnalysis.services').factory('eu.crismaproject.worldstateAnalysis.services.IcmmPersistanceService', [
+  'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
+  'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
+  function (CF, DS) {
+    'use strict';
+    var persistCriteriaFunctions, persistDecisionStrategies;
+    persistCriteriaFunctions = function (criteriaFunctions) {
+      CF.update(criteriaFunctions);
+    };
+    persistDecisionStrategies = function (decisionStrategies) {
+      DS.update(decisionStrategies);
+    };
+    return {
+      'persistCriteriaFunctions': persistCriteriaFunctions,
+      'persistDecisionStrategies': persistDecisionStrategies
+    };
+  }
+]);
