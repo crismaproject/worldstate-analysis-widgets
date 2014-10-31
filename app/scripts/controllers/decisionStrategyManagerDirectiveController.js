@@ -151,9 +151,9 @@ angular.module(
                 var i, file, reader;
                 if (!angular.equals(newVal, oldVal) && newVal) {
 
-                    for (i = 0; i < $scope.decisionStrategyFiles.length; i++) {
+                    for (i = 0; i < $scope.decisionStrategyFile.length; i++) {
 
-                        file = $scope.decisionStrategyFiles[i];
+                        file = $scope.decisionStrategyFile[i];
 
                         reader = new FileReader();
                         reader.onload = onloadDsFile(file);
