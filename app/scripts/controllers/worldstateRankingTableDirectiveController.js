@@ -88,9 +88,13 @@ angular.module(
 
             ctrl.createTableItem = function (ws) {
                 var i, crit, critWeight, score, newTableItem, item;
-                crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
-                critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
-                score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
+                if ($scope.criteriaFunction && $scope.decisionStrategy) {
+                    crit = ctrl.getCriteriaVectorForWorldstate(ws, $scope.criteriaFunction);
+                    critWeight = ctrl.getCritAndWeightVector($scope.decisionStrategy, crit);
+                    score = as.getOwa().aggregateLS(critWeight.criteria, $scope.decisionStrategy.satisfactionEmphasis, critWeight.weights);
+                } else {
+                    score = 0;
+                }
                 newTableItem = {
                     'rank': i,
                     'worldstate': ws.name,
@@ -99,13 +103,15 @@ angular.module(
                     rawScore: score
                 };
 
-                //we want to add the indicator and criteria....
-                for (i = 0; i < crit.length; i++) {
-                    item = crit[i];
-                    newTableItem[item.indicator.displayName] = {
-                        indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
-                        los: $filter('number')(item.criteria, 2) + ' % LoS'
-                    };
+                if ($scope.criteriaFunction && $scope.decisionStrategy) {
+                    //we want to add the indicator and criteria....
+                    for (i = 0; i < crit.length; i++) {
+                        item = crit[i];
+                        newTableItem[item.indicator.displayName] = {
+                            indicator: $filter('number')(item.indicator.value) + ' ' + item.indicator.unit,
+                            los: $filter('number')(item.criteria, 2) + ' % LoS'
+                        };
+                    }
                 }
                 return newTableItem;
             };
@@ -232,59 +238,49 @@ angular.module(
                 }
             };
 
+            ctrl.addMissingWoldstatesToTable = function (oldWorldStates) {
+                var i, ws, isContained;
+                for (i = $scope.worldstates.length - 1; i >= 0; i--) {
+                    ws = $scope.worldstates[i];
+                    isContained = false;
+                    /*jshint -W083 */
+                    if (oldWorldStates) {
+                        oldWorldStates.forEach(function (val) {
+                            if (parseInt(val.id) === parseInt(ws.id)) {
+                                isContained = true;
+                            }
+                        });
+                        if (!isContained) {
+                            ctrl.addWorldstateToTableData(ws);
+                        }
+                    }
+                }
+            };
+
+            ctrl.removeMissingWorldstatesFromTable = function (oldWorldstates) {
+                var i, ws, isContained;
+                for (i = oldWorldstates.length - 1; i >= 0; i--) {
+                    ws = oldWorldstates[i];
+                    isContained = false;
+                    /*jshint -W083 */
+                    $scope.worldstates.forEach(function (val) {
+                        if (parseInt(val.id) === parseInt(ws.id)) {
+                            isContained = true;
+                        }
+                    });
+                    if (!isContained) {
+                        ctrl.removeWorldstateFromTableData(ws);
+                    }
+                }
+            };
+
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
-                var isContained, i, ws, oldlength;
                 if (newVal === oldVal || !oldVal) {
                     return;
                 }
-                if (!$scope.criteriaFunction || !$scope.decisionStrategy) {
-                    return;
-                }
                 if ($scope.worldstates) {
-                    oldlength = oldVal ? oldVal.length : 0;
-                    if (newVal.length > oldlength) {
-//                        a new worldstate was added, we need to calculate the row model for it
-                        for (i = $scope.worldstates.length - 1; i >= 0; i--) {
-                            ws = $scope.worldstates[i];
-                            isContained = false;
-                            /*jshint -W083 */
-                            if (oldVal) {
-                                oldVal.forEach(function (val) {
-                                    if (parseInt(val.id) === parseInt(ws.id)) {
-                                        isContained = true;
-                                    }
-                                });
-                                if (!isContained) {
-                                    ctrl.addWorldstateToTableData(ws);
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (newVal.length < oldlength) {
-                        //a worldstate was removed. we need to remove the row model.
-                        for (i = oldVal.length - 1; i >= 0; i--) {
-                            ws = oldVal[i];
-                            isContained = false;
-                            /*jshint -W083 */
-                            $scope.worldstates.forEach(function (val) {
-                                if (parseInt(val.id) === parseInt(ws.id)) {
-                                    isContained = true;
-                                }
-                            });
-                            if (!isContained) {
-                                ctrl.removeWorldstateFromTableData(ws);
-                                break;
-                            }
-                        }
-                    } else {
-                        // a worldstate or the order has changed, check what worldstates have changed..
-                        for (i = 0; i < $scope.worldstates.length; i++) {
-                            if (!angular.equals($scope.worldstates[i], oldVal[i])) {
-                                ws = $scope.worldstates[i];
-                                ctrl.updateWorldstateTableData(ws);
-                            }
-                        }
-                    }
+                    ctrl.addMissingWoldstatesToTable(oldVal);
+                    ctrl.removeMissingWorldstatesFromTable(oldVal);
                 }
                 ctrl.refreshTable();
             };
