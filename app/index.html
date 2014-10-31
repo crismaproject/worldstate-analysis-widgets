@@ -401,7 +401,6 @@
         <script src="bower_components/ng-table/ng-table.js"></script>
         <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
         <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
-        <script src="bower_components/angular-local-storage/angular-local-storage.js"></script>
         <script src="bower_components/angular-commons/dist/scripts/angular-commons.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
@@ -452,6 +451,8 @@
         <script src="scripts/controllers/IcmmContextProviderDirectiveController.js"></script>
         <script src="scripts/directives/icmmBasedAnalysisContextProvider.js"></script>
         <script src="scripts/services/icmmPersistanceService.js"></script>
+        <script src="scripts/services/IcmmCriteriaFunctions.js"></script>
+        <script src="scripts/services/IcmmDecisionStrategies.js"></script>
 
         <!-- endbuild -->
 
@@ -464,8 +465,8 @@
                                                                                     'use strict';
                                                                                     $provide.constant('DEBUG', 'true');
                                                                                     $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-//                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
 //                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://fsdfd');
                                                                                 }
                                                                             ]
