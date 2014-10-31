@@ -6,10 +6,10 @@ angular.module(
         '$scope',
         'de.cismet.collidingNameService.Nodes',
         'de.cismet.crisma.ICMM.Worldstates',
-        'localStorageService',
-        '$timeout',
         'de.cismet.crisma.ICMM.services.icmm',
-        function ($scope, Nodes, Worldstates, localStorageService, $timeout, Icmm) {
+        'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
+        'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
+        function ($scope, Nodes, Worldstates, Icmm, CF, DS) {
             'use strict';
 
             // intialisation for the worldstate tree
@@ -24,7 +24,7 @@ angular.module(
             };
             $scope.treeSelection = [];
             $scope.selectedWorldstates = [];
-            
+
             Worldstates.query({level: 3, fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories', deduplicate: false}, function (data) {
                 data.forEach(function (ws) {
                     ws = Icmm.convertToCorrectIccDataFormat(ws);
@@ -32,13 +32,19 @@ angular.module(
                 $scope.worldstates = data;
             });
 
-
-            $scope.criteriaFunctions = localStorageService.get('criteriaFunctionSet') || [];
+            $scope.criteriaFunctions = [];
+            CF.query(function (data) {
+                if (data.length > 0) {
+                    $scope.criteriaFunctions = data;
+                }
+            });
             $scope.selectedCriteriaFunction = $scope.criteriaFunctions[0];
             $scope.showDsPersistSpinner = false;
             $scope.showDsPersistDone = false;
-            $scope.decisionStrategies = localStorageService.get('decisionStrategies') || [];
-            $scope.selectedDecisionStrategy = $scope.decisionStrategies[0];
+            $scope.decisionStrategies = [];
+            DS.query(function (data) {
+                $scope.decisionStrategies = data || [];
+            });
 
             // every time the treeSelection changes, we need to determine the
             // corresponding worldstates to the selected nodes. 
@@ -91,7 +97,7 @@ angular.module(
                     }
                 }
             });
-
+            
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
             });
