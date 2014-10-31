@@ -43,7 +43,7 @@ angular.module(
                     transformRequest: function (data) {
                         var transformedData, wrapper;
                         wrapper = {
-                            $self: "/CRISMA.criteriafunctions/1",
+                            $self: '/CRISMA.criteriafunctions/1',
                             id: 1,
                             criteriaFunctions: angular.toJson(data)
                         };

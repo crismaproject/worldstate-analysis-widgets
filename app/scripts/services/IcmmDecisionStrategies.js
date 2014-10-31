@@ -8,7 +8,8 @@ angular.module(
         'CRISMA_DOMAIN',
         'de.cismet.crisma.ICMM.services.icmm',
         function ($resource, CRISMA_ICMM_API, CRISMA_DOMAIN, Icmm) {
-            var transformedData, processResult, processResults;
+            'use strict';
+            var transformedData, processResult;
             processResult = function (dsDataObj) {
                 var wrapper;
                 if (dsDataObj) {
@@ -37,7 +38,7 @@ angular.module(
                     transformRequest: function (data) {
                         var transformedData, wrapper;
                         wrapper = {
-                            $self: "/CRISMA.decisionstrategies/1",
+                            $self: '/CRISMA.decisionstrategies/1',
                             id: 1,
                             decisionStrategies: angular.toJson(data)
                         };
