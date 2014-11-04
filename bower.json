@@ -17,14 +17,19 @@
   ],
   "dependencies": {
     "angular": "1.2.25",
+    "angular-resource": "1.2.25",
+    "angular-commons": "0.2.0",
     "json3": "3.2.6",
     "es5-shim": "2.1.0",
-    "angular-resource": "1.2.7",
+    "jquery": "2.1.1",
+    "jquery-ui": "1.10.4",
     "ng-table": "0.3.3",
-    "bootstrap": "3.2.0",
+    "bootstrap": "3.1.1",
     "icmm_js": "1.0.0",
+    "dynatree": "1.2.5",
     "crisma-worldstate-tree-widget-angular": "1.0.8",
     "d3": "3.3.6",
+    "nvd3": "1.1.15-beta",
     "angularjs-nvd3-directives": "0.0.7",
     "angular-strap": "2.0.3",
     "jquery-knob": "1.2.9",
@@ -33,15 +38,10 @@
   },
   "devDependencies": {
     "angular-mocks": "1.2.25",
-    "angular-scenario": "1.2.25",
-    "angular-commons": "0.2.0",
-    "nvd3": "1.1.15-beta"
+    "angular-scenario": "1.2.25"
   },
   "resolutions": {
-    "angular": "1.2.25",
-    "bootstrap": "3.2.0",
-    "d3": "3.3.6",
-    "angular-resource": "1.2.25",
-    "icmm_js": "1.0.0"
+    "icmm_js": "1.0.0",
+    "d3": "3.3.6"
   }
 }

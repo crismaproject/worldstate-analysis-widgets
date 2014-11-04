@@ -1,6 +1,12 @@
 node_modules
-dist/bower_components
+/nbproject/private/
+dist/*
+!dist/scripts
+!dist/styles
 .tmp
 .sass-cache
 app/bower_components
-/nbproject/private/
+.idea
+target
+.checkDependencies
+test-results.xml

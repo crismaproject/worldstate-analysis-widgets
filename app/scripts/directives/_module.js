@@ -1,0 +1,9 @@
+angular.module(
+    'eu.crismaproject.worldstateAnalysis.directives',
+    [
+        'eu.crismaproject.worldstateAnalysis.controllers',
+        'ngTable',
+        'de.cismet.crisma.ICMM.Worldstates',
+        'mgcrea.ngStrap.popover'
+    ]
+);
