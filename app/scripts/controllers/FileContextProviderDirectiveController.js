@@ -14,6 +14,18 @@ angular.module(
             $scope.worldstates = [];
             $scope.criteriaFunctions = [];
             $scope.decisionStrategies = [];
+            $scope.showDummyListItem = true;
+            $scope.removeSelectionBtnDisabled = true;
+            $scope.removeSelectionButtonStyle = {
+                'color': '#888'
+            };
+            $scope.noIndicatorsLoaded = true;
+            /*
+             * the indicator maps keeps track of the indicators that each object  
+             * (e.g. indicator object, criteriaFunction and decisionStrategy) that are loaded by this directive
+             *  must provide
+             */
+            $scope.indicatorMap;
 
             $scope.tooltipRename = {
                 title: 'Rename criteria function'
@@ -50,6 +62,19 @@ angular.module(
                 }
             };
 
+            $scope.$watchCollection('selectedWorldstates', function () {
+                //if no indicator objects are selected anymore whe need to disable the button
+                if ($scope.selectedWorldstates.length <= 0) {
+                    $scope.removeSelectionBtnDisabled = true;
+                    $scope.removeSelectionButtonStyle = {
+                        'color': '#CCC'
+                    };
+                } else {
+                    $scope.removeSelectionBtnDisabled = false;
+                    $scope.removeSelectionButtonStyle = {};
+                }
+            });
+
             $scope.getItemStyle = function (index) {
                 var c = 'list-group-item';
                 var wsToToggle, i, isSelected;
@@ -74,6 +99,9 @@ angular.module(
 
             $scope.removeSelectedDummyWS = function () {
                 var i, j, indexToRemove;
+                if ($scope.removeSelectionBtnDisabled) {
+                    return;
+                }
                 indexToRemove = [];
                 for (i = 0; i < $scope.selectedWorldstates.length; i++) {
                     for (j = 0; j < $scope.worldstates.length; j++) {
@@ -147,6 +175,14 @@ angular.module(
                             $scope.editable.push(false);
                             $scope.worldstates = [worldstateDummy];
                         }
+                        $scope.showDummyListItem = false;
+                        $scope.noIndicatorsLoaded = false;
+                        // when indicator objects are added we want them to be selected by default
+                        $scope.selectedWorldstates.splice(0, $scope.selectedWorldstates.length);
+                        $scope.worldstates.forEach(function (object, index) {
+                            $scope.toggleSelection(index);
+                        });
+
                         $scope.$apply();
 
                     } catch (err) {

@@ -32,13 +32,17 @@
                                       data-animation="am-fade-and-scale" 
                                       data-container="body"
                                       bs-tooltip="tooltipDeleteSelection.title"
+                                      ng-style="removeSelectionButtonStyle"
                                       ng-click="removeSelectedDummyWS()">
                                 </span>
                             </h4>
                         </div>
-                        <div id="collapseListGroup1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1" aria-expanded="false" style="height: 0px;">
-                            <div class="list-group" style="margin-bottom: 0px;">
-                                <a  ng-click="toggleSelection($index)"
+                        <div id="collapseListGroup1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1" aria-expanded="true" >
+                            <ul class="list-group">
+                                <!--dummy item that indicates that no indicator objects are available-->
+                                <li class="list-group-item" ng-show="showDummyListItem">
+                                </li>
+                                <li ng-click="toggleSelection($index)"
                                     ng-class="getItemStyle($index)"
                                     class="list-group-item" ng-repeat="ws in worldstates">
 
@@ -73,8 +77,8 @@
                                            style="margin-right: 10px;"
                                            class="glyphicon glyphicon-ok"></i>
                                     </div>
-                                </a>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
