@@ -1,4 +1,4 @@
-angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives').run(['$templateCache', function($templateCache) {
+angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('templates/criteriaEmphasesTemplate.html',
@@ -589,13 +589,13 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives').run([
 
   $templateCache.put('templates/indicatorCriteriaTableTemplate.html',
     "<div id=\"indicatorCriteriaTable\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(worldstates.length > 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "    <div ng-show=\"forCriteria && !criteriaFunction\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"forCriteria && !criteriaFunction\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>No criteria function selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"worldstates.length <= 0 || (forCriteria && !criteriaFunction)\">\n" +
+    "    <div ng-show=\"!(worldstates.length <= 0 || (forCriteria && !criteriaFunction))\">\n" +
     "        <table  data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\">\n" +
     "            <thead>\n" +
     "                <tr>\n" +
@@ -970,66 +970,67 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives').run([
 
   $templateCache.put('templates/worldstateRankingTableTemplate.html',
     "<div id=\"worldstateRankingTable\" style=\"overflow-x: auto\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(worldstates.length > 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"criteriaFunction || worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(criteriaFunction || worldstates.length <= 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>No criteria function selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"decisionStrategy|| worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
-    "        <strong>Warning: </strong>No decision strategy elected.\n" +
+    "    <div ng-if=\"!(decisionStrategy || worldstates.length <= 0)\" class=\"alert alert-warning\">\n" +
+    "        <strong>Warning: </strong>No decision strategy selected.\n" +
     "    </div>\n" +
-    "    <table ng-hide=\"worldstates.length <= 0 || !criteriaFunction || !decisionStrategy\" \n" +
-    "           ng-table=\"tableParams\" \n" +
-    "           show-filter=\"false\" \n" +
-    "           class=\"table table-striped\"\n" +
-    "           style=\"white-space: nowrap\">\n" +
-    "        <thead>\n" +
-    "            <tr>\n" +
+    "    <div ng-show=\"((worldstates.length > 0) && criteriaFunction && decisionStrategy)\">\n" +
+    "        <table  \n" +
+    "            ng-table=\"tableParams\" \n" +
+    "            show-filter=\"false\" \n" +
+    "            class=\"table table-striped\"\n" +
+    "            style=\"white-space: nowrap\">\n" +
+    "          \n" +
+    "            <thead>\n" +
+    "                <tr>\n" +
     "                <th ng-repeat=\"column in columns\"\n" +
-    "                     ng-if=\"$index < 3\"\n" +
-    "                    class=\"\"\n" +
-    "                    >\n" +
-    "                    {{column.title}}\n" +
-    "                </th>\n" +
-    "                <th ng-if=\"showRadarChart\">\n" +
-    "                    Criteria radar\n" +
-    "                </th>\n" +
+    "                        ng-if=\"$index < 3\"\n" +
+    "                        >\n" +
+    "                        {{column.title}}\n" +
+    "                    </th>\n" +
+    "                    <th ng-if=\"showRadarChart\">\n" +
+    "                        Criteria radar\n" +
+    "                    </th>\n" +
     "                <th ng-repeat=\"column in columns\"\n" +
-    "                     ng-if=\"showIndicators && $index >= 3\"\n" +
-    "                    class=\"\"\n" +
-    "                    >\n" +
-    "                    {{column.title}}\n" +
-    "                </th>\n" +
-    "            </tr>\n" +
-    "        </thead>\n" +
-    "        <tbody>\n" +
-    "            <tr ng-repeat=\"item in $data\">\n" +
+    "                        ng-if=\"showIndicators && $index >= 3\"\n" +
+    "                        >\n" +
+    "                        {{column.title}}\n" +
+    "                    </th>\n" +
+    "                </tr>\n" +
+    "            </thead>\n" +
+    "            <tbody>\n" +
+    "                <tr ng-repeat=\"item in $data\">\n" +
     "                <td ng-repeat=\"col in columns\" ng-if=\"$index < 3\" style=\"vertical-align: middle\">\n" +
-    "                    {{item[col.field]}}\n" +
-    "                </td>\n" +
-    "                <td ng-if=\"showRadarChart\"\n" +
-    "                    style=\"min-width:150px; width:150px; margin: 0 auto; padding-top: 20px\" \n" +
-    "                    criteria-radar \n" +
-    "                    worldstates=\"[item.ws]\" \n" +
-    "                    show-legend=\"false\"\n" +
-    "                    show-axis-text=\"true\"\n" +
-    "                    use-numbers=\"true\"\n" +
-    "                    criteria-function=\"criteriaFunction\"\n" +
-    "                    ng-click=\"clickToOpen($index)\"\n" +
-    "                   >\n" +
-    "                </td>\n" +
+    "                        {{item[col.field]}}\n" +
+    "                    </td>\n" +
+    "                    <td ng-if=\"showRadarChart\"\n" +
+    "                        style=\"min-width:150px; width:150px; margin: 0 auto; padding-top: 20px\" \n" +
+    "                        criteria-radar \n" +
+    "                        worldstates=\"[item.ws]\" \n" +
+    "                        show-legend=\"false\"\n" +
+    "                        show-axis-text=\"true\"\n" +
+    "                        use-numbers=\"true\"\n" +
+    "                        criteria-function=\"criteriaFunction\"\n" +
+    "                        ng-click=\"clickToOpen($index)\"\n" +
+    "                        >\n" +
+    "                    </td>\n" +
     "                <td ng-repeat=\"col in columns\"  ng-if=\"showIndicators && $index >= 3\" style=\"vertical-align: middle\">\n" +
-    "                    <span>\n" +
-    "                        {{item[col.field].indicator}}\n" +
-    "                        <br/>\n" +
-    "                        {{item[col.field].los}}\n" +
-    "                    </span>\n" +
-    "                </td>\n" +
+    "                        <span>\n" +
+    "                            {{item[col.field].indicator}}\n" +
+    "                            <br/>\n" +
+    "                            {{item[col.field].los}}\n" +
+    "                        </span>\n" +
+    "                    </td>\n" +
     "\n" +
-    "            </tr>\n" +
-    "        </tbody>\n" +
-    "    </table>\n" +
+    "                </tr>\n" +
+    "            </tbody>\n" +
+    "        </table>\n" +
+    "    </div>\n" +
     "</div>"
   );
 

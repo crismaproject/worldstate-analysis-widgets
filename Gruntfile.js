@@ -15,16 +15,19 @@ module.exports = function (grunt) {
      * ===========================================================================================================
      */
     // TODO: find a way for more convenient configuration
-    directivesMainModuleName = 'de.cismet.crisma.widgets.worldstateTreeWidget.directives';
+    directivesMainModuleName = 'eu.crismaproject.worldstateAnalysis.directives';
 
     customCopy = {
         preserveTimestamp: true,
         files: [{
             expand: true,
-            dot: true,
             cwd: '<%= targetDist %>',
             dest: '<%= targetMin %>',
-            src: ['bower_components/dynatree/dist/skin*/*.gif']
+            src: [
+                'bower_components/crisma-worldstate-tree-widget-angular/dist/images/*.png', 
+                'bower_components/dynatree/dist/skin*/*.gif',
+                'bower_components/ng-table/ng-table.map'
+            ]
         }]
     };
 
