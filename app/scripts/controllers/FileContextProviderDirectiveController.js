@@ -25,8 +25,6 @@ angular.module(
              * (e.g. indicator object, criteriaFunction and decisionStrategy) that are loaded by this directive
              *  must provide
              */
-            $scope.indicatorMap;
-
             $scope.tooltipRename = {
                 title: 'Rename criteria function'
             };
@@ -150,7 +148,8 @@ angular.module(
 
             onloadIccObjects = function (file) {
                 return function (e) {
-                    var fileObj, worldstateDummy, indicators, indicator, origLoadedIndicators;
+                    var fileObj, worldstateDummy, indicatorProp, indicator, origLoadedIndicators, indicatorGroup,
+                        containsIndicator;
                     try {
                         fileObj = JSON.parse(e.target.result);
                         /*
@@ -179,29 +178,37 @@ angular.module(
                         }
                         if (!$scope.indicatorMap) {
                             $scope.indicatorMap = {};
-                            for (var indicatorGroup in origLoadedIndicators) {
-                                for (var indicatorProp in origLoadedIndicators[indicatorGroup]) {
-                                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                                        $scope.indicatorMap[indicatorProp] = origLoadedIndicators[indicatorGroup][indicatorProp];
+                            for (indicatorGroup in origLoadedIndicators) {
+                                if (origLoadedIndicators.hasOwnProperty(indicatorGroup)) {
+                                    for (indicatorProp in origLoadedIndicators[indicatorGroup]) {
+                                        if (origLoadedIndicators[indicatorGroup].hasOwnProperty(indicatorProp)) {
+                                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                $scope.indicatorMap[indicatorProp] = origLoadedIndicators[indicatorGroup][indicatorProp];
+                                            }
+                                        }
                                     }
                                 }
                             }
                         } else {
                             for (indicator in $scope.indicatorMap) {
                                 if ($scope.indicatorMap.hasOwnProperty(indicator)) {
-                                    var containsIndicator = false;
-                                    for (var indicatorGroup in origLoadedIndicators) {
-                                        for (var indicatorProp in origLoadedIndicators[indicatorGroup]) {
-                                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
-                                                if ($scope.indicatorMap[indicator].displayName === origLoadedIndicators[indicatorGroup][indicatorProp].displayName) {
-                                                    containsIndicator = true;
-                                                    break;
+                                    containsIndicator = false;
+                                    for (indicatorGroup in origLoadedIndicators) {
+                                        if (origLoadedIndicators.hasOwnProperty(indicatorGroup)) {
+                                            for (indicatorProp in origLoadedIndicators[indicatorGroup]) {
+                                                if (origLoadedIndicators[indicatorGroup].hasOwnProperty()) {
+                                                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                        if ($scope.indicatorMap[indicator].displayName === origLoadedIndicators[indicatorGroup][indicatorProp].displayName) {
+                                                            containsIndicator = true;
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                     if (!containsIndicator) {
-                                        console.error("loaded indicator data does not match to the first loaded indicator set");
+                                        console.error('loaded indicator data does not match to the first loaded indicator set');
                                     }
                                 }
                             }
@@ -309,7 +316,7 @@ angular.module(
                                     }
                                 }
                             }
-                            $scope.loadedDsfFile =theFile.name;
+                            $scope.loadedDsfFile = theFile.name;
                             $scope.decisionStrategies = ds;
                         }
                         $scope.$apply();
