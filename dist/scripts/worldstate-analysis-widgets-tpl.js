@@ -255,16 +255,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                        <div class=\"panel-heading\" role=\"tab\" id=\"collapseListGroupHeading1\">\n" +
     "                            <h4 class=\"panel-title\">\n" +
     "                                <a class=\"collapsed\" data-toggle=\"collapse\" href=\"#collapseListGroup1\" aria-expanded=\"false\" aria-controls=\"collapseListGroup1\">\n" +
-    "                                    Available Icc Objects\n" +
+    "                                    Indicator files\n" +
     "                                </a>\n" +
     "                                <span style=\"font-size: 14px\" \n" +
     "                                      class=\"pull-right glyphicon glyphicon-plus-sign btn-file \">\n" +
     "                                    <span\n" +
-    "                                      data-placement=\"top\" data-type=\"info\" \n" +
-    "                                      data-delay=\"500\" \n" +
-    "                                      data-animation=\"am-fade-and-scale\" \n" +
-    "                                      data-container=\"body\"\n" +
-    "                                      bs-tooltip=\"tooltipAdd.title\"></span>\n" +
+    "                                        data-placement=\"top\" data-type=\"info\" \n" +
+    "                                        data-delay=\"500\" \n" +
+    "                                        data-animation=\"am-fade-and-scale\" \n" +
+    "                                        data-container=\"body\"\n" +
+    "                                        bs-tooltip=\"tooltipAdd.title\"></span>\n" +
     "                                    <input type=\"file\" file-input=\"iccObjects\" multiple>\n" +
     "                                </span>\n" +
     "                                <span style=\"margin-right:5px; font-size: 14px\" \n" +
@@ -274,13 +274,17 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                      data-animation=\"am-fade-and-scale\" \n" +
     "                                      data-container=\"body\"\n" +
     "                                      bs-tooltip=\"tooltipDeleteSelection.title\"\n" +
+    "                                      ng-style=\"removeSelectionButtonStyle\"\n" +
     "                                      ng-click=\"removeSelectedDummyWS()\">\n" +
     "                                </span>\n" +
     "                            </h4>\n" +
     "                        </div>\n" +
-    "                        <div id=\"collapseListGroup1\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"collapseListGroupHeading1\" aria-expanded=\"false\" style=\"height: 0px;\">\n" +
-    "                            <div class=\"list-group\" style=\"margin-bottom: 0px;\">\n" +
-    "                                <a  ng-click=\"toggleSelection($index)\"\n" +
+    "                        <div id=\"collapseListGroup1\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"collapseListGroupHeading1\" aria-expanded=\"true\" >\n" +
+    "                            <ul class=\"list-group\">\n" +
+    "                                <!--dummy item that indicates that no indicator objects are available-->\n" +
+    "                                <li class=\"list-group-item\" ng-show=\"showDummyListItem\">\n" +
+    "                                </li>\n" +
+    "                                <li ng-click=\"toggleSelection($index)\"\n" +
     "                                    ng-class=\"getItemStyle($index)\"\n" +
     "                                    class=\"list-group-item\" ng-repeat=\"ws in worldstates\">\n" +
     "\n" +
@@ -315,8 +319,8 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                           style=\"margin-right: 10px;\"\n" +
     "                                           class=\"glyphicon glyphicon-ok\"></i>\n" +
     "                                    </div>\n" +
-    "                                </a>\n" +
-    "                            </div>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -337,14 +341,59 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </div>\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
-    "                <label>Criteria Function Set File</label>\n" +
-    "                <input type=\"file\" file-input=\"cfConfigFile\">\n" +
+    "                <label>Criteria function file</label>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"row\" style=\"margin-bottom: 20px;\">\n" +
+    "            <div class=\"col-lg-4\">\n" +
+    "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                    Choose a file\n" +
+    "                    <input type=\"file\" ng-disabled=\"noIndicatorsLoaded\" file-input=\"cfConfigFile\">\n" +
+    "                </span>\n" +
+    "            </div>\n" +
+    "            <div class=\"col-lg-8\">\n" +
+    "                  <div ng-if=\"noIndicatorsLoaded\" \n" +
+    "                     class=\"alert alert-warning\">\n" +
+    "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
+    "                    No indicator files selected\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"cfFileLoadError\" \n" +
+    "                      class=\"alert alert-danger\"\n" +
+    "                      style=\"font-size: 14px;\">\n" +
+    "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
+    "                    {{cfFileLoadErrorMsg}}\n" +
+    "                </div>\n" +
+    "                <span ng-if=\"loadedCfFile\" style=\"vertical-align: middle\">Loaded File: {{loadedCfFile}}</span>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
-    "                <label>Decision Strategy Set File</label>\n" +
-    "                <input type=\"file\" file-input=\"dsConfigFile\">\n" +
+    "                <label>Decision strategy file</label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <div class=\"row\">\n" +
+    "            <div class=\"col-lg-4\">\n" +
+    "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                    Choose a file\n" +
+    "                    <input type=\"file\" file-input=\"dsConfigFile\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                </span>\n" +
+    "            </div>\n" +
+    "            <div class=\"col-lg-8\">\n" +
+    "                <div ng-if=\"noIndicatorsLoaded\" \n" +
+    "                     class=\"alert alert-warning\">\n" +
+    "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
+    "                    No indicator files selected\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"dsFileLoadError\"\n" +
+    "                     class=\"alert alert-danger\">\n" +
+    "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
+    "                    {{dsFileLoadErrorMsg}}\n" +
+    "                </div>\n" +
+    "                <span ng-if=\"loadedDsfFile\" \n" +
+    "                      style=\"vertical-align: middle\">\n" +
+    "                    Loaded File: {{loadedDsfFile}}\n" +
+    "                </span>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
