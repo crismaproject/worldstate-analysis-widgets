@@ -110,11 +110,10 @@ angular.module(
                         }
                     }
                 }
-                for (i = 0; i < indexToRemove.length; i++) {
+                for (i = indexToRemove.length - 1; i >= 0; i--) {
                     $scope.worldstates.splice(indexToRemove[i], 1);
                 }
                 $scope.selectedWorldstates = [];
-
             };
 
             /*
@@ -137,31 +136,79 @@ angular.module(
             $scope.fileLoadError = false;
             $scope.fileLoading = false;
 
+            $scope.showCfFileLoadingError = function (message) {
+                $scope.cfFileLoadError = true;
+                $scope.cfFileLoadErrorMsg = message;
+                $scope.$apply();
+            };
+
+            $scope.showDsFileLoadingError = function (message) {
+                $scope.dsFileLoadError = true;
+                $scope.dsFileLoadErrorMsg = message;
+                $scope.$apply();
+            };
+
             onloadIccObjects = function (file) {
                 return function (e) {
-                    var fileObj, worldstateDummy;
+                    var fileObj, worldstateDummy, indicators, indicator, origLoadedIndicators;
                     try {
                         fileObj = JSON.parse(e.target.result);
                         /*
                          * accept two differnt kind of files. 
                          * 1. A plain icc data object.
-                         * In that case we use apply a standard name to this object
+                         * In that case we apply a standard name to this object
                          * 
                          * 2. A worldstate Dummy object that already has a name
                          */
 
                         if (fileObj.name && fileObj.iccdata) {
                             worldstateDummy = fileObj;
+                            origLoadedIndicators = fileObj.iccdata;
+                            worldstateDummy.iccdata = {
+                                actualaccessinfo: JSON.stringify(worldstateDummy.iccdata)
+                            };
                         } else {
                             //generate a uniqe id...
+                            origLoadedIndicators = fileObj;
                             worldstateDummy = {
-                                name: 'Nonamed ICC data ' + ($scope.worldstates.length + 1),
-                                iccdata: fileObj
+                                name: 'Nonamed indicator data ' + ($scope.worldstates.length + 1),
+                                iccdata: {
+                                    actualaccessinfo: JSON.stringify(fileObj)
+                                }
                             };
+                        }
+                        if (!$scope.indicatorMap) {
+                            $scope.indicatorMap = {};
+                            for (var indicatorGroup in origLoadedIndicators) {
+                                for (var indicatorProp in origLoadedIndicators[indicatorGroup]) {
+                                    if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                        $scope.indicatorMap[indicatorProp] = origLoadedIndicators[indicatorGroup][indicatorProp];
+                                    }
+                                }
+                            }
+                        } else {
+                            for (indicator in $scope.indicatorMap) {
+                                if ($scope.indicatorMap.hasOwnProperty(indicator)) {
+                                    var containsIndicator = false;
+                                    for (var indicatorGroup in origLoadedIndicators) {
+                                        for (var indicatorProp in origLoadedIndicators[indicatorGroup]) {
+                                            if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                if ($scope.indicatorMap[indicator].displayName === origLoadedIndicators[indicatorGroup][indicatorProp].displayName) {
+                                                    containsIndicator = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!containsIndicator) {
+                                        console.error("loaded indicator data does not match to the first loaded indicator set");
+                                    }
+                                }
+                            }
                         }
 
                         // we need an id to distinc the icc objects. eg. the ranking table use this id
-                        // to keep track of the icc objects
+                        // to keep track of the indicator objects
                         if (!worldstateDummy.id) {
                             worldstateDummy.id = Math.floor((Math.random() * 1000000) + 1);
                         }
@@ -194,12 +241,36 @@ angular.module(
 
             onloadCfFile = function (theFile) {
                 return function (e) {
-                    var cfSet;
+                    var cfSet, cf, i, j, indicatorProp, indicatorFound, cfIndicator, msg;
                     try {
                         cfSet = JSON.parse(e.target.result);
 
                         if (Object.prototype.toString.call(cfSet) === '[object Array]') {
+                            // we need to check if the criteria Functions defined in the file
+                            // match to the indicators of the loaded indicator files...
+                            for (indicatorProp in $scope.indicatorMap) {
+                                for (i = 0; i < cfSet.length; i++) {
+                                    cf = cfSet[i];
+                                    for (j = 0; j < cf.criteriaFunctions.length; j++) {
+                                        cfIndicator = cf.criteriaFunctions[j].indicator;
+                                        indicatorFound = false;
+
+                                        if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
+                                            indicatorFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!indicatorFound) {
+                                        msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
+                                        console.error(msg);
+                                        $scope.showCfFileLoadingError(msg);
+                                        return;
+                                    }
+                                }
+                            }
                             $scope.criteriaFunctions = cfSet;
+                            $scope.loadedCfFile = theFile.name;
+
                         }
                         $scope.$apply();
                     } catch (err) {
@@ -211,11 +282,34 @@ angular.module(
 
             onloadDsFile = function (theFile) {
                 return function (e) {
-                    var ds;
+                    var ds, s, i, j, indicatorProp, indicatorFound, cfIndicator, msg;
                     try {
                         ds = JSON.parse(e.target.result);
 
                         if (Object.prototype.toString.call(ds) === '[object Array]') {
+                            // we need to check if the decision strategies defined in the file
+                            // match to the indicators of the loaded indicator files...
+                            for (indicatorProp in $scope.indicatorMap) {
+                                for (i = 0; i < ds.length; i++) {
+                                    s = ds[i];
+                                    for (j = 0; j < s.criteriaEmphases.length; j++) {
+                                        cfIndicator = s.criteriaEmphases[j].indicator.displayName;
+                                        indicatorFound = false;
+
+                                        if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
+                                            indicatorFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!indicatorFound) {
+                                        msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in decision strategy "' + s.name + '"';
+                                        console.error(msg);
+                                        $scope.showDsFileLoadingError(msg);
+                                        return;
+                                    }
+                                }
+                            }
+                            $scope.loadedDsfFile =theFile.name;
                             $scope.decisionStrategies = ds;
                         }
                         $scope.$apply();
@@ -298,6 +392,6 @@ angular.module(
             });
         }
     ]
-);
+    );
 
 
