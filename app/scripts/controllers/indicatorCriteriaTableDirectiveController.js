@@ -145,7 +145,7 @@ angular.module(
             };
 
             $scope.$watchCollection('worldstates', function () {
-                if ($scope.worldstates) {
+                if ($scope.worldstates && $scope.worldstates.length>0) {
                     if ($scope.forCriteria && !$scope.criteriaFunction) {
                         return;
                     }
