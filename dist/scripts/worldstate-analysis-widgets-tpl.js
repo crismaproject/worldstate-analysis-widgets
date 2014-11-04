@@ -1,4 +1,4 @@
-angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$templateCache', function($templateCache) {
+angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('templates/criteriaEmphasesTemplate.html',
