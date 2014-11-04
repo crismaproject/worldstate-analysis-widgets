@@ -95,14 +95,39 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <label>Criteria Function Set File</label>
-                <input type="file" file-input="cfConfigFile">
+                <label>Criteria function file</label>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-lg-4">
+                <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
+                    Choose a file
+                    <input type="file" ng-disabled="noIndicatorsLoaded" file-input="cfConfigFile">
+                </span>
+            </div>
+            <div class="col-lg-8" style="display: table-cell">
+                <span ng-if="noIndicatorsLoaded" style="vertical-align: middle">No indicator files selected</span>
+                <span ng-if="cfFileLoadError" style="vertical-align: middle; color: red">{{cfFileLoadErrorMsg}}</span>
+                <span ng-if="loadedCfFile" style="vertical-align: middle">{{loadedCfFile}}</span>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <label>Decision Strategy Set File</label>
-                <input type="file" file-input="dsConfigFile">
+                <label>Decision strategy file</label>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
+                    Choose a file
+                    <input type="file" file-input="dsConfigFile" ng-disabled="noIndicatorsLoaded">
+                </span>
+            </div>
+            <div class="col-lg-8" style="display: table-cell">
+                <span ng-if="noIndicatorsLoaded" style="vertical-align: middle">No indicator files selected</span>
+                <span ng-if="dsFileLoadError" style="vertical-align: middle; color: red">Loaded File: {{dsFileLoadErrorMsg}}</span>
+                <span ng-if="loadedDsfFile" style="vertical-align: middle">Loaded File: {{loadedDsfFile}}</span>
             </div>
         </div>
     </div>
