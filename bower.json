@@ -21,7 +21,7 @@
     "es5-shim": "2.1.0",
     "angular-resource": "1.2.7",
     "ng-table": "0.3.3",
-    "bootstrap": "3.2.0",
+    "bootstrap": "3.3.0",
     "icmm_js": "1.0.0",
     "crisma-worldstate-tree-widget-angular": "1.0.8",
     "d3": "3.3.6",
@@ -39,7 +39,7 @@
   },
   "resolutions": {
     "angular": "1.2.25",
-    "bootstrap": "3.2.0",
+    "bootstrap": "3.3.0",
     "d3": "3.3.6",
     "angular-resource": "1.2.25",
     "icmm_js": "1.0.0"
