@@ -309,7 +309,7 @@ module.exports = function (grunt) {
                             }
                         },
                         bootstrap : {
-                            versions: ['3.1.1'],
+                            versions: ['3.3.0', '3.2.0', '3.1.1'],
                             url: function (version) {
                                 return '//maxcdn.bootstrapcdn.com/bootstrap/' + version + '/js/bootstrap.min.js';
                             }
