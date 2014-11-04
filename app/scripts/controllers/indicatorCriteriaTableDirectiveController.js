@@ -1,11 +1,6 @@
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.controllers',
-    [
-        'nvd3ChartDirectives',
-        'eu.crismaproject.worldstateAnalysis.services',
-        'ngDialog'
-    ]
-    ).controller(
+    'eu.crismaproject.worldstateAnalysis.controllers'
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
     [
         '$scope',

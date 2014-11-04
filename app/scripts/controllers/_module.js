@@ -6,3 +6,11 @@ angular.module(
         'de.cismet.crisma.ICMM.services'
     ]
 );
+angular.module(
+    'eu.crismaproject.worldstateAnalysis.controllers',
+    [
+        'nvd3ChartDirectives',
+        'eu.crismaproject.worldstateAnalysis.services',
+        'ngDialog'
+    ]
+);
