@@ -255,16 +255,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                        <div class=\"panel-heading\" role=\"tab\" id=\"collapseListGroupHeading1\">\n" +
     "                            <h4 class=\"panel-title\">\n" +
     "                                <a class=\"collapsed\" data-toggle=\"collapse\" href=\"#collapseListGroup1\" aria-expanded=\"false\" aria-controls=\"collapseListGroup1\">\n" +
-    "                                    Available Icc Objects\n" +
+    "                                    Indicator files\n" +
     "                                </a>\n" +
     "                                <span style=\"font-size: 14px\" \n" +
     "                                      class=\"pull-right glyphicon glyphicon-plus-sign btn-file \">\n" +
     "                                    <span\n" +
-    "                                      data-placement=\"top\" data-type=\"info\" \n" +
-    "                                      data-delay=\"500\" \n" +
-    "                                      data-animation=\"am-fade-and-scale\" \n" +
-    "                                      data-container=\"body\"\n" +
-    "                                      bs-tooltip=\"tooltipAdd.title\"></span>\n" +
+    "                                        data-placement=\"top\" data-type=\"info\" \n" +
+    "                                        data-delay=\"500\" \n" +
+    "                                        data-animation=\"am-fade-and-scale\" \n" +
+    "                                        data-container=\"body\"\n" +
+    "                                        bs-tooltip=\"tooltipAdd.title\"></span>\n" +
     "                                    <input type=\"file\" file-input=\"iccObjects\" multiple>\n" +
     "                                </span>\n" +
     "                                <span style=\"margin-right:5px; font-size: 14px\" \n" +
@@ -274,13 +274,17 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                      data-animation=\"am-fade-and-scale\" \n" +
     "                                      data-container=\"body\"\n" +
     "                                      bs-tooltip=\"tooltipDeleteSelection.title\"\n" +
+    "                                      ng-style=\"removeSelectionButtonStyle\"\n" +
     "                                      ng-click=\"removeSelectedDummyWS()\">\n" +
     "                                </span>\n" +
     "                            </h4>\n" +
     "                        </div>\n" +
-    "                        <div id=\"collapseListGroup1\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"collapseListGroupHeading1\" aria-expanded=\"false\" style=\"height: 0px;\">\n" +
-    "                            <div class=\"list-group\" style=\"margin-bottom: 0px;\">\n" +
-    "                                <a  ng-click=\"toggleSelection($index)\"\n" +
+    "                        <div id=\"collapseListGroup1\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"collapseListGroupHeading1\" aria-expanded=\"true\" >\n" +
+    "                            <ul class=\"list-group\">\n" +
+    "                                <!--dummy item that indicates that no indicator objects are available-->\n" +
+    "                                <li class=\"list-group-item\" ng-show=\"showDummyListItem\">\n" +
+    "                                </li>\n" +
+    "                                <li ng-click=\"toggleSelection($index)\"\n" +
     "                                    ng-class=\"getItemStyle($index)\"\n" +
     "                                    class=\"list-group-item\" ng-repeat=\"ws in worldstates\">\n" +
     "\n" +
@@ -315,8 +319,8 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                           style=\"margin-right: 10px;\"\n" +
     "                                           class=\"glyphicon glyphicon-ok\"></i>\n" +
     "                                    </div>\n" +
-    "                                </a>\n" +
-    "                            </div>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -337,14 +341,59 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </div>\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
-    "                <label>Criteria Function Set File</label>\n" +
-    "                <input type=\"file\" file-input=\"cfConfigFile\">\n" +
+    "                <label>Criteria function file</label>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"row\" style=\"margin-bottom: 20px;\">\n" +
+    "            <div class=\"col-lg-4\">\n" +
+    "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                    Choose a file\n" +
+    "                    <input type=\"file\" ng-disabled=\"noIndicatorsLoaded\" file-input=\"cfConfigFile\">\n" +
+    "                </span>\n" +
+    "            </div>\n" +
+    "            <div class=\"col-lg-8\">\n" +
+    "                  <div ng-if=\"noIndicatorsLoaded\" \n" +
+    "                     class=\"alert alert-warning\">\n" +
+    "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
+    "                    No indicator files selected\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"cfFileLoadError\" \n" +
+    "                      class=\"alert alert-danger\"\n" +
+    "                      style=\"font-size: 14px;\">\n" +
+    "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
+    "                    {{cfFileLoadErrorMsg}}\n" +
+    "                </div>\n" +
+    "                <span ng-if=\"loadedCfFile\" style=\"vertical-align: middle\">Loaded File: {{loadedCfFile}}</span>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
-    "                <label>Decision Strategy Set File</label>\n" +
-    "                <input type=\"file\" file-input=\"dsConfigFile\">\n" +
+    "                <label>Decision strategy file</label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <div class=\"row\">\n" +
+    "            <div class=\"col-lg-4\">\n" +
+    "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                    Choose a file\n" +
+    "                    <input type=\"file\" file-input=\"dsConfigFile\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "                </span>\n" +
+    "            </div>\n" +
+    "            <div class=\"col-lg-8\">\n" +
+    "                <div ng-if=\"noIndicatorsLoaded\" \n" +
+    "                     class=\"alert alert-warning\">\n" +
+    "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
+    "                    No indicator files selected\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"dsFileLoadError\"\n" +
+    "                     class=\"alert alert-danger\">\n" +
+    "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
+    "                    {{dsFileLoadErrorMsg}}\n" +
+    "                </div>\n" +
+    "                <span ng-if=\"loadedDsfFile\" \n" +
+    "                      style=\"vertical-align: middle\">\n" +
+    "                    Loaded File: {{loadedDsfFile}}\n" +
+    "                </span>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -589,13 +638,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/indicatorCriteriaTableTemplate.html',
     "<div id=\"indicatorCriteriaTable\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(worldstates.length > 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "    <div ng-show=\"forCriteria && !criteriaFunction\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"forCriteria && !criteriaFunction\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>No criteria function selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"worldstates.length <= 0 || (forCriteria && !criteriaFunction)\">\n" +
+    "    <div ng-show=\"!(worldstates.length <= 0 || (forCriteria && !criteriaFunction))\">\n" +
     "        <table  data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\">\n" +
     "            <thead>\n" +
     "                <tr>\n" +
@@ -970,66 +1019,67 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/worldstateRankingTableTemplate.html',
     "<div id=\"worldstateRankingTable\" style=\"overflow-x: auto\">\n" +
-    "    <div ng-hide=\"worldstates.length > 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(worldstates.length > 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"criteriaFunction || worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
+    "    <div ng-if=\"!(criteriaFunction || worldstates.length <= 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>No criteria function selected.\n" +
     "    </div>\n" +
-    "    <div ng-hide=\"decisionStrategy|| worldstates.length <= 0\" class=\"alert alert-warning\">\n" +
-    "        <strong>Warning: </strong>No decision strategy elected.\n" +
+    "    <div ng-if=\"!(decisionStrategy || worldstates.length <= 0)\" class=\"alert alert-warning\">\n" +
+    "        <strong>Warning: </strong>No decision strategy selected.\n" +
     "    </div>\n" +
-    "    <table ng-hide=\"worldstates.length <= 0 || !criteriaFunction || !decisionStrategy\" \n" +
-    "           ng-table=\"tableParams\" \n" +
-    "           show-filter=\"false\" \n" +
-    "           class=\"table table-striped\"\n" +
-    "           style=\"white-space: nowrap\">\n" +
-    "        <thead>\n" +
-    "            <tr>\n" +
+    "    <div ng-show=\"((worldstates.length > 0) && criteriaFunction && decisionStrategy)\">\n" +
+    "        <table  \n" +
+    "            ng-table=\"tableParams\" \n" +
+    "            show-filter=\"false\" \n" +
+    "            class=\"table table-striped\"\n" +
+    "            style=\"white-space: nowrap\">\n" +
+    "          \n" +
+    "            <thead>\n" +
+    "                <tr>\n" +
     "                <th ng-repeat=\"column in columns\"\n" +
-    "                     ng-if=\"$index < 3\"\n" +
-    "                    class=\"\"\n" +
-    "                    >\n" +
-    "                    {{column.title}}\n" +
-    "                </th>\n" +
-    "                <th ng-if=\"showRadarChart\">\n" +
-    "                    Criteria radar\n" +
-    "                </th>\n" +
+    "                        ng-if=\"$index < 3\"\n" +
+    "                        >\n" +
+    "                        {{column.title}}\n" +
+    "                    </th>\n" +
+    "                    <th ng-if=\"showRadarChart\">\n" +
+    "                        Criteria radar\n" +
+    "                    </th>\n" +
     "                <th ng-repeat=\"column in columns\"\n" +
-    "                     ng-if=\"showIndicators && $index >= 3\"\n" +
-    "                    class=\"\"\n" +
-    "                    >\n" +
-    "                    {{column.title}}\n" +
-    "                </th>\n" +
-    "            </tr>\n" +
-    "        </thead>\n" +
-    "        <tbody>\n" +
-    "            <tr ng-repeat=\"item in $data\">\n" +
+    "                        ng-if=\"showIndicators && $index >= 3\"\n" +
+    "                        >\n" +
+    "                        {{column.title}}\n" +
+    "                    </th>\n" +
+    "                </tr>\n" +
+    "            </thead>\n" +
+    "            <tbody>\n" +
+    "                <tr ng-repeat=\"item in $data\">\n" +
     "                <td ng-repeat=\"col in columns\" ng-if=\"$index < 3\" style=\"vertical-align: middle\">\n" +
-    "                    {{item[col.field]}}\n" +
-    "                </td>\n" +
-    "                <td ng-if=\"showRadarChart\"\n" +
-    "                    style=\"min-width:150px; width:150px; margin: 0 auto; padding-top: 20px\" \n" +
-    "                    criteria-radar \n" +
-    "                    worldstates=\"[item.ws]\" \n" +
-    "                    show-legend=\"false\"\n" +
-    "                    show-axis-text=\"true\"\n" +
-    "                    use-numbers=\"true\"\n" +
-    "                    criteria-function=\"criteriaFunction\"\n" +
-    "                    ng-click=\"clickToOpen($index)\"\n" +
-    "                   >\n" +
-    "                </td>\n" +
+    "                        {{item[col.field]}}\n" +
+    "                    </td>\n" +
+    "                    <td ng-if=\"showRadarChart\"\n" +
+    "                        style=\"min-width:150px; width:150px; margin: 0 auto; padding-top: 20px\" \n" +
+    "                        criteria-radar \n" +
+    "                        worldstates=\"[item.ws]\" \n" +
+    "                        show-legend=\"false\"\n" +
+    "                        show-axis-text=\"true\"\n" +
+    "                        use-numbers=\"true\"\n" +
+    "                        criteria-function=\"criteriaFunction\"\n" +
+    "                        ng-click=\"clickToOpen($index)\"\n" +
+    "                        >\n" +
+    "                    </td>\n" +
     "                <td ng-repeat=\"col in columns\"  ng-if=\"showIndicators && $index >= 3\" style=\"vertical-align: middle\">\n" +
-    "                    <span>\n" +
-    "                        {{item[col.field].indicator}}\n" +
-    "                        <br/>\n" +
-    "                        {{item[col.field].los}}\n" +
-    "                    </span>\n" +
-    "                </td>\n" +
+    "                        <span>\n" +
+    "                            {{item[col.field].indicator}}\n" +
+    "                            <br/>\n" +
+    "                            {{item[col.field].los}}\n" +
+    "                        </span>\n" +
+    "                    </td>\n" +
     "\n" +
-    "            </tr>\n" +
-    "        </tbody>\n" +
-    "    </table>\n" +
+    "                </tr>\n" +
+    "            </tbody>\n" +
+    "        </table>\n" +
+    "    </div>\n" +
     "</div>"
   );
 

@@ -214,6 +214,7 @@ angular.module(
             ctrl.refreshTable = function () {
                 if ($scope.tableParams) {
                     $scope.tableParams.reload();
+                    $scope.tableParams.settings().$scope = $scope;
                 } else {
                     $scope.tableParams = new NgTableParams({
                         page: 1, // show first page
@@ -275,14 +276,15 @@ angular.module(
             };
 
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
-                if (newVal === oldVal || !oldVal) {
+//                if (newVal === oldVal || !oldVal) {
+                if (newVal === oldVal || !oldVal || !$scope.criteriaFunction || !$scope.decisionStrategy) {
                     return;
                 }
-                if ($scope.worldstates) {
+                if ($scope.worldstates && $scope.worldstates.length>0) {
                     ctrl.addMissingWoldstatesToTable(oldVal);
                     ctrl.removeMissingWorldstatesFromTable(oldVal);
+                    ctrl.refreshTable();
                 }
-                ctrl.refreshTable();
             };
 
             ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {

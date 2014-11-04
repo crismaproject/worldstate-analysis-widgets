@@ -20,7 +20,7 @@
         <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog-theme-plain.css">
         <link rel="stylesheet" type="text/css" media="screen" href="bower_components/crisma-worldstate-tree-widget-angular/dist/styles/crisma-worldstate-tree-widget-angular.css">
 
-        <!-- build:css(.tmp) styles/worldstate-analysis-widget.min.css -->
+        <!-- build:css() -->
         <link rel="stylesheet" href="styles/indicatorCriteriaTableDirective.css">
         <!-- endbuild -->
 
@@ -395,12 +395,12 @@
         <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
         <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
         <script src="bower_components/jquery-knob/js/jquery.knob.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/ng-table/ng-table.js"></script>
-        <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
-        <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+        <script src="bower_components/angular-strap/dist/angular-strap.js"></script>
+        <script src="bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
         <script src="bower_components/angular-commons/dist/scripts/angular-commons.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <script src="bower_components/crisma-worldstate-tree-widget-angular/dist/scripts/crisma-worldstate-tree-widget-angular.js"></script>
@@ -411,8 +411,11 @@
         <script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
         <script src="bower_components/ngDialog/js/ngDialog.js"></script>
 
-        <!-- build:js({.tmp,app}) scripts/worldstate-analysis-widget.min.js -->
+        <!-- build:js() -->
         <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/_module.js"></script>
+        <script src="scripts/directives/_module.js"></script>
+        <script src="scripts/services/_module.js"></script>
         <script src="scripts/controllers/mainController.js"></script>
         <script src="scripts/controllers/indicatorCriteriaTableDirectiveController.js"></script>
         <script src="scripts/directives/indicatorCriteriaTableDirective.js"></script>
@@ -430,13 +433,13 @@
         <script src="scripts/directives/criteriaFunctionManagerDirective.js"></script>
         <script src="scripts/services/analysisService.js"></script>
         <script src="scripts/services/criteriaCalculationService.js"></script>
-        <script src="scripts/controllers/WorldstateAnalysisWidgetDirectiveController.js"></script>
+        <script src="scripts/controllers/worldstateAnalysisWidgetDirectiveController.js"></script>
         <script src="scripts/directives/worldstateAnalysisWidget.js"></script>
-        <script src="scripts/controllers/LevelOfEmphasisDirectiveController.js"></script>
+        <script src="scripts/controllers/levelOfEmphasisDirectiveController.js"></script>
         <script src="scripts/directives/levelOfEmphasisDirective.js"></script>
         <script src="scripts/controllers/criteriaEmphasesDirectiveController.js"></script>
         <script src="scripts/directives/criteriaEmphasesDirective.js"></script>
-        <script src="scripts/controllers/DecisionStrategyDirectiveController.js"></script>
+        <script src="scripts/controllers/decisionStrategyDirectiveController.js"></script>
         <script src="scripts/directives/decisionStrategyDirective.js"></script>
         <script src="scripts/controllers/decisionStrategyManagerDirectiveController.js"></script>
         <script src="scripts/directives/decisionStrategyManagerDirective.js"></script>
@@ -445,15 +448,14 @@
         <script src="scripts/controllers/indicatorBarChartDirectiveController.js"></script>
         <script src="scripts/directives/indicatorBarChartDirective.js"></script>
         <script src="scripts/directives/fileReader.js"></script>
-        <script src="scripts/controllers/FileContextProviderDirectiveController.js"></script>
+        <script src="scripts/controllers/fileContextProviderDirectiveController.js"></script>
         <script src="scripts/directives/fileBasedAnalysisContextProvider.js"></script>
         <script src="scripts/services/filesPersistanceService.js"></script>
-        <script src="scripts/controllers/IcmmContextProviderDirectiveController.js"></script>
+        <script src="scripts/controllers/icmmContextProviderDirectiveController.js"></script>
         <script src="scripts/directives/icmmBasedAnalysisContextProvider.js"></script>
         <script src="scripts/services/icmmPersistanceService.js"></script>
-        <script src="scripts/services/IcmmCriteriaFunctions.js"></script>
-        <script src="scripts/services/IcmmDecisionStrategies.js"></script>
-
+        <script src="scripts/services/icmmCriteriaFunctions.js"></script>
+        <script src="scripts/services/icmmDecisionStrategies.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->
@@ -465,8 +467,8 @@
                                                                                     'use strict';
                                                                                     $provide.constant('DEBUG', 'true');
                                                                                     $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+//                                                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
 //                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://fsdfd');
                                                                                 }
                                                                             ]

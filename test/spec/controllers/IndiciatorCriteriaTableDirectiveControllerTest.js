@@ -643,7 +643,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="worldstates.length > 0" class="alert alert-warning">');
+            expect(element.html()).toContain('<strong>Warning: </strong>There are no worldstates selected.');
         });
 
         it('Replaces the element with a table when worldstates are provided ', function () {
