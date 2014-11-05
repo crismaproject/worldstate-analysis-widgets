@@ -103,13 +103,13 @@
             </div>
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
                     Choose a file
                     <input type="file" ng-disabled="noIndicatorsLoaded" file-input="cfConfigFile">
                 </span>
             </div>
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                   <div ng-if="noIndicatorsLoaded" 
                      class="alert alert-warning">
                     <i class="glyphicon glyphicon-info-sign"></i> 
@@ -121,7 +121,9 @@
                     <i class="glyphicon glyphicon-warning-sign"></i>
                     {{cfFileLoadErrorMsg}}
                 </div>
-                <span ng-if="loadedCfFile" style="vertical-align: middle">Loaded File: {{loadedCfFile}}</span>
+                <div class="alert alert-success" ng-if="loadedCfFile" style="vertical-align: middle">
+                    Loaded File: {{loadedCfFile}}
+                </div>
             </div>
         </div>
         <div class="row">
@@ -131,13 +133,13 @@
 
         </div>
         <div class="row">
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
                     Choose a file
                     <input type="file" file-input="dsConfigFile" ng-disabled="noIndicatorsLoaded">
                 </span>
             </div>
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div ng-if="noIndicatorsLoaded" 
                      class="alert alert-warning">
                     <i class="glyphicon glyphicon-info-sign"></i> 
