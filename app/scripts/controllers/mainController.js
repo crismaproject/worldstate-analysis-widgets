@@ -69,9 +69,9 @@ angular.module(
                 $scope.showPersistDone = false;
                 $timeout(function () {
                     if ($scope.icmmTabVisible) {
-                        IcmmPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+                        IcmmPersistanceService.persistCriteriaFunctions($scope.container.criteriaFunctions);
                     } else {
-                        FilesPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+                        FilesPersistanceService.persistCriteriaFunctions($scope.container.criteriaFunctions);
                     }
 
                     $scope.showPersistSpinner = false;
@@ -93,9 +93,9 @@ angular.module(
                 $scope.showDsPersistDone = false;
                 $timeout(function () {
                     if ($scope.icmmTabVisible) {
-                        IcmmPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+                        IcmmPersistanceService.persistDecisionStrategies($scope.container.decisionStrategies);
                     } else {
-                        FilesPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+                        FilesPersistanceService.persistDecisionStrategies($scope.container.decisionStrategies);
                     }
                     $scope.showDsPersistSpinner = false;
                     $scope.showDsPersistDone = true;

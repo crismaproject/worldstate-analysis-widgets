@@ -15,7 +15,9 @@ angular.module(
                 var wrapper;
                 if (cfDataObj) {
                     wrapper = JSON.parse(cfDataObj);
-                    return JSON.parse(wrapper.criteriaFunctions);
+                    if(wrapper){
+                        return JSON.parse(wrapper.criteriaFunctions);
+                    }
                 }
                 return null;
             };
