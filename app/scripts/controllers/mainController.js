@@ -1,6 +1,14 @@
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.demoApp.controllers'
-).controller(
+    'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
+    [
+        'de.cismet.crisma.ICMM.Worldstates',
+        'de.cismet.cids.rest.collidngNames.Nodes',
+        'de.cismet.crisma.ICMM.services',
+        'ui.bootstrap.tabs',
+        'ui.bootstrap.collapse',
+        'ui.bootstrap.tpls'
+    ]
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
@@ -11,43 +19,49 @@ angular.module(
             'use strict';
 
             var createChartModels;
+            // we bind to the container object since the provider directives are nested in angular-bootstrap tabs
+            // tabs create a own scope and thus override every "simple" property. using an container object the binding
+            // stll works...
+            $scope.container = {};
             $scope.forCriteriaTable = false;
-            $scope.chartModels = [];
+            $scope.container.chartModels = [];
+            $scope.icmmTabCollapsed=false;
+            $scope.filesTabCollapsed=false;
 
             createChartModels = function () {
                 var j, modelArr;
-                $scope.chartModels = [];
-                if ($scope.worldstates && $scope.worldstates.length > 0) {
-                    for (j = 0; j < $scope.worldstates.length; j++) {
+                $scope.container.chartModels = [];
+                if ($scope.container.worldstates && $scope.container.worldstates.length > 0) {
+                    for (j = 0; j < $scope.container.worldstates.length; j++) {
                         modelArr = [];
-                        if ($scope.worldstates[j]) {
-                            modelArr.push($scope.worldstates[j]);
+                        if ($scope.container.worldstates[j]) {
+                            modelArr.push($scope.container.worldstates[j]);
                         }
                         if ($scope.worldstateRef) {
                             modelArr = modelArr.concat($scope.worldstateRef);
                         }
-                        $scope.chartModels.push(modelArr);
+                        $scope.container.chartModels.push(modelArr);
                     }
                 }
             };
 
-            $scope.$watch('worldstateRef', function (newVal, oldVal) {
+            $scope.$watch('container.worldstateRef', function (newVal, oldVal) {
                 if (newVal !== oldVal) {
                     createChartModels();
                 }
             });
-            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates) {
+            $scope.$watchCollection('container.worldstates', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.container.worldstates) {
                     createChartModels();
                 }
             });
 
             $scope.updateSelectedCriteriaFunction = function (index) {
-                $scope.selectedCriteriaFunction = $scope.criteriaFunctions[index];
+                $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions[index];
             };
 
             $scope.updateSelectedDecisionStrategy = function (index) {
-                $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
+                $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies[index];
             };
 
             $scope.persistCriteriaFunctions = function () {
@@ -101,61 +115,61 @@ angular.module(
              */
 
             function watchIcmmWs () {
-                return $scope.$watch('worldstatesIcmm', function () {
-                    $scope.worldstates = $scope.worldstatesIcmm;
+                return $scope.$watch('container.worldstatesIcmm', function () {
+                    $scope.container.worldstates = $scope.container.worldstatesIcmm;
                 });
             }
 
             $scope.derigsterIcmmWsWatch = watchIcmmWs();
 
             function watchFilesWs () {
-                return $scope.$watch('worldstatesFiles', function () {
-                    $scope.worldstates = $scope.worldstatesFiles;
+                return $scope.$watch('container.worldstatesFiles', function () {
+                    $scope.container.worldstates = $scope.container.worldstatesFiles;
                 });
             }
 
             // refWorldstate watches
             function watchRefWsIcmm () {
-                return $scope.$watch('refWorldstatesIcmm', function () {
-                    $scope.refWorldstates = $scope.refWorldstatesIcmm;
+                return $scope.$watch('container.refWorldstatesIcmm', function () {
+                    $scope.container.refWorldstates = $scope.container.refWorldstatesIcmm;
                 });
             }
 
             $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
 
             function watchRefWsFiles () {
-                return $scope.$watch('refWorldstatesFiles', function () {
-                    $scope.refWorldstates = $scope.refWorldstatesFiles;
+                return $scope.$watch('container.refWorldstatesFiles', function () {
+                    $scope.container.refWorldstates = $scope.container.refWorldstatesFiles;
                 });
             }
 
             // criteriaFunctions watches
             function watchCfIcmm () {
-                return $scope.$watch('criteriaFunctionsIcmm', function () {
-                    $scope.criteriaFunctions = $scope.criteriaFunctionsIcmm;
+                return $scope.$watch('container.criteriaFunctionsIcmm', function () {
+                    $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsIcmm;
                 });
             }
 
             $scope.derigsterCfIcmm = watchCfIcmm();
 
             function watchCfFiles () {
-                return $scope.$watch('criteriaFunctionsFiles', function () {
-                    $scope.criteriaFunctions = $scope.criteriaFunctionsFiles;
+                return $scope.$watch('container.criteriaFunctionsFiles', function () {
+                    $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsFiles;
                 });
             }
 
             //decision strategy watches
             function watchDsIcmm () {
-                return $scope.$watch('decisionStrategiesIcmm', function () {
-                    $scope.decisionStrategies = $scope.decisionStrategiesIcmm;
+                return $scope.$watch('container.decisionStrategiesIcmm', function () {
+                    $scope.container.decisionStrategies = $scope.container.decisionStrategiesIcmm;
                 });
             }
 
             $scope.derigsterDsIcmm = watchDsIcmm();
 
             function watchDsFiles () {
-                return $scope.$watch('decisionStrategiesFiles', function () {
-                    $scope.decisionStrategies = $scope.decisionStrategiesFiles;
+                return $scope.$watch('container.decisionStrategiesFiles', function () {
+                    $scope.container.decisionStrategies = $scope.container.decisionStrategiesFiles;
                 });
             }
 
@@ -163,20 +177,28 @@ angular.module(
             $scope.icmmTabVisible = true;
             $scope.switchToIcmmTab = function () {
                 $scope.icmmTabVisible = true;
-                $scope.derigsterFilesWsWatch();
+                if ($scope.derigsterFilesWsWatch) {
+                    $scope.derigsterFilesWsWatch();
+                }
                 $scope.derigsterIcmmWsWatch = watchIcmmWs();
-
-                $scope.derigsterRefWsFilesWatch();
+                if ($scope.derigsterRefWsFilesWatch) {
+                    $scope.derigsterRefWsFilesWatch();
+                }
                 $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
 
-                $scope.derigsterCfFilesWatch();
+                if ($scope.derigsterCfFilesWatch) {
+                    $scope.derigsterCfFilesWatch();
+                }
                 $scope.derigsterCfIcmm = watchCfIcmm();
-
-                $scope.derigsterDsFilesWatch();
+                if ($scope.derigsterDsFilesWatch) {
+                    $scope.derigsterDsFilesWatch();
+                }
                 $scope.derigsterDsIcmm = watchDsIcmm();
-                
+
                 $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy= undefined;
+                $scope.selectedDecisionStrategy = undefined;
+
+                $scope.icmmLastViewed = true;
             };
 
 
@@ -194,9 +216,11 @@ angular.module(
 
                 $scope.derigsterDsIcmm();
                 $scope.derigsterDsFilesWatch = watchDsFiles();
-                
+
                 $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy= undefined;
+                $scope.selectedDecisionStrategy = undefined;
+
+                $scope.icmmLastViewed = true;
             };
 
         }
