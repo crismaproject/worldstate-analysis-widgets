@@ -37,8 +37,8 @@ angular.module(
                         if ($scope.container.worldstates[j]) {
                             modelArr.push($scope.container.worldstates[j]);
                         }
-                        if ($scope.worldstateRef) {
-                            modelArr = modelArr.concat($scope.worldstateRef);
+                        if ($scope.container.worldstateRef) {
+                            modelArr = modelArr.concat($scope.container.worldstateRef);
                         }
                         $scope.container.chartModels.push(modelArr);
                     }
