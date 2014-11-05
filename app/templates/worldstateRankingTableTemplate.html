@@ -1,4 +1,5 @@
 <div id="worldstateRankingTable" style="overflow-x: auto">
+
     <div ng-if="!(worldstates.length > 0)" class="alert alert-warning">
         <strong>Warning: </strong>There are no worldstates selected.
     </div>
@@ -10,31 +11,14 @@
     </div>
     <div ng-show="((worldstates.length > 0) && criteriaFunction && decisionStrategy)">
         <table  
-            ng-table="tableParams" 
+            ng-table="tableParams"
+            template-header="templates/rankingTableHeader.html"
             show-filter="false" 
             class="table table-striped"
             style="white-space: nowrap">
-          
-            <thead>
-                <tr>
-                <th ng-repeat="column in columns"
-                        ng-if="$index < 3"
-                        >
-                        {{column.title}}
-                    </th>
-                    <th ng-if="showRadarChart">
-                        Criteria radar
-                    </th>
-                <th ng-repeat="column in columns"
-                        ng-if="showIndicators && $index >= 3"
-                        >
-                        {{column.title}}
-                    </th>
-                </tr>
-            </thead>
             <tbody>
                 <tr ng-repeat="item in $data">
-                <td ng-repeat="col in columns" ng-if="$index < 3" style="vertical-align: middle">
+                    <td ng-repeat="col in columns" ng-if="$index < 3" style="vertical-align: middle">
                         {{item[col.field]}}
                     </td>
                     <td ng-if="showRadarChart"
@@ -48,7 +32,7 @@
                         ng-click="clickToOpen($index)"
                         >
                     </td>
-                <td ng-repeat="col in columns"  ng-if="showIndicators && $index >= 3" style="vertical-align: middle">
+                    <td ng-repeat="col in columns"  ng-if="showIndicators && $index >= 3" style="vertical-align: middle">
                         <span>
                             {{item[col.field].indicator}}
                             <br/>
