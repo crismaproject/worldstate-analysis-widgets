@@ -34,7 +34,8 @@
     "angular-strap": "2.0.3",
     "jquery-knob": "1.2.9",
     "ngDialog": "0.2.14",
-    "radar-chart-d3": "#d5944759c30f073f21c0860a1f71351d370149d8"
+    "radar-chart-d3": "#d5944759c30f073f21c0860a1f71351d370149d8",
+    "angular-bootstrap": "0.11.2"
   },
   "devDependencies": {
     "angular-mocks": "1.2.25",
