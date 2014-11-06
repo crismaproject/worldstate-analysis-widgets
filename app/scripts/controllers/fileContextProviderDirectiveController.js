@@ -170,7 +170,7 @@ angular.module(
                             //generate a uniqe id...
                             origLoadedIndicators = fileObj;
                             worldstateDummy = {
-                                name: 'Nonamed indicator data ' + ($scope.worldstates.length + 1),
+                                name: 'Nonamed indicator data ' +'(filename: '+file.name+' )',
                                 iccdata: {
                                     actualaccessinfo: JSON.stringify(fileObj)
                                 }
