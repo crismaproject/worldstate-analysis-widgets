@@ -49,7 +49,8 @@ angular.module(
                         template: 'templates/indicatorBandPopoverTemplate.html',
                         contentTemplate: 'templates/indicatorBandPopoverContentTemplate.html',
                         placement: 'bottom',
-                        trigger: 'manual'
+                        trigger: 'manual',
+                        autoClose:true
                     });
 
                     scope.togglePopover = function () {
