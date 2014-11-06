@@ -1,16 +1,21 @@
 angular.module(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
     [
+        'de.cismet.crisma.ICMM.config',
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes',
-        'de.cismet.crisma.ICMM.services'
+        'de.cismet.crisma.ICMM.services',
+        'ui.bootstrap.tabs',
+        'ui.bootstrap.collapse',
+        'ui.bootstrap.tpls'
     ]
-);
+    );
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
     [
         'nvd3ChartDirectives',
         'eu.crismaproject.worldstateAnalysis.services',
-        'ngDialog'
+        'ngDialog',
+        'de.cismet.crisma.ICMM.config',
     ]
-);
+    );
