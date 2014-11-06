@@ -621,7 +621,7 @@ describe('IndiciatorCriteriaTableDirective Test Suite', function () {
             module('ngTable');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
-            module('templates/indicatorCriteriaTableTemplate.html', 'templates/nopager.html');
+            module('templates/indicatorCriteriaTableTemplate.html', 'templates/nopager.html', 'templates/indicatorCriteriaTableHeader.html');
         });
 
         // Store references to $rootScope and $compile
