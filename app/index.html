@@ -546,14 +546,11 @@
         <script>
                                                                                 angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
                                                                                     [
-                                                                                        '$provide',
-                                                                                        function ($provide) {
+                                                                                        'de.cismet.crisma.ICMM.config.IcmmSettingsProvider',
+                                                                                        function (IcmmSettingsProvider) {
                                                                                             'use strict';
-                                                                                            $provide.constant('DEBUG', 'true');
-                                                                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
-                                                                                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
-//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://fsdfd');
+                                                                                            IcmmSettingsProvider.setInitialIcmmApi('http://crisma.cismet.de/icmm_api');
+                                                                                            IcmmSettingsProvider.setInitialDomain('CRISMA');
                                                                                         }
                                                                                     ]
                                                                                     );</script>
