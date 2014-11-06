@@ -692,7 +692,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             module('ngDialog');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
-            module('templates/worldstateRankingTableTemplate.html');
+            module('templates/worldstateRankingTableTemplate.html','templates/rankingTableHeader.html');
         });
         // Store references to $rootScope and $compile
         // so they are available to all tests in this describe block

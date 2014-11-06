@@ -9,7 +9,8 @@ angular.module(
         'de.cismet.crisma.ICMM.services.icmm',
         'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
         'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
-        function ($scope, Nodes, Worldstates, Icmm, CF, DS) {
+        'de.cismet.crisma.ICMM.config.IcmmSettings',
+        function ($scope, Nodes, Worldstates, Icmm, CF, DS, IcmmSettings) {
             'use strict';
 
             // intialisation for the worldstate tree
@@ -97,11 +98,58 @@ angular.module(
                     }
                 }
             });
-            
+
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
             });
 
+
+            $scope.backendUrls = [{
+                    url: 'http://crisma.cismet.de/icmm_api',
+                    domain: 'CRISMA',
+                    name: 'crisma.cismet.de'
+                }, {
+                    url: 'http://localhost:8890',
+                    domain: 'CRISMA',
+                    name: 'localhost'
+                }];
+
+            $scope.selectedIcms = $scope.backendUrls[0];
+            $scope.updateSelectedIcms = function (index) {
+                $scope.selectedIcms = $scope.backendUrls[index];
+            };
+            $scope.$watch('selectedIcms', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    IcmmSettings.setIcmmApi($scope.selectedIcms.url);
+                    IcmmSettings.setDomain($scope.selectedIcms.domain);
+                }
+            });
+            IcmmSettings.addApiListener(function () {
+                $scope.treeSelection = [];
+                $scope.worldstates = [];
+                $scope.selectedWorldstates = [];
+                $scope.treeNodes =[];
+                 Nodes.query(function (data) {
+                     $scope.treeNodes =data;
+                });
+                $scope.criteriaFunctions = [];
+                CF.query(function (data) {
+                    if (data.length > 0) {
+                        $scope.criteriaFunctions = data;
+                    }
+                });
+                $scope.decisionStrategies = [];
+                DS.query(function (data) {
+                    $scope.decisionStrategies = data || [];
+                });
+                Worldstates.query({level: 3, fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories', deduplicate: false}, function (data) {
+                    data.forEach(function (ws) {
+                        ws = Icmm.convertToCorrectIccDataFormat(ws);
+                    });
+                    $scope.worldstates = data;
+                });
+
+            });
         }
     ]
     );

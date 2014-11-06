@@ -1,18 +1,20 @@
 <div class="row">
     <div ng-show="!fileAPIAvailable" class="col-lg-12">
         <div class="alert alert-danger">
-            HTML 5 File APi is not available in your Browser. Please provide a polyfill or use a Browser that supports this.
+            HTML 5 File APi is not available in your Browser. Please use a Browser that supports this.
             see also http://caniuse.com/#search=file%20api
         </div>
     </div>
     <div ng-show="fileAPIAvailable" class="col-lg-12">
         <div class="row">
             <div class="col-lg-12">
-                <div class="panel-group" role="tablist">
+                <div class="panel-group">
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="collapseListGroupHeading1">
+                        <div class="panel-heading" role="tab" >
                             <h4 class="panel-title">
-                                <a class="collapsed" data-toggle="collapse" href="#collapseListGroup1" aria-expanded="false" aria-controls="collapseListGroup1">
+                                <a ng-click="indicatorFileCollapsed = !indicatorFileCollapsed">
+                                    <i ng-if="!indicatorFileCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
+                                    <i ng-if="indicatorFileCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
                                     Indicator files
                                 </a>
                                 <span style="font-size: 14px" 
@@ -37,7 +39,7 @@
                                 </span>
                             </h4>
                         </div>
-                        <div id="collapseListGroup1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1" aria-expanded="true" >
+                        <div class="panel-collapse" collapse="indicatorFileCollapsed" >
                             <ul class="list-group">
                                 <!--dummy item that indicates that no indicator objects are available-->
                                 <li class="list-group-item" ng-show="showDummyListItem">
@@ -103,25 +105,27 @@
             </div>
         </div>
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-lg-4">
+            <div class="col-lg-2 col-md-2">
                 <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
                     Choose a file
                     <input type="file" ng-disabled="noIndicatorsLoaded" file-input="cfConfigFile">
                 </span>
             </div>
-            <div class="col-lg-8">
-                  <div ng-if="noIndicatorsLoaded" 
+            <div class="col-lg-10 col-md-10">
+                <div ng-if="noIndicatorsLoaded" 
                      class="alert alert-warning">
                     <i class="glyphicon glyphicon-info-sign"></i> 
                     No indicator files selected
                 </div>
                 <div ng-if="cfFileLoadError" 
-                      class="alert alert-danger"
-                      style="font-size: 14px;">
+                     class="alert alert-danger"
+                     style="font-size: 14px;">
                     <i class="glyphicon glyphicon-warning-sign"></i>
                     {{cfFileLoadErrorMsg}}
                 </div>
-                <span ng-if="loadedCfFile" style="vertical-align: middle">Loaded File: {{loadedCfFile}}</span>
+                <div class="alert alert-success" ng-if="loadedCfFile" style="vertical-align: middle">
+                    Loaded File: {{loadedCfFile}}
+                </div>
             </div>
         </div>
         <div class="row">
@@ -131,13 +135,13 @@
 
         </div>
         <div class="row">
-            <div class="col-lg-4">
+            <div class="col-lg-2 col-md-2">
                 <span class="btn btn-default btn-file" ng-disabled="noIndicatorsLoaded">
                     Choose a file
                     <input type="file" file-input="dsConfigFile" ng-disabled="noIndicatorsLoaded">
                 </span>
             </div>
-            <div class="col-lg-8">
+            <div class="col-lg-10 col-md-10">
                 <div ng-if="noIndicatorsLoaded" 
                      class="alert alert-warning">
                     <i class="glyphicon glyphicon-info-sign"></i> 
@@ -148,10 +152,9 @@
                     <i class="glyphicon glyphicon-warning-sign"></i>
                     {{dsFileLoadErrorMsg}}
                 </div>
-                <span ng-if="loadedDsfFile" 
-                      style="vertical-align: middle">
+                 <div class="alert alert-success" ng-if="loadedDsfFile" style="vertical-align: middle">
                     Loaded File: {{loadedDsfFile}}
-                </span>
+                </div>
             </div>
         </div>
     </div>

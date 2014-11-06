@@ -32,79 +32,73 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
   $templateCache.put('templates/criteriaFunctionManagerTemplate.html',
     "<div class=\"col-lg-12\">\n" +
     "    <div class=\"row\">\n" +
-    "        <div class=\"col-lg-3\">\n" +
-    "            <div class=\"row\">\n" +
-    "                <div class=\"list-group\">\n" +
-    "                    <span ng-show=\"fileAPIAvailable\" \n" +
-    "                        ng-style=\"getButtonStyle()\"\n" +
-    "                        style=\"margin-bottom: -30px; z-index: 50; margin-left: 225px; font-size: 14px;\"\n" +
-    "                        class=\"glyphicon glyphicon-upload btn-file\">\n" +
-    "                        <input type=\"file\" ng-disabled=\"listItemsDisabled\" file-input=\"criteriaFunctionFile\" multiple>\n" +
-    "                    </span>\n" +
-    "                    <a class=\"list-group-item active\">\n" +
-    "                        Criteria Functions \n" +
+    "        <div class=\"col-lg-3 col-md-12\">\n" +
+    "            <div class=\"list-group\">\n" +
+    "                <span id=\"importCf\" ng-show=\"fileAPIAvailable\" \n" +
+    "                      ng-style=\"getButtonStyle()\"\n" +
+    "                      style=\"margin-bottom: -30px; z-index: 50; font-size: 14px;\"\n" +
+    "                      class=\"glyphicon glyphicon-upload btn-file\">\n" +
+    "                    <input type=\"file\" ng-disabled=\"listItemsDisabled\" file-input=\"criteriaFunctionFile\" multiple>\n" +
+    "                </span>\n" +
+    "                <a class=\"list-group-item active\">\n" +
+    "                    Criteria Functions \n" +
+    "                    <i data-placement=\"top\" \n" +
+    "                       data-type=\"info\" \n" +
+    "                       data-delay=\"500\" \n" +
+    "                       data-container=\"body\"\n" +
+    "                       data-animation=\"am-fade-and-scale\" \n" +
+    "                       bs-tooltip=\"tooltipAdd.title\"\n" +
+    "                       ng-style=\"getButtonStyle()\"\n" +
+    "                       ng-click=\"addCriteriaFunction()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
+    "                </a>\n" +
+    "                <a ng-click=\"setSelectedCriteriaFunction($index)\"\n" +
+    "                   class=\"list-group-item\"\n" +
+    "                   ng-class=\"getListItemClass($index)\"\n" +
+    "                   ng-repeat=\"cf in criteriaFunctionSet\">\n" +
+    "                    <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
+    "                    <input style =\"color:black;width:75%\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
+    "                    <div class=\"pull-right\" ng-hide=\"$index !== selectedCriteriaFunctionIndex\">\n" +
+    "\n" +
+    "                        <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
+    "                           data-placement=\"top\" data-type=\"info\" \n" +
+    "                           data-delay=\"500\" \n" +
+    "                           data-animation=\"am-fade-and-scale\" \n" +
+    "                           data-container=\"body\"\n" +
+    "                           bs-tooltip=\"tooltipRename.title\"\n" +
+    "                           ng-click=\"editable[$index] = true\" \n" +
+    "                           style=\"margin-right: 10px;\"\n" +
+    "                           class=\"glyphicon glyphicon-pencil\"></i>\n" +
+    "                        <i ng-hide=\"listItemsDisabled || !editable[$index]\"\n" +
+    "                           data-placement=\"top\" \n" +
+    "                           data-type=\"info\" \n" +
+    "                           data-delay=\"500\" \n" +
+    "                           data-animation=\"am-fade-and-scale\" \n" +
+    "                           data-container=\"body\"\n" +
+    "                           bs-tooltip=\"tooltipRenameDone.title\"\n" +
+    "                           ng-click=\"editable[$index] = false\"\n" +
+    "                           style=\"margin-right: 10px;\"\n" +
+    "                           class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                        <!--                            <i data-placement=\"bottom\" data-type=\"info\" data-delay=\"500\" data-animation=\"am-fade-and-scale\" bs-tooltip=\"tooltipSave.title\"\n" +
+    "                                                       ng-click=\"saveCriteriaFunctions()\"\n" +
+    "                                                       style=\"margin-right: 10px;\"\n" +
+    "                                                       class=\"glyphicon glyphicon-floppy-disk\"></i>-->\n" +
     "                        <i data-placement=\"top\" \n" +
     "                           data-type=\"info\" \n" +
     "                           data-delay=\"500\" \n" +
-    "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
-    "                           bs-tooltip=\"tooltipAdd.title\"\n" +
-    "                           ng-style=\"getButtonStyle()\"\n" +
-    "                           ng-click=\"addCriteriaFunction()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
-    "                    </a>\n" +
-    "                    <a ng-click=\"setSelectedCriteriaFunction($index)\"\n" +
-    "                       class=\"list-group-item\"\n" +
-    "                       ng-class=\"getListItemClass($index)\"\n" +
-    "                       ng-repeat=\"cf in criteriaFunctionSet\">\n" +
-    "                        <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
-    "                        <input style =\"color:black;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
-    "                        <div class=\"pull-right\" ng-hide=\"$index !== selectedCriteriaFunctionIndex\">\n" +
-    "\n" +
-    "                            <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
-    "                               data-placement=\"top\" data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               data-container=\"body\"\n" +
-    "                               bs-tooltip=\"tooltipRename.title\"\n" +
-    "                               ng-click=\"editable[$index] = true\" \n" +
-    "                               style=\"margin-right: 10px;\"\n" +
-    "                               class=\"glyphicon glyphicon-pencil\"></i>\n" +
-    "                            <i ng-hide=\"listItemsDisabled || !editable[$index]\"\n" +
-    "                               data-placement=\"top\" \n" +
-    "                               data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               data-container=\"body\"\n" +
-    "                               bs-tooltip=\"tooltipRenameDone.title\"\n" +
-    "                               ng-click=\"editable[$index] = false\"\n" +
-    "                               style=\"margin-right: 10px;\"\n" +
-    "                               class=\"glyphicon glyphicon-ok\"></i>\n" +
-    "                            <!--                            <i data-placement=\"bottom\" data-type=\"info\" data-delay=\"500\" data-animation=\"am-fade-and-scale\" bs-tooltip=\"tooltipSave.title\"\n" +
-    "                                                           ng-click=\"saveCriteriaFunctions()\"\n" +
-    "                                                           style=\"margin-right: 10px;\"\n" +
-    "                                                           class=\"glyphicon glyphicon-floppy-disk\"></i>-->\n" +
-    "                            <i data-placement=\"top\" \n" +
-    "                               data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               bs-tooltip=\"tooltipSave.title\"\n" +
-    "                               data-container=\"body\"\n" +
-    "                               ng-hide=\"listItemsDisabled\"\n" +
-    "                               ng-click=\"removeCriteriaFunction()\"\n" +
-    "                               class=\"glyphicon glyphicon-minus-sign\"></i>\n" +
-    "                        </div>\n" +
-    "                    </a>\n" +
-    "                </div>\n" +
+    "                           bs-tooltip=\"tooltipDelete.title\"\n" +
+    "                           data-container=\"body\"\n" +
+    "                           ng-hide=\"listItemsDisabled\"\n" +
+    "                           ng-click=\"removeCriteriaFunction()\"\n" +
+    "                           class=\"glyphicon glyphicon-minus-sign\"></i>\n" +
+    "                    </div>\n" +
+    "                </a>\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" style=\"margin-top: 20px\" ng-if=\"listItemsDisabled\">\n" +
-    "            <div class=\"row\" ng-if=\"listItemsDisabled\">\n" +
-    "                <div class=\"col-lg-12\">\n" +
-    "                    <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
-    "                </div>   \n" +
-    "            </div>\n" +
+    "        <div class=\"col-lg-9 col-md-12\" style=\"margin-top: 20px\" ng-if=\"listItemsDisabled\">\n" +
+    "            <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" style=\"margin-top: 20px\" ng-if=\"selectedCriteriaFunctionIndex >= 0 && criteriaFunctionSet[selectedCriteriaFunctionIndex]\">\n" +
+    "        <div class=\"col-lg-9 col-md-12\" style=\"margin-top: 20px\" ng-if=\"selectedCriteriaFunctionIndex >= 0 && criteriaFunctionSet[selectedCriteriaFunctionIndex]\">\n" +
     "            <div class=\"row\" ng-if=\"!listItemsDisabled\" ng-repeat=\"indicator in indicators\">\n" +
     "                <div class=\"col-lg-12\">\n" +
     "                    <div class=\"row\">\n" +
@@ -129,11 +123,11 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "<div class=\"ngdialog-message\" \n" +
     "     style=\"width:500px;min-width: 500px\"\n" +
     "    criteria-radar \n" +
-    "    worldstates=\"[ws]\" \n" +
+    "    worldstates=\"ws\" \n" +
     "    show-legend=\"false\"\n" +
     "    show-axis-text=\"true\"\n" +
     "    use-numbers=\"false\"\n" +
-    "    criteria-function=\"criteriaFunction\">>\n" +
+    "    criteria-function=\"criteriaFunction\">\n" +
     "</div>\n"
   );
 
@@ -141,99 +135,89 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
   $templateCache.put('templates/decisionStrategyManagerTemplate.html',
     "<div class=\"col-lg-12\">\n" +
     "    <div class=\"row\">\n" +
-    "        <div class=\"col-lg-3\">\n" +
-    "            <div class=\"row\">\n" +
-    "                <div class=\"list-group\">\n" +
-    "                    <span ng-show=\"fileAPIAvailable\"\n" +
-    "                        ng-style=\"getButtonStyle()\"\n" +
-    "                        style=\"margin-bottom: -30px; z-index: 50; margin-left: 225px; font-size: 14px;\"\n" +
-    "                        class=\"glyphicon glyphicon-upload btn-file\">\n" +
-    "                        <input ng-disabled=\"listItemsDisabled\" type=\"file\" file-input=\"decisionStrategyFile\" multiple>\n" +
-    "                    </span>\n" +
-    "                    <a class=\"list-group-item active\">\n" +
-    "                        Decision Strategies\n" +
-    "                        <i data-placement=\"top\" \n" +
+    "        <div class=\"col-lg-3 col-md-12\">\n" +
+    "            <div class=\"list-group\">\n" +
+    "                <span id=\"importDs\" ng-show=\"fileAPIAvailable\"\n" +
+    "                      ng-style=\"getButtonStyle()\"\n" +
+    "                      style=\"margin-bottom: -30px; z-index: 50; font-size: 14px;\"\n" +
+    "                      class=\"glyphicon glyphicon-upload btn-file lg-margin-left\">\n" +
+    "                    <input ng-disabled=\"listItemsDisabled\" type=\"file\" file-input=\"decisionStrategyFile\" multiple>\n" +
+    "                </span>\n" +
+    "                <a class=\"list-group-item active\">\n" +
+    "                    Decision Strategies\n" +
+    "                    <i data-placement=\"top\" \n" +
+    "                       data-type=\"info\" \n" +
+    "                       data-delay=\"500\" \n" +
+    "                       data-container=\"body\"\n" +
+    "                       data-animation=\"am-fade-and-scale\" \n" +
+    "                       bs-tooltip=\"tooltipAdd.title\"\n" +
+    "                       ng-style=\"getButtonStyle()\"\n" +
+    "                       ng-click=\"addDecisionStrategy()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
+    "                </a>\n" +
+    "                <a ng-click=\"setSelectedDecisionStrategy($index)\"\n" +
+    "                   ng-class=\"getItemStyle($index)\" \n" +
+    "                   ng-repeat=\"cf in decisionStrategies\">\n" +
+    "                    <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
+    "                    <input style =\"color:black; width:75%;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
+    "                    <div class=\"pull-right\" ng-hide=\"$index !== selectedDecisionStrategyIndex\">\n" +
+    "\n" +
+    "                        <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
+    "                           data-placement=\"top\" data-type=\"info\" \n" +
+    "                           data-delay=\"500\" \n" +
+    "                           data-animation=\"am-fade-and-scale\" \n" +
+    "                           data-container=\"body\"\n" +
+    "                           bs-tooltip=\"tooltipRename.title\"\n" +
+    "                           ng-click=\"editable[$index] = true\" \n" +
+    "                           style=\"margin-right: 10px;\"\n" +
+    "                           class=\"glyphicon glyphicon-pencil\"></i>\n" +
+    "                        <i ng-hide=\"listItemDisabled || !editable[$index]\"\n" +
+    "                           data-placement=\"top\" \n" +
     "                           data-type=\"info\" \n" +
     "                           data-delay=\"500\" \n" +
-    "                           data-container=\"body\"\n" +
     "                           data-animation=\"am-fade-and-scale\" \n" +
-    "                           bs-tooltip=\"tooltipAdd.title\"\n" +
-    "                           ng-style=\"getButtonStyle()\"\n" +
-    "                           ng-click=\"addDecisionStrategy()\" class=\"pull-right glyphicon glyphicon-plus-sign\"></i>\n" +
-    "                    </a>\n" +
-    "                    <a ng-click=\"setSelectedDecisionStrategy($index)\"\n" +
-    "                       ng-class=\"getItemStyle($index)\" \n" +
-    "                       ng-repeat=\"cf in decisionStrategies\">\n" +
-    "                        <span ng-hide=\"editable[$index]\">{{cf.name}}</span>\n" +
-    "                        <input style =\"color:black;\" ng-hide=\"!editable[$index]\" type=\"text\" ng-model=\"cf.name\">\n" +
-    "                        <div class=\"pull-right\" ng-hide=\"$index !== selectedDecisionStrategyIndex\">\n" +
-    "\n" +
-    "                            <i ng-hide=\"listItemsDisabled || editable[$index]\" \n" +
-    "                               data-placement=\"top\" data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               data-container=\"body\"\n" +
-    "                               bs-tooltip=\"tooltipRename.title\"\n" +
-    "                               ng-click=\"editable[$index] = true\" \n" +
-    "                               style=\"margin-right: 10px;\"\n" +
-    "                               class=\"glyphicon glyphicon-pencil\"></i>\n" +
-    "                            <i ng-hide=\"listItemDisabled || !editable[$index]\"\n" +
-    "                               data-placement=\"top\" \n" +
-    "                               data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               data-container=\"body\"\n" +
-    "                               bs-tooltip=\"tooltipRenameDone.title\"\n" +
-    "                               ng-click=\"editable[$index] = false\"\n" +
-    "                               style=\"margin-right: 10px;\"\n" +
-    "                               class=\"glyphicon glyphicon-ok\"></i>\n" +
-    "                            <i data-placement=\"top\" \n" +
-    "                               ng-hide=\"listItemsDisabled\"\n" +
-    "                               data-type=\"info\" \n" +
-    "                               data-delay=\"500\" \n" +
-    "                               data-animation=\"am-fade-and-scale\" \n" +
-    "                               bs-tooltip=\"tooltipSave.title\"\n" +
-    "                               data-container=\"body\"\n" +
-    "                               ng-click=\"removeDecisionStrategy()\"\n" +
-    "                               class=\"glyphicon glyphicon-minus-sign\"></i>\n" +
-    "                        </div>\n" +
-    "                    </a>\n" +
-    "                </div>\n" +
+    "                           data-container=\"body\"\n" +
+    "                           bs-tooltip=\"tooltipRenameDone.title\"\n" +
+    "                           ng-click=\"editable[$index] = false\"\n" +
+    "                           style=\"margin-right: 10px;\"\n" +
+    "                           class=\"glyphicon glyphicon-ok\"></i>\n" +
+    "                        <i data-placement=\"top\" \n" +
+    "                           ng-hide=\"listItemsDisabled\"\n" +
+    "                           data-type=\"info\" \n" +
+    "                           data-delay=\"500\" \n" +
+    "                           data-animation=\"am-fade-and-scale\" \n" +
+    "                           bs-tooltip=\"tooltipDelete.title\"\n" +
+    "                           data-container=\"body\"\n" +
+    "                           ng-click=\"removeDecisionStrategy()\"\n" +
+    "                           class=\"glyphicon glyphicon-minus-sign\"></i>\n" +
+    "                    </div>\n" +
+    "                </a>\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" ng-if=\"listItemsDisabled\" style=\"margin-top: 20px\">\n" +
-    "            <div class=\"row\">\n" +
-    "                <div class=\"col-lg-12\">\n" +
-    "                    <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
-    "                </div>   \n" +
-    "            </div>\n" +
+    "        <div class=\"col-lg-9 col-md-12\" ng-if=\"listItemsDisabled\" style=\"margin-top: 20px\">\n" +
+    "            <div class=\"alert alert-warning\" role=\"alert\"><b>Warning:</b> No worldstates are selected</div>\n" +
     "        </div>\n" +
-    "        <div class=\"col-lg-9\" style=\"margin-top: 20px\" ng-if=\"!listItemsDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
+    "        <div class=\"col-lg-9 col-md-12\" style=\"margin-top: 20px\" ng-if=\"!listItemsDisabled && selectedDecisionStrategyIndex >= 0 && decisionStrategies[selectedDecisionStrategyIndex]\">\n" +
     "            <decision-strategy worldstates=\"worldstates\" decision-strategy=\"currentDecisionStrategy\">\n" +
-    "\n" +
     "            </decision-strategy>\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "</div>\n" +
     "</div>\n"
   );
 
 
   $templateCache.put('templates/decisionStrategyTemplate.html',
-    "<div>\n" +
-    "    <div class=\"col-lg-3\">\n" +
+    "<div class=\"row\">\n" +
+    "    <div class=\"col-lg-3 col-md-12\">\n" +
     "        <level-of-emphasis \n" +
     "            satisfaction-emphasis=\"decisionStrategy.satisfactionEmphasis\"\n" +
     "            indicator-size=\"indicatorSize\"\n" +
     "            >\n" +
     "        </level-of-emphasis>\n" +
     "    </div>\n" +
-    "    <div class=\"col-lg-9\">\n" +
-    "        <div class=\"row\">\n" +
+    "    <div class=\"col-lg-9 col-md-12\">\n" +
     "            <criteria-emphasis indicator-map=\"indicatorMap\" criteria-emphases=\"decisionStrategy.criteriaEmphases\">\n" +
     "                \n" +
     "            </criteria-emphasis>\n" +
-    "        </div>\n" +
     "    </div>\n" +
     "</div>"
   );
@@ -243,18 +227,20 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "<div class=\"row\">\n" +
     "    <div ng-show=\"!fileAPIAvailable\" class=\"col-lg-12\">\n" +
     "        <div class=\"alert alert-danger\">\n" +
-    "            HTML 5 File APi is not available in your Browser. Please provide a polyfill or use a Browser that supports this.\n" +
+    "            HTML 5 File APi is not available in your Browser. Please use a Browser that supports this.\n" +
     "            see also http://caniuse.com/#search=file%20api\n" +
     "        </div>\n" +
     "    </div>\n" +
     "    <div ng-show=\"fileAPIAvailable\" class=\"col-lg-12\">\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
-    "                <div class=\"panel-group\" role=\"tablist\">\n" +
+    "                <div class=\"panel-group\">\n" +
     "                    <div class=\"panel panel-default\">\n" +
-    "                        <div class=\"panel-heading\" role=\"tab\" id=\"collapseListGroupHeading1\">\n" +
+    "                        <div class=\"panel-heading\" role=\"tab\" >\n" +
     "                            <h4 class=\"panel-title\">\n" +
-    "                                <a class=\"collapsed\" data-toggle=\"collapse\" href=\"#collapseListGroup1\" aria-expanded=\"false\" aria-controls=\"collapseListGroup1\">\n" +
+    "                                <a ng-click=\"indicatorFileCollapsed = !indicatorFileCollapsed\">\n" +
+    "                                    <i ng-if=\"!indicatorFileCollapsed\" class=\"glyphicon glyphicon-circle-arrow-up\"></i>\n" +
+    "                                    <i ng-if=\"indicatorFileCollapsed\" class=\"glyphicon glyphicon-circle-arrow-down\"></i>\n" +
     "                                    Indicator files\n" +
     "                                </a>\n" +
     "                                <span style=\"font-size: 14px\" \n" +
@@ -279,7 +265,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                                </span>\n" +
     "                            </h4>\n" +
     "                        </div>\n" +
-    "                        <div id=\"collapseListGroup1\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"collapseListGroupHeading1\" aria-expanded=\"true\" >\n" +
+    "                        <div class=\"panel-collapse\" collapse=\"indicatorFileCollapsed\" >\n" +
     "                            <ul class=\"list-group\">\n" +
     "                                <!--dummy item that indicates that no indicator objects are available-->\n" +
     "                                <li class=\"list-group-item\" ng-show=\"showDummyListItem\">\n" +
@@ -345,25 +331,27 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"row\" style=\"margin-bottom: 20px;\">\n" +
-    "            <div class=\"col-lg-4\">\n" +
+    "            <div class=\"col-lg-2 col-md-2\">\n" +
     "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                    Choose a file\n" +
     "                    <input type=\"file\" ng-disabled=\"noIndicatorsLoaded\" file-input=\"cfConfigFile\">\n" +
     "                </span>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-8\">\n" +
-    "                  <div ng-if=\"noIndicatorsLoaded\" \n" +
+    "            <div class=\"col-lg-10 col-md-10\">\n" +
+    "                <div ng-if=\"noIndicatorsLoaded\" \n" +
     "                     class=\"alert alert-warning\">\n" +
     "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
     "                    No indicator files selected\n" +
     "                </div>\n" +
     "                <div ng-if=\"cfFileLoadError\" \n" +
-    "                      class=\"alert alert-danger\"\n" +
-    "                      style=\"font-size: 14px;\">\n" +
+    "                     class=\"alert alert-danger\"\n" +
+    "                     style=\"font-size: 14px;\">\n" +
     "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
     "                    {{cfFileLoadErrorMsg}}\n" +
     "                </div>\n" +
-    "                <span ng-if=\"loadedCfFile\" style=\"vertical-align: middle\">Loaded File: {{loadedCfFile}}</span>\n" +
+    "                <div class=\"alert alert-success\" ng-if=\"loadedCfFile\" style=\"vertical-align: middle\">\n" +
+    "                    Loaded File: {{loadedCfFile}}\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"row\">\n" +
@@ -373,13 +361,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "\n" +
     "        </div>\n" +
     "        <div class=\"row\">\n" +
-    "            <div class=\"col-lg-4\">\n" +
+    "            <div class=\"col-lg-2 col-md-2\">\n" +
     "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                    Choose a file\n" +
     "                    <input type=\"file\" file-input=\"dsConfigFile\" ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                </span>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-8\">\n" +
+    "            <div class=\"col-lg-10 col-md-10\">\n" +
     "                <div ng-if=\"noIndicatorsLoaded\" \n" +
     "                     class=\"alert alert-warning\">\n" +
     "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
@@ -390,10 +378,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                    <i class=\"glyphicon glyphicon-warning-sign\"></i>\n" +
     "                    {{dsFileLoadErrorMsg}}\n" +
     "                </div>\n" +
-    "                <span ng-if=\"loadedDsfFile\" \n" +
-    "                      style=\"vertical-align: middle\">\n" +
+    "                 <div class=\"alert alert-success\" ng-if=\"loadedDsfFile\" style=\"vertical-align: middle\">\n" +
     "                    Loaded File: {{loadedDsfFile}}\n" +
-    "                </span>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -404,8 +391,42 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
   $templateCache.put('templates/icmmContextProviderTemplate.html',
     "<div class=\"row\">\n" +
     "    <div class=\"col-lg-12\">\n" +
-    "        <catalogue-tree options=\"treeOptions\" nodes=\"treeNodes\" selection=\"treeSelection\" active-node=\"activeItem\"></catalogue-tree>\n" +
+    "        <div class=\"row\" style=\"margin-bottom: 20px;\">\n" +
+    "            <div class=\"col-lg-4 col-md-6\">\n" +
+    "                <div class=\"row\">\n" +
+    "                    <div class=\"col-lg-12\">\n" +
+    "                        <label>ICMS instance</label>        \n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "                <div class=\"row\">\n" +
+    "                    <div class=\"col-lg-12 col-md-12\">\n" +
+    "                        <div class=\"btn-group\" style=\"width: 100%\" dropdown>\n" +
+    "                            <button type=\"button\" \n" +
+    "                                    class=\"btn btn-default btn-sm\"\n" +
+    "                                    style=\"width: 80%\">\n" +
+    "                                 {{selectedIcms.name}}\n" +
+    "                            </button>\n" +
+    "                            <button type=\"button\" class=\"btn btn-default btn-sm dropdown-toggle\">\n" +
+    "                                <span class=\"caret\"></span>\n" +
+    "                                <span class=\"sr-only\">Toggle Dropdown</span>\n" +
+    "                            </button>\n" +
+    "                            <ul class=\"dropdown-menu\" role=\"menu\" >\n" +
+    "                                <li ng-repeat=\"icms in backendUrls\" role=\"presentation\" ng-click=\"updateSelectedIcms($index)\">\n" +
+    "                                    <a>{{icms.name}}</a>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"row\">\n" +
+    "            <div class=\"col-lg-12\">\n" +
+    "                <catalogue-tree options=\"treeOptions\" nodes=\"treeNodes\" selection=\"treeSelection\" active-node=\"activeItem\"></catalogue-tree>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "    </div>\n" +
+    "\n" +
     "</div>"
   );
 
@@ -494,7 +515,12 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
   $templateCache.put('templates/indicatorBandPopoverTemplate.html',
     "<div class=\"popover\" style=\"color:black\" ng-click=\"$event.stopPropagation();\">\n" +
     "  <div class=\"arrow\"></div>\n" +
-    "  <h3 class=\"popover-title\" ng-bind=\"title\" ng-show=\"title\"></h3>\n" +
+    "  <div>\n" +
+    "      <h3 class=\"popover-title\"  ng-show=\"title\">\n" +
+    "          {{title}}\n" +
+    "      </h3>\n" +
+    "  </div>\n" +
+    "  </h3>\n" +
     "  <div class=\"popover-content\" ng-bind=\"content\"></div>\n" +
     "</div>"
   );
@@ -502,9 +528,9 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/indicatorBandTemplate.html',
     "<div class=\"row\">\n" +
-    "    <div class=\"col-lg-12\">\n" +
+    "    <div class=\"col-lg-12 col-md-12\">\n" +
     "        <div class=\"row\">\n" +
-    "            <div class=\"col-lg-2\" style=\"padding-right:5px;width:12.5%\">\n" +
+    "            <div class=\"col-lg-2 col-md-2\" style=\"padding-right:5px;width:12.5%\">\n" +
     "<!--                we use the previous-interval binding to bind the upperBoundary\n" +
     "                to this element. this is necessary to correctly set the labels. \n" +
     "                see also \n" +
@@ -519,7 +545,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                    </indicator-band-item>\n" +
     "                </div>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-9\">\n" +
+    "            <div class=\"col-lg-9 col-md-9\">\n" +
     "                <div class=\"row\">\n" +
     "                    <div class=\"progress\">\n" +
     "                        <indicator-band-item \n" +
@@ -549,7 +575,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                    </div>\n" +
     "                </div>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-2\"  style=\"padding-left:5px;width: 12.5%\">\n" +
+    "            <div class=\"col-lg-2 col-md-2\"  style=\"padding-left:5px;width: 12.5%\">\n" +
     "                <!-- we use the previous-interval binding to bind the lowerBoundary\n" +
     "                to this element. this is necessary to correctly set the labels. \n" +
     "                see also \n" +
@@ -587,14 +613,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </div>\n" +
     "    </div>\n" +
     "    <div class=\"row\" ng-if=\"worldstates && worldstates.length > 0\">\n" +
-    "        <div class=\"col-lg-4\"  ng-repeat=\"chartModel in chartModels\">\n" +
+    "        <div class=\"col-lg-4 col-md-6\"  ng-repeat=\"chartModel in chartModels\">\n" +
     "            <div class=\"row\">\n" +
     "                <div class=\"col-lg-12\" style=\"text-align: center\">\n" +
     "                    <label>{{chartModel[0].key}}</label>\n" +
     "                </div>\n" +
     "            </div>\n" +
     "            <div class=\"row\">\n" +
-    "                <div class=\"col-lg12\" nvd3-discrete-bar-chart style=\"margin-top: -40px;\"\n" +
+    "                <div class=\"col-lg-12\" nvd3-discrete-bar-chart style=\"margin-top: -40px;\"\n" +
     "                     data=\"chartModel\"\n" +
     "                     width=\"400\"\n" +
     "                     height=\"200\"\n" +
@@ -619,13 +645,16 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
 
   $templateCache.put('templates/indicatorCriteriaAxisChooserTemplate.html',
-    "<div class=\"btn-group\">\n" +
-    "    <button type=\"button\" class=\"btn btn-default btn-sm\"> <img ng-src=\"{{selectedAxis.icon}}\" style=\"margin-right:5px;float:left\"/>{{selectedAxis.name}}</button>\n" +
-    "    <button type=\"button\" class=\"btn btn-default btn-sm dropdown-toggle\" data-toggle=\"dropdown\">\n" +
+    "<div class=\"btn-group\"  dropdown>\n" +
+    "    <button type=\"button\" \n" +
+    "            class=\"btn btn-default btn-sm\">\n" +
+    "        <img ng-src=\"{{selectedAxis.icon}}\" style=\"margin-right:5px;float:left\"/>{{selectedAxis.name}}\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-default btn-sm dropdown-toggle\">\n" +
     "        <span class=\"caret\"></span>\n" +
     "        <span class=\"sr-only\">Toggle Dropdown</span>\n" +
     "    </button>\n" +
-    "    <ul class=\"dropdown-menu\" role=\"menu\" >\n" +
+    "     <ul class=\"dropdown-menu\" role=\"menu\" >\n" +
     "        <li ng-repeat=\"scale in scales\" role=\"presentation\" ng-click=\"axisSelected($index)\" ng-class=\"{'dropdown-header':scale.isGroup}\">\n" +
     "            <a ng-if=\"!scale.isGroup\">{{scale.name}}</a>\n" +
     "            <img ng-if=\"scale.isGroup\" ng-src=\"{{scale.icon}}\" style=\"margin-right:5px;float:left\"/>\n" +
@@ -633,6 +662,15 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </li>\n" +
     "    </ul>\n" +
     "</div>"
+  );
+
+
+  $templateCache.put('templates/indicatorCriteriaTableHeader.html',
+    "<tr>\n" +
+    "    <th ng-repeat=\"column in columns\" class=\"text-left\" ng-style=\"getCellStyle($index)\">\n" +
+    "        {{column.title}}\n" +
+    "    </th>\n" +
+    "</tr>"
   );
 
 
@@ -645,14 +683,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        <strong>Warning: </strong>No criteria function selected.\n" +
     "    </div>\n" +
     "    <div ng-show=\"!(worldstates.length <= 0 || (forCriteria && !criteriaFunction))\">\n" +
-    "        <table  data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\">\n" +
-    "            <thead>\n" +
-    "                <tr>\n" +
-    "                    <th ng-repeat=\"column in columns\" class=\"text-left\" ng-style=\"getCellStyle($index)\">\n" +
-    "                        {{column.title}}\n" +
-    "                    </th>\n" +
-    "                </tr>\n" +
-    "            </thead>\n" +
+    "        <table  data-ng-table=\"tableParams\" class=\"table\" template-pagination=\"templates/nopager.html\"  template-header=\"templates/indicatorCriteriaTableHeader.html\">\n" +
     "            <tbody>\n" +
     "                <tr data-ng-repeat=\"row in $data\" ng-class=\"{'info':isGroupRow(row)}\" \n" +
     "                    ng-style=\"getRowStyle($index)\">\n" +
@@ -673,7 +704,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "    <div class=\"panel-heading\" style=\" white-space: nowrap;\n" +
     "         overflow: hidden;\n" +
     "         text-overflow: ellipsis;\">\n" +
-    "        Level of satisfaction emphasis {{model.lse}}\n" +
+    "        Level of satisfaction emphasis\n" +
     "    </div>\n" +
     "    <div class=\"panel-body\" >\n" +
     "        <div ng-if=\"!expertMode && indicatorSize>=1\">\n" +
@@ -721,6 +752,25 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/nopager.html',
     ""
+  );
+
+
+  $templateCache.put('templates/rankingTableHeader.html',
+    "<tr>\n" +
+    "    <th ng-repeat=\"column in columns\"\n" +
+    "        ng-if=\"$index < 3\"\n" +
+    "        >\n" +
+    "        {{column.title}}\n" +
+    "    </th>\n" +
+    "    <th ng-if=\"showRadarChart\">\n" +
+    "        Criteria radar\n" +
+    "    </th>\n" +
+    "    <th ng-repeat=\"column in columns\"\n" +
+    "        ng-if=\"showIndicators && $index >= 3\"\n" +
+    "        >\n" +
+    "        {{column.title}}\n" +
+    "    </th>\n" +
+    "</tr>"
   );
 
 
@@ -1019,6 +1069,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/worldstateRankingTableTemplate.html',
     "<div id=\"worldstateRankingTable\" style=\"overflow-x: auto\">\n" +
+    "\n" +
     "    <div ng-if=\"!(worldstates.length > 0)\" class=\"alert alert-warning\">\n" +
     "        <strong>Warning: </strong>There are no worldstates selected.\n" +
     "    </div>\n" +
@@ -1030,31 +1081,14 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "    </div>\n" +
     "    <div ng-show=\"((worldstates.length > 0) && criteriaFunction && decisionStrategy)\">\n" +
     "        <table  \n" +
-    "            ng-table=\"tableParams\" \n" +
+    "            ng-table=\"tableParams\"\n" +
+    "            template-header=\"templates/rankingTableHeader.html\"\n" +
     "            show-filter=\"false\" \n" +
     "            class=\"table table-striped\"\n" +
     "            style=\"white-space: nowrap\">\n" +
-    "          \n" +
-    "            <thead>\n" +
-    "                <tr>\n" +
-    "                <th ng-repeat=\"column in columns\"\n" +
-    "                        ng-if=\"$index < 3\"\n" +
-    "                        >\n" +
-    "                        {{column.title}}\n" +
-    "                    </th>\n" +
-    "                    <th ng-if=\"showRadarChart\">\n" +
-    "                        Criteria radar\n" +
-    "                    </th>\n" +
-    "                <th ng-repeat=\"column in columns\"\n" +
-    "                        ng-if=\"showIndicators && $index >= 3\"\n" +
-    "                        >\n" +
-    "                        {{column.title}}\n" +
-    "                    </th>\n" +
-    "                </tr>\n" +
-    "            </thead>\n" +
     "            <tbody>\n" +
     "                <tr ng-repeat=\"item in $data\">\n" +
-    "                <td ng-repeat=\"col in columns\" ng-if=\"$index < 3\" style=\"vertical-align: middle\">\n" +
+    "                    <td ng-repeat=\"col in columns\" ng-if=\"$index < 3\" style=\"vertical-align: middle\">\n" +
     "                        {{item[col.field]}}\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"showRadarChart\"\n" +
@@ -1068,7 +1102,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                        ng-click=\"clickToOpen($index)\"\n" +
     "                        >\n" +
     "                    </td>\n" +
-    "                <td ng-repeat=\"col in columns\"  ng-if=\"showIndicators && $index >= 3\" style=\"vertical-align: middle\">\n" +
+    "                    <td ng-repeat=\"col in columns\"  ng-if=\"showIndicators && $index >= 3\" style=\"vertical-align: middle\">\n" +
     "                        <span>\n" +
     "                            {{item[col.field].indicator}}\n" +
     "                            <br/>\n" +

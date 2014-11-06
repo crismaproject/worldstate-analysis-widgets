@@ -127,10 +127,51 @@ angular.module(
 
             onloadDsFile = function (theFile) {
                 return function (e) {
-                    var cf;
+                    var cf, indicatorMapLength, indicatorProp, cfIndicatorLength, cfIndicator, indicatorFound, j, msg,
+                        referenceIccData, indicatorGroup;
                     try {
                         cf = JSON.parse(e.target.result);
+                        indicatorMapLength = 0;
+                        referenceIccData = Worldstates.utils.stripIccData([$scope.worldstates[0]])[0].data;
+                        for (indicatorGroup in referenceIccData) {
+                            if (referenceIccData.hasOwnProperty(indicatorGroup)) {
+                                if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                    for (indicatorProp in referenceIccData[indicatorGroup]) {
+                                        if (referenceIccData[indicatorGroup].hasOwnProperty(indicatorProp)) {
+                                            if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                                indicatorMapLength++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // we need to check if the criteria Functions defined in the file
+                        // match to the indicators of the loaded indicator files...
+                        for (indicatorProp in $scope.indicatorMap) {
+                            if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                cfIndicatorLength = cf.criteriaFunctions.length;
+                                for (j = 0; j < cf.criteriaFunctions.length; j++) {
+                                    cfIndicator = cf.criteriaFunctions[j].indicator;
+                                    indicatorFound = false;
 
+                                    if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
+                                        indicatorFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!indicatorFound) {
+                                    msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
+                                    console.error(msg);
+                                    return;
+                                }
+                                if (cfIndicatorLength !== indicatorMapLength) {
+                                    msg = 'Criteria Function :"' + cf.name + '" contains more indicators than the loaded indicator files.';
+                                    console.error(msg);
+                                    return;
+                                }
+                            }
+                        }
                         $scope.criteriaFunctionSet.push(cf);
                         $scope.$apply();
                     } catch (err) {

@@ -6,26 +6,31 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.directives',
         'eu.crismaproject.worldstateAnalysis.services',
         'de.cismet.crisma.widgets.worldstateTreeWidget',
-        'mgcrea.ngStrap'
+        'ui.bootstrap.tabs',
+        'ui.bootstrap.collapse',
+        'ui.bootstrap.dropdown',
+        'ui.bootstrap.tpls'
     ]
-);
+    );
 
 angular.module(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
     [
+        'de.cismet.crisma.ICMM.config',
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes',
-        'de.cismet.crisma.ICMM.services'
+        'de.cismet.crisma.ICMM.services',
     ]
-);
+    );
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers',
     [
         'nvd3ChartDirectives',
         'eu.crismaproject.worldstateAnalysis.services',
-        'ngDialog'
+        'ngDialog',
+        'de.cismet.crisma.ICMM.config',
     ]
-);
+    );
 angular.module(
     'eu.crismaproject.worldstateAnalysis.controllers'
 ).controller(
@@ -247,10 +252,51 @@ angular.module(
 
             onloadDsFile = function (theFile) {
                 return function (e) {
-                    var cf;
+                    var cf, indicatorMapLength, indicatorProp, cfIndicatorLength, cfIndicator, indicatorFound, j, msg,
+                        referenceIccData, indicatorGroup;
                     try {
                         cf = JSON.parse(e.target.result);
+                        indicatorMapLength = 0;
+                        referenceIccData = Worldstates.utils.stripIccData([$scope.worldstates[0]])[0].data;
+                        for (indicatorGroup in referenceIccData) {
+                            if (referenceIccData.hasOwnProperty(indicatorGroup)) {
+                                if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                    for (indicatorProp in referenceIccData[indicatorGroup]) {
+                                        if (referenceIccData[indicatorGroup].hasOwnProperty(indicatorProp)) {
+                                            if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                                indicatorMapLength++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // we need to check if the criteria Functions defined in the file
+                        // match to the indicators of the loaded indicator files...
+                        for (indicatorProp in $scope.indicatorMap) {
+                            if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                cfIndicatorLength = cf.criteriaFunctions.length;
+                                for (j = 0; j < cf.criteriaFunctions.length; j++) {
+                                    cfIndicator = cf.criteriaFunctions[j].indicator;
+                                    indicatorFound = false;
 
+                                    if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
+                                        indicatorFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!indicatorFound) {
+                                    msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
+                                    console.error(msg);
+                                    return;
+                                }
+                                if (cfIndicatorLength !== indicatorMapLength) {
+                                    msg = 'Criteria Function :"' + cf.name + '" contains more indicators than the loaded indicator files.';
+                                    console.error(msg);
+                                    return;
+                                }
+                            }
+                        }
                         $scope.criteriaFunctionSet.push(cf);
                         $scope.$apply();
                     } catch (err) {
@@ -537,10 +583,51 @@ angular.module(
 
             onloadDsFile = function (theFile) {
                 return function (e) {
-                    var ds;
+                    var ds, referenceIccData, indicatorGroup, indicatorMapLength, indicatorProp,
+                        dsIndicatorLength, dsIndicator, indicatorFound, msg, j;
                     try {
                         ds = JSON.parse(e.target.result);
+                        indicatorMapLength = 0;
+                        referenceIccData = Worldstates.utils.stripIccData([$scope.worldstates[0]])[0].data;
+                        for (indicatorGroup in referenceIccData) {
+                            if (referenceIccData.hasOwnProperty(indicatorGroup)) {
+                                if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                    for (indicatorProp in referenceIccData[indicatorGroup]) {
+                                        if (referenceIccData[indicatorGroup].hasOwnProperty(indicatorProp)) {
+                                            if (indicatorGroup !== 'displayName' && indicatorGroup !== 'iconResource') {
+                                                indicatorMapLength++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // we need to check if the criteria Functions defined in the file
+                        // match to the indicators of the loaded indicator files...
+                        for (indicatorProp in $scope.indicatorMap) {
+                            if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                dsIndicatorLength = ds.criteriaFunctions.length;
+                                for (j = 0; j < ds.criteriaFunctions.length; j++) {
+                                    dsIndicator = ds.criteriaFunctions[j].indicator;
+                                    indicatorFound = false;
 
+                                    if ($scope.indicatorMap[indicatorProp].displayName === dsIndicator) {
+                                        indicatorFound = true;
+                                        break;
+                                    }
+                                }
+                                if (!indicatorFound) {
+                                    msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + ds.name + '"';
+                                    console.error(msg);
+                                    return;
+                                }
+                                if (dsIndicatorLength !== indicatorMapLength) {
+                                    msg = 'Criteria Function :"' + ds.name + '" contains more indicators than the loaded indicator files.';
+                                    console.error(msg);
+                                    return;
+                                }
+                            }
+                        }
                         $scope.decisionStrategies.push(ds);
                         $scope.$apply();
                     } catch (err) {
@@ -574,7 +661,7 @@ angular.module(
             });
         }
     ]
-);
+    );
 
 
 
@@ -717,20 +804,20 @@ angular.module(
 
             $scope.showCfFileLoadingError = function (message) {
                 $scope.cfFileLoadError = true;
-                $scope.cfFileLoadErrorMsg = message;
+                $scope.cfFileLoadErrorMsg = 'Criteria functions not loaded. ' + message;
                 $scope.$apply();
             };
 
             $scope.showDsFileLoadingError = function (message) {
                 $scope.dsFileLoadError = true;
-                $scope.dsFileLoadErrorMsg = message;
+                $scope.dsFileLoadErrorMsg = 'Decision strategies not loaded. ' + message;
                 $scope.$apply();
             };
 
             onloadIccObjects = function (file) {
                 return function (e) {
                     var fileObj, worldstateDummy, indicatorProp, indicator, origLoadedIndicators, indicatorGroup,
-                        containsIndicator;
+                        loadedIndicatorLength, indicatorMapLength, containsIndicator;
                     try {
                         fileObj = JSON.parse(e.target.result);
                         /*
@@ -751,7 +838,7 @@ angular.module(
                             //generate a uniqe id...
                             origLoadedIndicators = fileObj;
                             worldstateDummy = {
-                                name: 'Nonamed indicator data ' + ($scope.worldstates.length + 1),
+                                name: 'Nonamed indicator data ' + '(filename: ' + file.name + ' )',
                                 iccdata: {
                                     actualaccessinfo: JSON.stringify(fileObj)
                                 }
@@ -771,13 +858,17 @@ angular.module(
                                 }
                             }
                         } else {
+                            loadedIndicatorLength = 0;
+                            indicatorMapLength = 0;
                             for (indicator in $scope.indicatorMap) {
                                 if ($scope.indicatorMap.hasOwnProperty(indicator)) {
                                     containsIndicator = false;
+                                    indicatorMapLength++;
                                     for (indicatorGroup in origLoadedIndicators) {
                                         if (origLoadedIndicators.hasOwnProperty(indicatorGroup)) {
                                             for (indicatorProp in origLoadedIndicators[indicatorGroup]) {
-                                                if (origLoadedIndicators[indicatorGroup].hasOwnProperty()) {
+                                                if (origLoadedIndicators[indicatorGroup].hasOwnProperty(indicatorProp)) {
+                                                    loadedIndicatorLength++;
                                                     if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
                                                         if ($scope.indicatorMap[indicator].displayName === origLoadedIndicators[indicatorGroup][indicatorProp].displayName) {
                                                             containsIndicator = true;
@@ -792,6 +883,9 @@ angular.module(
                                         console.error('loaded indicator data does not match to the first loaded indicator set');
                                     }
                                 }
+                            }
+                            if (loadedIndicatorLength !== indicatorMapLength) {
+                                console.error('indicator data in file ' + file.name + ' has more indicators defined that the first loaded indicator set.');
                             }
                         }
 
@@ -829,30 +923,46 @@ angular.module(
 
             onloadCfFile = function (theFile) {
                 return function (e) {
-                    var cfSet, cf, i, j, indicatorProp, indicatorFound, cfIndicator, msg;
+                    var cfSet, cf, i, j, indicatorProp, indicatorFound, cfIndicator, msg, indicatorMapLength,
+                        cfIndicatorLength;
                     try {
                         cfSet = JSON.parse(e.target.result);
 
                         if (Object.prototype.toString.call(cfSet) === '[object Array]') {
+                            indicatorMapLength = 0;
+                            for (indicatorProp in $scope.indicatorMap) {
+                                if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                    indicatorMapLength++;
+                                }
+                            }
                             // we need to check if the criteria Functions defined in the file
                             // match to the indicators of the loaded indicator files...
                             for (indicatorProp in $scope.indicatorMap) {
-                                for (i = 0; i < cfSet.length; i++) {
-                                    cf = cfSet[i];
-                                    for (j = 0; j < cf.criteriaFunctions.length; j++) {
-                                        cfIndicator = cf.criteriaFunctions[j].indicator;
-                                        indicatorFound = false;
+                                if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                    for (i = 0; i < cfSet.length; i++) {
+                                        cf = cfSet[i];
+                                        cfIndicatorLength = cf.criteriaFunctions.length;
+                                        for (j = 0; j < cf.criteriaFunctions.length; j++) {
+                                            cfIndicator = cf.criteriaFunctions[j].indicator;
+                                            indicatorFound = false;
 
-                                        if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
-                                            indicatorFound = true;
-                                            break;
+                                            if ($scope.indicatorMap[indicatorProp].displayName === cfIndicator) {
+                                                indicatorFound = true;
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if (!indicatorFound) {
-                                        msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
-                                        console.error(msg);
-                                        $scope.showCfFileLoadingError(msg);
-                                        return;
+                                        if (!indicatorFound) {
+                                            msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
+                                            console.error(msg);
+                                            $scope.showCfFileLoadingError(msg);
+                                            return;
+                                        }
+                                        if (cfIndicatorLength !== indicatorMapLength) {
+                                            msg = 'Criteria Function :"' + cf.name + '" contains more indicators than the loaded indicator files.';
+                                            console.error(msg);
+                                            $scope.showCfFileLoadingError(msg);
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -870,16 +980,23 @@ angular.module(
 
             onloadDsFile = function (theFile) {
                 return function (e) {
-                    var ds, s, i, j, indicatorProp, indicatorFound, cfIndicator, msg;
+                    var ds, s, i, j, indicatorProp, indicatorFound, cfIndicator, msg, indicatorMapLength, dsIndicatorLength;
                     try {
                         ds = JSON.parse(e.target.result);
 
                         if (Object.prototype.toString.call(ds) === '[object Array]') {
+                            indicatorMapLength = 0;
+                            for (indicatorProp in $scope.indicatorMap) {
+                                if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
+                                    indicatorMapLength++;
+                                }
+                            }
                             // we need to check if the decision strategies defined in the file
                             // match to the indicators of the loaded indicator files...
                             for (indicatorProp in $scope.indicatorMap) {
                                 for (i = 0; i < ds.length; i++) {
                                     s = ds[i];
+                                    dsIndicatorLength = s.criteriaEmphases.length;
                                     for (j = 0; j < s.criteriaEmphases.length; j++) {
                                         cfIndicator = s.criteriaEmphases[j].indicator.displayName;
                                         indicatorFound = false;
@@ -889,8 +1006,20 @@ angular.module(
                                             break;
                                         }
                                     }
+                                    if (s.satisfactionEmphasis.length !== indicatorMapLength) {
+                                        msg = 'Satisfaction Emphasis Vector for decision strategy :"' + ds.name + '" contains more elements than indicator are defined';
+                                        console.error(msg);
+                                        $scope.showDsFileLoadingError(msg);
+                                        return;
+                                    }
                                     if (!indicatorFound) {
                                         msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in decision strategy "' + s.name + '"';
+                                        console.error(msg);
+                                        $scope.showDsFileLoadingError(msg);
+                                        return;
+                                    }
+                                    if (dsIndicatorLength !== indicatorMapLength) {
+                                        msg = 'Decision strategy :"' + ds.name + '" contains more indicators than the loaded indicator files.';
                                         console.error(msg);
                                         $scope.showDsFileLoadingError(msg);
                                         return;
@@ -995,7 +1124,8 @@ angular.module(
         'de.cismet.crisma.ICMM.services.icmm',
         'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
         'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
-        function ($scope, Nodes, Worldstates, Icmm, CF, DS) {
+        'de.cismet.crisma.ICMM.config.IcmmSettings',
+        function ($scope, Nodes, Worldstates, Icmm, CF, DS, IcmmSettings) {
             'use strict';
 
             // intialisation for the worldstate tree
@@ -1083,11 +1213,58 @@ angular.module(
                     }
                 }
             });
-            
+
             // Retrieve the top level nodes from the icmm api
             $scope.treeNodes = Nodes.query(function () {
             });
 
+
+            $scope.backendUrls = [{
+                    url: 'http://crisma.cismet.de/icmm_api',
+                    domain: 'CRISMA',
+                    name: 'crisma.cismet.de'
+                }, {
+                    url: 'http://localhost:8890',
+                    domain: 'CRISMA',
+                    name: 'localhost'
+                }];
+
+            $scope.selectedIcms = $scope.backendUrls[0];
+            $scope.updateSelectedIcms = function (index) {
+                $scope.selectedIcms = $scope.backendUrls[index];
+            };
+            $scope.$watch('selectedIcms', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    IcmmSettings.setIcmmApi($scope.selectedIcms.url);
+                    IcmmSettings.setDomain($scope.selectedIcms.domain);
+                }
+            });
+            IcmmSettings.addApiListener(function () {
+                $scope.treeSelection = [];
+                $scope.worldstates = [];
+                $scope.selectedWorldstates = [];
+                $scope.treeNodes =[];
+                 Nodes.query(function (data) {
+                     $scope.treeNodes =data;
+                });
+                $scope.criteriaFunctions = [];
+                CF.query(function (data) {
+                    if (data.length > 0) {
+                        $scope.criteriaFunctions = data;
+                    }
+                });
+                $scope.decisionStrategies = [];
+                DS.query(function (data) {
+                    $scope.decisionStrategies = data || [];
+                });
+                Worldstates.query({level: 3, fields: 'id,name,key,iccdata,actualaccessinfo, actualaccessinfocontenttype, categories', deduplicate: false}, function (data) {
+                    data.forEach(function (ws) {
+                        ws = Icmm.convertToCorrectIccDataFormat(ws);
+                    });
+                    $scope.worldstates = data;
+                });
+
+            });
         }
     ]
     );
@@ -1848,55 +2025,82 @@ angular.module(
 
 
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.demoApp.controllers'
-).controller(
+    'eu.crismaproject.worldstateAnalysis.demoApp.controllers',
+    [
+        'de.cismet.crisma.ICMM.Worldstates',
+        'de.cismet.cids.rest.collidngNames.Nodes',
+        'de.cismet.crisma.ICMM.services',
+        'ui.bootstrap.tabs',
+        'ui.bootstrap.collapse',
+        'ui.bootstrap.tpls'
+    ]
+    ).controller(
     'eu.crismaproject.worldstateAnalysis.demoApp.controllers.MainController',
     [
         '$scope',
         '$timeout',
         'eu.crismaproject.worldstateAnalysis.services.IcmmPersistanceService',
         'eu.crismaproject.worldstateAnalysis.services.FilesPersistanceService',
-        function ($scope, $timeout, IcmmPersistanceService, FilesPersistanceService) {
+        'ngDialog',
+        function ($scope, $timeout, IcmmPersistanceService, FilesPersistanceService, ngDialog) {
             'use strict';
 
             var createChartModels;
+            // we bind to the container object since the provider directives are nested in angular-bootstrap tabs
+            // tabs create a own scope and thus override every "simple" property. using an container object the binding
+            // stll works...
+            $scope.container = {};
             $scope.forCriteriaTable = false;
-            $scope.chartModels = [];
+            $scope.container.chartModels = [];
+            $scope.icmmTabCollapsed = false;
+            $scope.filesTabCollapsed = false;
+
+            $scope.openRadarModal = function (index) {
+                var childScope;
+                childScope = $scope.$new();
+                childScope.ws = $scope.container.chartModels[index];
+                childScope.criteriaFunction = $scope.container.selectedCriteriaFunction;
+                ngDialog.open({
+                    template: 'templates/criteriaRadarPopupTemplate.html',
+                    scope: childScope,
+                    className: 'ngdialog-theme-default ngdialog-theme-custom ngdialog-theme-width'
+                });
+            };
 
             createChartModels = function () {
                 var j, modelArr;
-                $scope.chartModels = [];
-                if ($scope.worldstates && $scope.worldstates.length > 0) {
-                    for (j = 0; j < $scope.worldstates.length; j++) {
+                $scope.container.chartModels = [];
+                if ($scope.container.worldstates && $scope.container.worldstates.length > 0) {
+                    for (j = 0; j < $scope.container.worldstates.length; j++) {
                         modelArr = [];
-                        if ($scope.worldstates[j]) {
-                            modelArr.push($scope.worldstates[j]);
+                        if ($scope.container.worldstates[j]) {
+                            modelArr.push($scope.container.worldstates[j]);
                         }
-                        if ($scope.worldstateRef) {
-                            modelArr = modelArr.concat($scope.worldstateRef);
+                        if ($scope.container.worldstateRef) {
+                            modelArr = modelArr.concat($scope.container.worldstateRef);
                         }
-                        $scope.chartModels.push(modelArr);
+                        $scope.container.chartModels.push(modelArr);
                     }
                 }
             };
 
-            $scope.$watch('worldstateRef', function (newVal, oldVal) {
+            $scope.$watch('container.worldstateRef', function (newVal, oldVal) {
                 if (newVal !== oldVal) {
                     createChartModels();
                 }
             });
-            $scope.$watchCollection('worldstates', function (newVal, oldVal) {
-                if (newVal !== oldVal && $scope.worldstates) {
+            $scope.$watchCollection('container.worldstates', function (newVal, oldVal) {
+                if (newVal !== oldVal && $scope.container.worldstates) {
                     createChartModels();
                 }
             });
 
             $scope.updateSelectedCriteriaFunction = function (index) {
-                $scope.selectedCriteriaFunction = $scope.criteriaFunctions[index];
+                $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions[index];
             };
 
             $scope.updateSelectedDecisionStrategy = function (index) {
-                $scope.selectedDecisionStrategy = $scope.decisionStrategies[index];
+                $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies[index];
             };
 
             $scope.persistCriteriaFunctions = function () {
@@ -1904,9 +2108,9 @@ angular.module(
                 $scope.showPersistDone = false;
                 $timeout(function () {
                     if ($scope.icmmTabVisible) {
-                        IcmmPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+                        IcmmPersistanceService.persistCriteriaFunctions($scope.container.criteriaFunctions);
                     } else {
-                        FilesPersistanceService.persistCriteriaFunctions($scope.criteriaFunctions);
+                        FilesPersistanceService.persistCriteriaFunctions($scope.container.criteriaFunctions);
                     }
 
                     $scope.showPersistSpinner = false;
@@ -1928,9 +2132,9 @@ angular.module(
                 $scope.showDsPersistDone = false;
                 $timeout(function () {
                     if ($scope.icmmTabVisible) {
-                        IcmmPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+                        IcmmPersistanceService.persistDecisionStrategies($scope.container.decisionStrategies);
                     } else {
-                        FilesPersistanceService.persistDecisionStrategies($scope.decisionStrategies);
+                        FilesPersistanceService.persistDecisionStrategies($scope.container.decisionStrategies);
                     }
                     $scope.showDsPersistSpinner = false;
                     $scope.showDsPersistDone = true;
@@ -1950,61 +2154,65 @@ angular.module(
              */
 
             function watchIcmmWs () {
-                return $scope.$watch('worldstatesIcmm', function () {
-                    $scope.worldstates = $scope.worldstatesIcmm;
+                return $scope.$watch('container.worldstatesIcmm', function () {
+                    $scope.container.worldstates = $scope.container.worldstatesIcmm;
                 });
             }
 
             $scope.derigsterIcmmWsWatch = watchIcmmWs();
 
             function watchFilesWs () {
-                return $scope.$watch('worldstatesFiles', function () {
-                    $scope.worldstates = $scope.worldstatesFiles;
+                return $scope.$watch('container.worldstatesFiles', function () {
+                    $scope.container.worldstates = $scope.container.worldstatesFiles;
                 });
             }
 
             // refWorldstate watches
             function watchRefWsIcmm () {
-                return $scope.$watch('refWorldstatesIcmm', function () {
-                    $scope.refWorldstates = $scope.refWorldstatesIcmm;
+                return $scope.$watch('container.refWorldstatesIcmm', function () {
+                    $scope.container.refWorldstates = $scope.container.refWorldstatesIcmm;
                 });
             }
 
             $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
 
             function watchRefWsFiles () {
-                return $scope.$watch('refWorldstatesFiles', function () {
-                    $scope.refWorldstates = $scope.refWorldstatesFiles;
+                return $scope.$watch('container.refWorldstatesFiles', function () {
+                    $scope.container.refWorldstates = $scope.container.refWorldstatesFiles;
                 });
             }
 
             // criteriaFunctions watches
             function watchCfIcmm () {
-                return $scope.$watch('criteriaFunctionsIcmm', function () {
-                    $scope.criteriaFunctions = $scope.criteriaFunctionsIcmm;
+                return $scope.$watch('container.criteriaFunctionsIcmm', function () {
+                    $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsIcmm;
+                    $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions ? $scope.container.criteriaFunctions[0] : false;
                 });
             }
 
             $scope.derigsterCfIcmm = watchCfIcmm();
 
             function watchCfFiles () {
-                return $scope.$watch('criteriaFunctionsFiles', function () {
-                    $scope.criteriaFunctions = $scope.criteriaFunctionsFiles;
+                return $scope.$watch('container.criteriaFunctionsFiles', function () {
+                    $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsFiles;
+                    $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions ? $scope.container.criteriaFunctions[0] : false;
                 });
             }
 
             //decision strategy watches
             function watchDsIcmm () {
-                return $scope.$watch('decisionStrategiesIcmm', function () {
-                    $scope.decisionStrategies = $scope.decisionStrategiesIcmm;
+                return $scope.$watch('container.decisionStrategiesIcmm', function () {
+                    $scope.container.decisionStrategies = $scope.container.decisionStrategiesIcmm;
+                    $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies ? $scope.container.decisionStrategies[0] : false;
                 });
             }
 
             $scope.derigsterDsIcmm = watchDsIcmm();
 
             function watchDsFiles () {
-                return $scope.$watch('decisionStrategiesFiles', function () {
-                    $scope.decisionStrategies = $scope.decisionStrategiesFiles;
+                return $scope.$watch('container.decisionStrategiesFiles', function () {
+                    $scope.container.decisionStrategies = $scope.container.decisionStrategiesFiles;
+                    $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies ? $scope.container.decisionStrategies[0] : false;
                 });
             }
 
@@ -2012,20 +2220,26 @@ angular.module(
             $scope.icmmTabVisible = true;
             $scope.switchToIcmmTab = function () {
                 $scope.icmmTabVisible = true;
-                $scope.derigsterFilesWsWatch();
+                if ($scope.derigsterFilesWsWatch) {
+                    $scope.derigsterFilesWsWatch();
+                }
                 $scope.derigsterIcmmWsWatch = watchIcmmWs();
-
-                $scope.derigsterRefWsFilesWatch();
+                if ($scope.derigsterRefWsFilesWatch) {
+                    $scope.derigsterRefWsFilesWatch();
+                }
                 $scope.derigsterRefWsIcmmWatch = watchRefWsIcmm();
 
-                $scope.derigsterCfFilesWatch();
+                if ($scope.derigsterCfFilesWatch) {
+                    $scope.derigsterCfFilesWatch();
+                }
                 $scope.derigsterCfIcmm = watchCfIcmm();
-
-                $scope.derigsterDsFilesWatch();
+                if ($scope.derigsterDsFilesWatch) {
+                    $scope.derigsterDsFilesWatch();
+                }
                 $scope.derigsterDsIcmm = watchDsIcmm();
-                
-                $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy= undefined;
+
+
+                $scope.icmmLastViewed = true;
             };
 
 
@@ -2043,9 +2257,8 @@ angular.module(
 
                 $scope.derigsterDsIcmm();
                 $scope.derigsterDsFilesWatch = watchDsFiles();
-                
-                $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy= undefined;
+
+                $scope.icmmLastViewed = true;
             };
 
         }
@@ -2499,7 +2712,7 @@ angular.module(
                         }
                     }
                     if (insertPosition === -1) {
-                        newTableItem.rank = $scope.tableData.length + 1;
+                        newTableItem.rank = tableArr.length + 1;
                         tableArr.push(newTableItem);
                     } else {
                         tableArr.splice(insertPosition, 0, newTableItem);
@@ -2553,7 +2766,7 @@ angular.module(
             ctrl.refreshTable = function () {
                 if ($scope.tableParams) {
                     $scope.tableParams.reload();
-                    $scope.tableParams.settings().$scope = $scope;
+//                    $scope.tableParams.settings().$scope = $scope;
                 } else {
                     $scope.tableParams = new NgTableParams({
                         page: 1, // show first page
@@ -2616,12 +2829,13 @@ angular.module(
 
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
 //                if (newVal === oldVal || !oldVal) {
-                if (newVal === oldVal || !oldVal || !$scope.criteriaFunction || !$scope.decisionStrategy) {
+                if (newVal === oldVal || !oldVal) {
                     return;
                 }
-                if ($scope.worldstates && $scope.worldstates.length>0) {
+                ctrl.removeMissingWorldstatesFromTable(oldVal);
+                
+                if ($scope.worldstates && $scope.worldstates.length > 0 && $scope.criteriaFunction && $scope.decisionStrategy) {
                     ctrl.addMissingWoldstatesToTable(oldVal);
-                    ctrl.removeMissingWorldstatesFromTable(oldVal);
                     ctrl.refreshTable();
                 }
             };
@@ -2630,7 +2844,7 @@ angular.module(
                 var ws, newTableItem, i = 0, newTableData = [];
                 if (!angular.equals(newVal, oldVal) && $scope.worldstates && $scope.worldstates.length > 0) {
                     if ($scope.criteriaFunction && $scope.decisionStrategy) {
-                        if (!$scope.tableData) {
+                        if (!$scope.tableData || $scope.tableData.length===0) {
                             for (i = 0; i < $scope.worldstates.length; i++) {
                                 ctrl.addWorldstateToTableData($scope.worldstates[i]);
                             }
@@ -2649,7 +2863,7 @@ angular.module(
             };
 
             $scope.clickToOpen = function (index) {
-                $scope.ws = $scope.tableData[index].ws;
+                $scope.ws = [$scope.tableData[index].ws];
                 ngDialog.open({
                     template: 'templates/criteriaRadarPopupTemplate.html',
                     scope: $scope,
@@ -3148,7 +3362,8 @@ angular.module(
                         template: 'templates/indicatorBandPopoverTemplate.html',
                         contentTemplate: 'templates/indicatorBandPopoverContentTemplate.html',
                         placement: 'bottom',
-                        trigger: 'manual'
+                        trigger: 'manual',
+                        autoClose:true
                     });
 
                     scope.togglePopover = function () {
@@ -3432,7 +3647,7 @@ angular.module(
 );
 angular.module(
     'eu.crismaproject.worldstateAnalysis.services',
-    []
+    ['de.cismet.crisma.ICMM.config']
 );
 angular.module(
     'eu.crismaproject.worldstateAnalysis.services'
@@ -3846,67 +4061,92 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.services.CriteriaFunction',
     [
         '$resource',
-        'CRISMA_ICMM_API',
-        'CRISMA_DOMAIN',
+        'de.cismet.crisma.ICMM.config.IcmmSettings',
         'de.cismet.crisma.ICMM.services.icmm',
-        function ($resource, CRISMA_ICMM_API, CRISMA_DOMAIN, Icmm) {
+        function ($resource, IcmmSettings, Icmm) {
             'use strict';
-
-            var cf, processResult;
+            var cf, processResult, cfFacade, createResource;
             processResult = function (cfDataObj) {
                 var wrapper;
                 if (cfDataObj) {
                     wrapper = JSON.parse(cfDataObj);
-                    return JSON.parse(wrapper.criteriaFunctions);
+                    if (wrapper) {
+                        return JSON.parse(wrapper.criteriaFunctions);
+                    }
                 }
                 return null;
             };
 
-            cf = $resource(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.criteriafunctions/1', {
-                cfId: '@id',
-                deduplicate: false,
-                omitNullValues: 'false'
-            }, {
-                'get': {
-                    method: 'GET',
-                    transformResponse: processResult
-                },
-                'query': {
-                    isArray: true,
-                    method: 'GET',
-                    params: {
-                        level: '1',
-                        omitNullValues: 'true'
+            createResource = function () {
+                var r;
+
+                r = $resource(IcmmSettings.getIcmmApi() + '/' + IcmmSettings.getDomain() + '.criteriafunctions/1', {
+                    cfId: '@id',
+                    deduplicate: false,
+                    omitNullValues: 'false'
+                }, {
+                    'get': {
+                        method: 'GET',
+                        transformResponse: processResult
                     },
-                    transformResponse: processResult
-                },
-                'update': {
-                    method: 'PUT',
-                    transformRequest: function (data) {
-                        var transformedData, wrapper;
-                        wrapper = {
-                            $self: '/CRISMA.criteriafunctions/1',
-                            id: 1,
-                            criteriaFunctions: angular.toJson(data)
-                        };
-                        transformedData = JSON.stringify(wrapper, function (k, v) {
-                            // we have to take care of angular properties by ourselves
-                            if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
-                                return undefined;
-                            }
+                    'query': {
+                        isArray: true,
+                        method: 'GET',
+                        params: {
+                            level: '1',
+                            omitNullValues: 'true'
+                        },
+                        transformResponse: processResult
+                    },
+                    'update': {
+                        method: 'PUT',
+                        transformRequest: function (data) {
+                            var transformedData, wrapper;
+                            wrapper = {
+                                $self: '/CRISMA.criteriafunctions/1',
+                                id: 1,
+                                criteriaFunctions: angular.toJson(data)
+                            };
+                            transformedData = JSON.stringify(wrapper, function (k, v) {
+                                // we have to take care of angular properties by ourselves
+                                if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
+                                    return undefined;
+                                }
 
-                            return v;
-                        });
-                        return transformedData;
+                                return v;
+                            });
+                            return transformedData;
+                        }
                     }
+                });
+                r.getId = function () {
+                    return Icmm.getNextId(IcmmSettings.getIcmmApi() + '/' + IcmmSettings.getDomain(), '.criteriafunctions');
+                };
+                return r;
+            };
+            
+            cf = createResource();
+            
+            cfFacade = {
+                'get': function () {
+                    return cf.get.apply(this, arguments);
+                },
+                'query': function () {
+                    return cf.query.apply(this, arguments);
+                },
+                'update': function () {
+                    return cf.update.apply(this, arguments);
+                },
+                'getId': function () {
+                    return cf.getId.apply(this, arguments);
                 }
-            });
-
-            cf.getId = function () {
-                return Icmm.getNextId(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN, '.criteriafunctions');
             };
 
-            return cf;
+            IcmmSettings.addApiListener(function () {
+                cf = createResource();
+            });
+
+            return cfFacade;
         }
     ]
     );
@@ -3916,12 +4156,11 @@ angular.module(
     'eu.crismaproject.worldstateAnalysis.services.DecisionStrategies',
     [
         '$resource',
-        'CRISMA_ICMM_API',
-        'CRISMA_DOMAIN',
+        'de.cismet.crisma.ICMM.config.IcmmSettings',
         'de.cismet.crisma.ICMM.services.icmm',
-        function ($resource, CRISMA_ICMM_API, CRISMA_DOMAIN, Icmm) {
+        function ($resource, IcmmSettings, Icmm) {
             'use strict';
-            var transformedData, processResult;
+            var ds, processResult, dsFacade, createResource;
             processResult = function (dsDataObj) {
                 var wrapper;
                 if (dsDataObj) {
@@ -3931,47 +4170,74 @@ angular.module(
                 return null;
 
             };
-            transformedData = $resource(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.decisionstrategies/1', {
-                dsId: '@id',
-                deduplicate: false,
-                omitNullValues: 'false'
-            }, {
-                'query': {
-                    method: 'GET',
-                    isArray: true,
-                    params: {
-                        level: '1',
-                        omitNullValues: 'true'
+
+            createResource = function () {
+                var r;
+
+                r = $resource(IcmmSettings.getIcmmApi() + '/' + IcmmSettings.getDomain() + '.decisionstrategies/1', {
+                    dsId: '@id',
+                    deduplicate: false,
+                    omitNullValues: 'false'
+                }, {
+                    'query': {
+                        method: 'GET',
+                        isArray: true,
+                        params: {
+                            level: '1',
+                            omitNullValues: 'true'
+                        },
+                        transformResponse: processResult
                     },
-                    transformResponse: processResult
-                },
-                'update': {
-                    method: 'PUT',
-                    transformRequest: function (data) {
-                        var transformedData, wrapper;
-                        wrapper = {
-                            $self: '/CRISMA.decisionstrategies/1',
-                            id: 1,
-                            decisionStrategies: angular.toJson(data)
-                        };
-                        transformedData = JSON.stringify(wrapper, function (k, v) {
-                            // we have to take care of angular properties by ourselves
-                            if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
-                                return undefined;
-                            }
+                    'update': {
+                        method: 'PUT',
+                        transformRequest: function (data) {
+                            var transformedData, wrapper;
+                            wrapper = {
+                                $self: '/CRISMA.decisionstrategies/1',
+                                id: 1,
+                                decisionStrategies: angular.toJson(data)
+                            };
+                            transformedData = JSON.stringify(wrapper, function (k, v) {
+                                // we have to take care of angular properties by ourselves
+                                if (k.substring(0, 1) === '$' && !(k === '$self' || k === '$ref')) {
+                                    return undefined;
+                                }
 
-                            return v;
-                        });
-                        return transformedData;
+                                return v;
+                            });
+                            return transformedData;
+                        }
                     }
-                }
-            });
+                });
 
-            transformedData.getId = function () {
-                return Icmm.getNextId(CRISMA_ICMM_API + '/' + CRISMA_DOMAIN, '.decisionstrategies');
+                r.getId = function () {
+                    return Icmm.getNextId(IcmmSettings.getIcmmApi() + '/' + IcmmSettings.getDomain(), '.decisionstrategies');
+                };
+
+                return r;
             };
 
-            return transformedData;
+            ds = createResource();
+            dsFacade = {
+                'get': function () {
+                    return ds.get.apply(this, arguments);
+                },
+                'query': function () {
+                    return ds.query.apply(this, arguments);
+                },
+                'update': function () {
+                    return ds.update.apply(this, arguments);
+                },
+                'getId': function () {
+                    return ds.getId.apply(this, arguments);
+                }
+            };
+
+            IcmmSettings.addApiListener(function () {
+                ds = createResource();
+            });
+
+            return dsFacade;
         }
     ]
     );
