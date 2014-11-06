@@ -135,7 +135,7 @@ angular.module(
             onloadDsFile = function (theFile) {
                 return function (e) {
                     var ds, referenceIccData, indicatorGroup, indicatorMapLength, indicatorProp,
-                        cfIndicatorLength, dsIndicator, indicatorFound, msg, j;
+                        dsIndicatorLength, dsIndicator, indicatorFound, msg, j;
                     try {
                         ds = JSON.parse(e.target.result);
                         indicatorMapLength = 0;
@@ -157,7 +157,7 @@ angular.module(
                         // match to the indicators of the loaded indicator files...
                         for (indicatorProp in $scope.indicatorMap) {
                             if ($scope.indicatorMap.hasOwnProperty(indicatorProp)) {
-                                cfIndicatorLength = ds.criteriaFunctions.length;
+                                dsIndicatorLength = ds.criteriaFunctions.length;
                                 for (j = 0; j < ds.criteriaFunctions.length; j++) {
                                     dsIndicator = ds.criteriaFunctions[j].indicator;
                                     indicatorFound = false;
@@ -168,12 +168,12 @@ angular.module(
                                     }
                                 }
                                 if (!indicatorFound) {
-                                    msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + cf.name + '"';
+                                    msg = 'Could not find indicator "' + $scope.indicatorMap[indicatorProp].displayName + '" in criteria function "' + ds.name + '"';
                                     console.error(msg);
                                     return;
                                 }
-                                if (cfIndicatorLength !== indicatorMapLength) {
-                                    msg = 'Criteria Function :"' + cf.name + '" contains more indicators than the loaded indicator files.';
+                                if (dsIndicatorLength !== indicatorMapLength) {
+                                    msg = 'Criteria Function :"' + ds.name + '" contains more indicators than the loaded indicator files.';
                                     console.error(msg);
                                     return;
                                 }
