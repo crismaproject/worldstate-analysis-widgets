@@ -336,7 +336,17 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-9">
-                                                    <div class="row">
+                                                    <div class="row" ng-if="!container.worldstates || container.worldstates <=0">
+                                                        <div class="col-lg-12">
+                                                            <div class="alert alert-warning" role="alert"><b>Warning:</b> No worldstates are selected</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-if="container.worldstates.length>0 && !container.selectedCriteriaFunction">
+                                                        <div class="col-lg-12">
+                                                            <div class="alert alert-warning" role="alert"><b>Warning:</b> No criteria function selected</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" ng-if="container.worldstates.length>0 && container.selectedCriteriaFunction">
                                                         <div class="col-lg-4" ng-repeat="chartModel in container.chartModels">
                                                             <div class="panel panel-default">
                                                                 <div class="panel-heading">
