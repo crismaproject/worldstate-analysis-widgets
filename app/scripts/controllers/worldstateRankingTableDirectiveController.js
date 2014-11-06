@@ -310,7 +310,7 @@ angular.module(
             };
 
             $scope.clickToOpen = function (index) {
-                $scope.ws = $scope.tableData[index].ws;
+                $scope.ws = [$scope.tableData[index].ws];
                 ngDialog.open({
                     template: 'templates/criteriaRadarPopupTemplate.html',
                     scope: $scope,
