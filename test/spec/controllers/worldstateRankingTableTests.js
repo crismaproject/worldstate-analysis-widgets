@@ -692,7 +692,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             module('ngDialog');
             module('eu.crismaproject.worldstateAnalysis.directives');
             module('eu.crismaproject.worldstateAnalysis.services');
-            module('templates/worldstateRankingTableTemplate.html');
+            module('templates/worldstateRankingTableTemplate.html','templates/rankingTableHeader.html');
         });
         // Store references to $rootScope and $compile
         // so they are available to all tests in this describe block
@@ -713,7 +713,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             var element = $compile('<worldstate-ranking-table worldstates="worldstates" criteria-function="criteriaFunction" decision-strategy="decisionStrategy" show-indicators="false" show-radar-chart="false"> </worldstate-ranking-table>')($rootScope);
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain(' <div ng-hide="worldstates.length > 0" class="alert alert-warning">');
+            expect(element.html()).toContain('<strong>Warning: </strong>There are no worldstates selected.');
         });
         it('replaces the element with a warn badge when no criteriaFunction is provided ', function () {
             $rootScope.worldstates = [ws];
@@ -722,7 +722,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="criteriaFunction || worldstates.length <= 0" class="alert alert-warning">');
+            expect(element.html()).toContain('<strong>Warning: </strong>No criteria function selected.');
         });
         it('replaces the element with a warn badge when no decisionstrategy is provided ', function () {
             $rootScope.criteriaFunction = cf;
@@ -731,7 +731,7 @@ describe('Worldstate Ranking Table Test Suite', function () {
             // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
             $rootScope.$digest();
             // Check that the compiled element contains the templated content
-            expect(element.html()).toContain('<div ng-hide="decisionStrategy|| worldstates.length <= 0" class="alert alert-warning">');
+            expect(element.html()).toContain('<strong>Warning: </strong>No decision strategy selected.');
         });
         it('replaces the element with a table when worldstates, critFunc, decStrat is provided', function () {
             $rootScope.criteriaFunction = cf;

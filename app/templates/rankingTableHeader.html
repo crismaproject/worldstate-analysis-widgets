@@ -1,0 +1,15 @@
+<tr>
+    <th ng-repeat="column in columns"
+        ng-if="$index < 3"
+        >
+        {{column.title}}
+    </th>
+    <th ng-if="showRadarChart">
+        Criteria radar
+    </th>
+    <th ng-repeat="column in columns"
+        ng-if="showIndicators && $index >= 3"
+        >
+        {{column.title}}
+    </th>
+</tr>

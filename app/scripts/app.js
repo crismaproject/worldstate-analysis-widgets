@@ -6,6 +6,9 @@ angular.module(
         'eu.crismaproject.worldstateAnalysis.directives',
         'eu.crismaproject.worldstateAnalysis.services',
         'de.cismet.crisma.widgets.worldstateTreeWidget',
-        'mgcrea.ngStrap'
+        'ui.bootstrap.tabs',
+        'ui.bootstrap.collapse',
+        'ui.bootstrap.dropdown',
+        'ui.bootstrap.tpls'
     ]
-);
+    );

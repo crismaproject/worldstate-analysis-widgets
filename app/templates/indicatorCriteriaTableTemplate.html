@@ -1,19 +1,12 @@
 <div id="indicatorCriteriaTable">
-    <div ng-hide="worldstates.length > 0" class="alert alert-warning">
+    <div ng-if="!(worldstates.length > 0)" class="alert alert-warning">
         <strong>Warning: </strong>There are no worldstates selected.
     </div>
-    <div ng-show="forCriteria && !criteriaFunction" class="alert alert-warning">
+    <div ng-if="forCriteria && !criteriaFunction" class="alert alert-warning">
         <strong>Warning: </strong>No criteria function selected.
     </div>
-    <div ng-hide="worldstates.length <= 0 || (forCriteria && !criteriaFunction)">
-        <table  data-ng-table="tableParams" class="table" template-pagination="templates/nopager.html">
-            <thead>
-                <tr>
-                    <th ng-repeat="column in columns" class="text-left" ng-style="getCellStyle($index)">
-                        {{column.title}}
-                    </th>
-                </tr>
-            </thead>
+    <div ng-show="!(worldstates.length <= 0 || (forCriteria && !criteriaFunction))">
+        <table  data-ng-table="tableParams" class="table" template-pagination="templates/nopager.html"  template-header="templates/indicatorCriteriaTableHeader.html">
             <tbody>
                 <tr data-ng-repeat="row in $data" ng-class="{'info':isGroupRow(row)}" 
                     ng-style="getRowStyle($index)">

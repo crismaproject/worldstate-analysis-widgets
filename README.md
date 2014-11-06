@@ -1,4 +1,4 @@
-worldstate-analysis-widgets
+worldstate-analysis-widgets [![Build Status](http://ci.cismet.de/buildStatus/icon?job=worldstate-analysis-widgets)](https://ci.cismet.de/view/html5%20javascript/job/worldstate-analysis-widgets/)
 ===========================
 
 The AngularJS implementation of the Scenario Comparison and Analysis and the Multi-Criteria-Analysis and Decision Support Functional Building Block.

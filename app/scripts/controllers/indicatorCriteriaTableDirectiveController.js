@@ -1,11 +1,6 @@
 angular.module(
-    'eu.crismaproject.worldstateAnalysis.controllers',
-    [
-        'nvd3ChartDirectives',
-        'eu.crismaproject.worldstateAnalysis.services',
-        'ngDialog'
-    ]
-    ).controller(
+    'eu.crismaproject.worldstateAnalysis.controllers'
+).controller(
     'eu.crismaproject.worldstateAnalysis.controllers.IndicatorCriteriaTableDirectiveController',
     [
         '$scope',
@@ -145,7 +140,7 @@ angular.module(
             };
 
             $scope.$watchCollection('worldstates', function () {
-                if ($scope.worldstates) {
+                if ($scope.worldstates && $scope.worldstates.length>0) {
                     if ($scope.forCriteria && !$scope.criteriaFunction) {
                         return;
                     }

@@ -160,7 +160,7 @@ angular.module(
                         }
                     }
                     if (insertPosition === -1) {
-                        newTableItem.rank = $scope.tableData.length + 1;
+                        newTableItem.rank = tableArr.length + 1;
                         tableArr.push(newTableItem);
                     } else {
                         tableArr.splice(insertPosition, 0, newTableItem);
@@ -214,6 +214,7 @@ angular.module(
             ctrl.refreshTable = function () {
                 if ($scope.tableParams) {
                     $scope.tableParams.reload();
+//                    $scope.tableParams.settings().$scope = $scope;
                 } else {
                     $scope.tableParams = new NgTableParams({
                         page: 1, // show first page
@@ -275,21 +276,23 @@ angular.module(
             };
 
             ctrl.worldstateWatchCallback = function (newVal, oldVal) {
+//                if (newVal === oldVal || !oldVal) {
                 if (newVal === oldVal || !oldVal) {
                     return;
                 }
-                if ($scope.worldstates) {
+                ctrl.removeMissingWorldstatesFromTable(oldVal);
+                
+                if ($scope.worldstates && $scope.worldstates.length > 0 && $scope.criteriaFunction && $scope.decisionStrategy) {
                     ctrl.addMissingWoldstatesToTable(oldVal);
-                    ctrl.removeMissingWorldstatesFromTable(oldVal);
+                    ctrl.refreshTable();
                 }
-                ctrl.refreshTable();
             };
 
             ctrl.decisionStrategyWatchCallback = function (newVal, oldVal) {
                 var ws, newTableItem, i = 0, newTableData = [];
                 if (!angular.equals(newVal, oldVal) && $scope.worldstates && $scope.worldstates.length > 0) {
                     if ($scope.criteriaFunction && $scope.decisionStrategy) {
-                        if (!$scope.tableData) {
+                        if (!$scope.tableData || $scope.tableData.length===0) {
                             for (i = 0; i < $scope.worldstates.length; i++) {
                                 ctrl.addWorldstateToTableData($scope.worldstates[i]);
                             }
@@ -308,7 +311,7 @@ angular.module(
             };
 
             $scope.clickToOpen = function (index) {
-                $scope.ws = $scope.tableData[index].ws;
+                $scope.ws = [$scope.tableData[index].ws];
                 ngDialog.open({
                     template: 'templates/criteriaRadarPopupTemplate.html',
                     scope: $scope,
