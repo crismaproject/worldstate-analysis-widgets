@@ -5,9 +5,6 @@ angular.module(
         'de.cismet.crisma.ICMM.Worldstates',
         'de.cismet.cids.rest.collidngNames.Nodes',
         'de.cismet.crisma.ICMM.services',
-        'ui.bootstrap.tabs',
-        'ui.bootstrap.collapse',
-        'ui.bootstrap.tpls'
     ]
     );
 angular.module(

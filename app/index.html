@@ -119,15 +119,15 @@
                                                         <label>Criteria function</label>        
                                                     </div>
                                                     <div class="row">
-                                                        <div class="btn-group" style="width:100%">
+                                                        <div class="btn-group" style="width: 100%" dropdown>
                                                             <button type="button" 
                                                                     class="btn btn-default btn-sm"
-                                                                    style="width:80%">
+                                                                    style="width: 80%">
                                                                 {{container.selectedCriteriaFunction ? container.selectedCriteriaFunction.name : "Please select a criteria function"}}
                                                             </button>
-                                                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                            <button type="button" class="btn btn-default btn-sm dropdown-toggle">
                                                                 <span class="caret"></span>
-                                                                <span class="sr-only">Toggle dropdown</span>
+                                                                <span class="sr-only">Toggle Dropdown</span>
                                                             </button>
                                                             <ul class="dropdown-menu" role="menu" >
                                                                 <li ng-repeat="cf in container.criteriaFunctions" role="presentation" ng-click="updateSelectedCriteriaFunction($index)">
@@ -142,15 +142,15 @@
                                                         <label>Decision strategy</label>        
                                                     </div>
                                                     <div class="row">
-                                                        <div class="btn-group" style="width: 100%">
+                                                        <div class="btn-group" style="width: 100%" dropdown>
                                                             <button type="button" 
                                                                     class="btn btn-default btn-sm"
                                                                     style="width: 80%">
                                                                 {{container.selectedDecisionStrategy ? container.selectedDecisionStrategy.name : "Please select a decision strategy"}}
                                                             </button>
-                                                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                            <button type="button" class="btn btn-default btn-sm dropdown-toggle">
                                                                 <span class="caret"></span>
-                                                                <span class="sr-only">Toggle dropdown</span>
+                                                                <span class="sr-only">Toggle Dropdown</span>
                                                             </button>
                                                             <ul class="dropdown-menu" role="menu" >
                                                                 <li ng-repeat="cf in container.decisionStrategies" role="presentation" ng-click="updateSelectedDecisionStrategy($index)">
