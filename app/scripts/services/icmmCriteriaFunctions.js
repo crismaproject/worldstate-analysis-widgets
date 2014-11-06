@@ -21,7 +21,7 @@ angular.module(
             };
 
             createResource = function () {
-                var r
+                var r;
 
                 r = $resource(IcmmSettings.getIcmmApi() + '/' + IcmmSettings.getDomain() + '.criteriafunctions/1', {
                     cfId: '@id',
