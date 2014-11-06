@@ -8,11 +8,13 @@
     <div ng-show="fileAPIAvailable" class="col-lg-12">
         <div class="row">
             <div class="col-lg-12">
-                <div class="panel-group" role="tablist">
+                <div class="panel-group">
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="collapseListGroupHeading1">
+                        <div class="panel-heading" role="tab" >
                             <h4 class="panel-title">
-                                <a class="collapsed" data-toggle="collapse" href="#collapseListGroup1" aria-expanded="false" aria-controls="collapseListGroup1">
+                                <a ng-click="indicatorFileCollapsed = !indicatorFileCollapsed">
+                                    <i ng-if="!indicatorFileCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
+                                    <i ng-if="indicatorFileCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
                                     Indicator files
                                 </a>
                                 <span style="font-size: 14px" 
@@ -37,7 +39,7 @@
                                 </span>
                             </h4>
                         </div>
-                        <div id="collapseListGroup1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1" aria-expanded="true" >
+                        <div class="panel-collapse" collapse="indicatorFileCollapsed" >
                             <ul class="list-group">
                                 <!--dummy item that indicates that no indicator objects are available-->
                                 <li class="list-group-item" ng-show="showDummyListItem">
@@ -110,14 +112,14 @@
                 </span>
             </div>
             <div class="col-lg-10">
-                  <div ng-if="noIndicatorsLoaded" 
+                <div ng-if="noIndicatorsLoaded" 
                      class="alert alert-warning">
                     <i class="glyphicon glyphicon-info-sign"></i> 
                     No indicator files selected
                 </div>
                 <div ng-if="cfFileLoadError" 
-                      class="alert alert-danger"
-                      style="font-size: 14px;">
+                     class="alert alert-danger"
+                     style="font-size: 14px;">
                     <i class="glyphicon glyphicon-warning-sign"></i>
                     {{cfFileLoadErrorMsg}}
                 </div>
