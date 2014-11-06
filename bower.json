@@ -44,7 +44,7 @@
   "resolutions": {
     "bootstrap": "3.3.0",
     "d3": "3.3.6",
-    "icmm_js": "1.1.0",
+    "icmm_js": "1.1.1",
     "angular": "1.2.25"
   }
 }
