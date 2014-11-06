@@ -37,15 +37,15 @@
                     <tabset>
                         <tab select="switchToIcmmTab();filesTabCollapsed=false" active="icmmTabActive">
                             <tab-heading>
-                                Analysis from ICMM
-                                <i class="glyphicon glyphicon-arrow-up" 
+                                <i class="glyphicon glyphicon-chevron-up" 
                                    ng-show="icmmTabActive && !filesTabCollapsed"
                                    ng-click="filesTabCollapsed = true"
                                    style="color:#2a6496; cursor: pointer"></i>
-                                <i class="glyphicon glyphicon-arrow-down" 
+                                <i class="glyphicon glyphicon-chevron-down" 
                                    ng-show="icmmTabActive && filesTabCollapsed"
                                    ng-click="filesTabCollapsed = false"
                                    style="color:#2a6496; cursor: pointer"></i>
+                                Analysis from ICMM
                             </tab-heading>
                             <tab-content>
                                 <div style="border-left: 1px solid #ddd;
@@ -66,16 +66,15 @@
                         </tab>
                         <tab select="switchToFilesTab();icmmTabCollapsed=false" active="filesTabActive">
                             <tab-heading>
-                                Analysis from Files
-
-                                <i class="glyphicon glyphicon-arrow-up" 
+                                 <i class="glyphicon glyphicon-chevron-up" 
                                    ng-show="filesTabActive && !icmmTabCollapsed"
                                    ng-click="icmmTabCollapsed = true"
                                    style="color:#2a6496; cursor: pointer"></i>
-                                <i class="glyphicon glyphicon-arrow-down" 
+                                <i class="glyphicon glyphicon-chevron-down" 
                                    ng-show="filesTabActive && icmmTabCollapsed"
                                    ng-click="icmmTabCollapsed = false"
                                    style="color:#2a6496; cursor: pointer"></i>
+                                Analysis from Files
                             </tab-heading>
                             <tab-content>
                                 <div style="border-left: 1px solid #ddd;
@@ -170,8 +169,8 @@
                                                 <h3 style="display:table-cell;vertical-align: middle" 
                                                     class="panel-title">
                                                     <a  ng-click="rankingTableCollapsed = !rankingTableCollapsed">
-                                                        <i ng-if="!rankingTableCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
-                                                        <i ng-if="rankingTableCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
+                                                        <i ng-if="!rankingTableCollapsed" class="glyphicon glyphicon-chevron-up"></i>
+                                                        <i ng-if="rankingTableCollapsed" class="glyphicon glyphicon-chevron-down"></i>
                                                         Worldstate ranking table
                                                     </a>
                                                 </h3>
@@ -212,8 +211,8 @@
                                                 <h3 style="display:table-cell;vertical-align: middle" class="panel-title"> 
                                                     <a style="color:#000" 
                                                        ng-click="indicatorCriteriaTableCollapsed = !indicatorCriteriaTableCollapsed">
-                                                        <i ng-if="!indicatorCriteriaTableCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
-                                                        <i ng-if="indicatorCriteriaTableCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
+                                                        <i ng-if="!indicatorCriteriaTableCollapsed" class="glyphicon glyphicon-chevron-up"></i>
+                                                        <i ng-if="indicatorCriteriaTableCollapsed" class="glyphicon glyphicon-chevron-down"></i>
                                                         {{forCriteriaTable ? 'Criteria' : 'Indicator'}} table
                                                     </a>
                                                 </h3>
@@ -251,8 +250,8 @@
                                                 <h3 style="display:inline" class="panel-title"> 
                                                     <a style="color:#000" 
                                                        ng-click="indicatorBarChartsCollapsed = !indicatorBarChartsCollapsed">
-                                                        <i ng-if="!indicatorBarChartsCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
-                                                        <i ng-if="indicatorBarChartsCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
+                                                        <i ng-if="!indicatorBarChartsCollapsed" class="glyphicon glyphicon-chevron-up"></i>
+                                                        <i ng-if="indicatorBarChartsCollapsed" class="glyphicon glyphicon-chevron-down"></i>
                                                         Indicator bar charts
                                                     </a>
                                                 </h3>
@@ -272,8 +271,8 @@
                                                 <h3 style="display:table-cell;vertical-align: middle" class="panel-title"> 
                                                     <a style="color:#000" 
                                                        ng-click="relationAnalysisChartCollapsed = !relationAnalysisChartCollapsed">
-                                                        <i ng-if="!relationAnalysisChartCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
-                                                        <i ng-if="relationAnalysisChartCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
+                                                        <i ng-if="!relationAnalysisChartCollapsed" class="glyphicon glyphicon-chevron-up"></i>
+                                                        <i ng-if="relationAnalysisChartCollapsed" class="glyphicon glyphicon-chevron-down"></i>
                                                         Worldstate relation analysis chart
                                                     </a>
                                                 </h3>
@@ -310,8 +309,8 @@
                                                     <h3 style="display:inline" class="panel-title"> 
                                                         <a style="color:#000" 
                                                            ng-click="criteriaRadaCollapsed = !criteriaRadaCollapsed">
-                                                            <i ng-if="!criteriaRadaCollapsed" class="glyphicon glyphicon-circle-arrow-up"></i>
-                                                            <i ng-if="criteriaRadaCollapsed" class="glyphicon glyphicon-circle-arrow-down"></i>
+                                                            <i ng-if="!criteriaRadaCollapsed" class="glyphicon glyphicon-chevron-up"></i>
+                                                            <i ng-if="criteriaRadaCollapsed" class="glyphicon glyphicon-chevron-down"></i>
                                                             Criteria radar chart comparison
                                                         </a>
                                                     </h3>
