@@ -31,7 +31,7 @@
     "d3": "3.3.6",
     "nvd3": "1.1.15-beta",
     "angularjs-nvd3-directives": "0.0.7",
-    "angular-strap": "2.0.3",
+    "angular-strap": "2.1.3",
     "jquery-knob": "1.2.9",
     "ngDialog": "0.2.14",
     "radar-chart-d3": "#d5944759c30f073f21c0860a1f71351d370149d8",
@@ -44,6 +44,7 @@
   "resolutions": {
     "bootstrap": "3.3.0",
     "d3": "3.3.6",
-    "icmm_js": "1.1.0"
+    "icmm_js": "1.1.0",
+    "angular": "1.2.25"
   }
 }
