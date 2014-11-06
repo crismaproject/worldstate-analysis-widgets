@@ -23,7 +23,7 @@
                    ng-class="getItemStyle($index)" 
                    ng-repeat="cf in decisionStrategies">
                     <span ng-hide="editable[$index]">{{cf.name}}</span>
-                    <input style ="color:black;" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
+                    <input style ="color:black; width:75%;" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
                     <div class="pull-right" ng-hide="$index !== selectedDecisionStrategyIndex">
 
                         <i ng-hide="listItemsDisabled || editable[$index]" 
@@ -50,7 +50,7 @@
                            data-type="info" 
                            data-delay="500" 
                            data-animation="am-fade-and-scale" 
-                           bs-tooltip="tooltipSave.title"
+                           bs-tooltip="tooltipDelete.title"
                            data-container="body"
                            ng-click="removeDecisionStrategy()"
                            class="glyphicon glyphicon-minus-sign"></i>

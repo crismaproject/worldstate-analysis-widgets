@@ -24,7 +24,7 @@
                    ng-class="getListItemClass($index)"
                    ng-repeat="cf in criteriaFunctionSet">
                     <span ng-hide="editable[$index]">{{cf.name}}</span>
-                    <input style ="color:black;" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
+                    <input style ="color:black;width:75%" ng-hide="!editable[$index]" type="text" ng-model="cf.name">
                     <div class="pull-right" ng-hide="$index !== selectedCriteriaFunctionIndex">
 
                         <i ng-hide="listItemsDisabled || editable[$index]" 
@@ -54,7 +54,7 @@
                            data-type="info" 
                            data-delay="500" 
                            data-animation="am-fade-and-scale" 
-                           bs-tooltip="tooltipSave.title"
+                           bs-tooltip="tooltipDelete.title"
                            data-container="body"
                            ng-hide="listItemsDisabled"
                            ng-click="removeCriteriaFunction()"
