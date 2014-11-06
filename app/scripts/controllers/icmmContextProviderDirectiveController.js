@@ -124,8 +124,7 @@ angular.module(
                     IcmmSettings.setDomain($scope.selectedIcms.domain);
                 }
             });
-            IcmmSettings.addApiListener(function (newURl) {
-                console.log('iccm url has changed to ' + newURl)
+            IcmmSettings.addApiListener(function () {
                 $scope.treeSelection = [];
                 $scope.worldstates = [];
                 $scope.selectedWorldstates = [];
