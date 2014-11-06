@@ -15,7 +15,8 @@ angular.module(
         '$timeout',
         'eu.crismaproject.worldstateAnalysis.services.IcmmPersistanceService',
         'eu.crismaproject.worldstateAnalysis.services.FilesPersistanceService',
-        function ($scope, $timeout, IcmmPersistanceService, FilesPersistanceService) {
+        'ngDialog',
+        function ($scope, $timeout, IcmmPersistanceService, FilesPersistanceService, ngDialog) {
             'use strict';
 
             var createChartModels;
@@ -25,8 +26,20 @@ angular.module(
             $scope.container = {};
             $scope.forCriteriaTable = false;
             $scope.container.chartModels = [];
-            $scope.icmmTabCollapsed=false;
-            $scope.filesTabCollapsed=false;
+            $scope.icmmTabCollapsed = false;
+            $scope.filesTabCollapsed = false;
+
+            $scope.openRadarModal = function (index) {
+                var childScope;
+                childScope = $scope.$new();
+                childScope.ws = $scope.container.chartModels[index];
+                childScope.criteriaFunction = $scope.container.selectedCriteriaFunction;
+                ngDialog.open({
+                    template: 'templates/criteriaRadarPopupTemplate.html',
+                    scope: childScope,
+                    className: 'ngdialog-theme-default ngdialog-theme-custom ngdialog-theme-width'
+                });
+            };
 
             createChartModels = function () {
                 var j, modelArr;
@@ -147,6 +160,7 @@ angular.module(
             function watchCfIcmm () {
                 return $scope.$watch('container.criteriaFunctionsIcmm', function () {
                     $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsIcmm;
+                    $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions ? $scope.container.criteriaFunctions[0] : false;
                 });
             }
 
@@ -155,6 +169,7 @@ angular.module(
             function watchCfFiles () {
                 return $scope.$watch('container.criteriaFunctionsFiles', function () {
                     $scope.container.criteriaFunctions = $scope.container.criteriaFunctionsFiles;
+                    $scope.container.selectedCriteriaFunction = $scope.container.criteriaFunctions ? $scope.container.criteriaFunctions[0] : false;
                 });
             }
 
@@ -162,6 +177,7 @@ angular.module(
             function watchDsIcmm () {
                 return $scope.$watch('container.decisionStrategiesIcmm', function () {
                     $scope.container.decisionStrategies = $scope.container.decisionStrategiesIcmm;
+                    $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies ? $scope.container.decisionStrategies[0] : false;
                 });
             }
 
@@ -170,6 +186,7 @@ angular.module(
             function watchDsFiles () {
                 return $scope.$watch('container.decisionStrategiesFiles', function () {
                     $scope.container.decisionStrategies = $scope.container.decisionStrategiesFiles;
+                    $scope.container.selectedDecisionStrategy = $scope.container.decisionStrategies ? $scope.container.decisionStrategies[0] : false;
                 });
             }
 
@@ -195,8 +212,6 @@ angular.module(
                 }
                 $scope.derigsterDsIcmm = watchDsIcmm();
 
-                $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy = undefined;
 
                 $scope.icmmLastViewed = true;
             };
@@ -216,9 +231,6 @@ angular.module(
 
                 $scope.derigsterDsIcmm();
                 $scope.derigsterDsFilesWatch = watchDsFiles();
-
-                $scope.selectedCriteriaFunction = undefined;
-                $scope.selectedDecisionStrategy = undefined;
 
                 $scope.icmmLastViewed = true;
             };
