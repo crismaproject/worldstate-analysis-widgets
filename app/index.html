@@ -66,7 +66,7 @@
                         </tab>
                         <tab select="switchToFilesTab();icmmTabCollapsed=false" active="filesTabActive">
                             <tab-heading>
-                                 <i class="glyphicon glyphicon-chevron-up" 
+                                <i class="glyphicon glyphicon-chevron-up" 
                                    ng-show="filesTabActive && !icmmTabCollapsed"
                                    ng-click="icmmTabCollapsed = true"
                                    style="color:#2a6496; cursor: pointer"></i>
@@ -546,11 +546,12 @@
         <script>
                                                                                 angular.module('eu.crismaproject.worldstateAnalysis.demoApp').config(
                                                                                     [
-                                                                                        'de.cismet.crisma.ICMM.config.IcmmSettingsProvider',
-                                                                                        function (IcmmSettingsProvider) {
+                                                                                        '$provide',
+                                                                                        function ($provide) {
                                                                                             'use strict';
-                                                                                            IcmmSettingsProvider.setInitialIcmmApi('http://crisma.cismet.de/icmm_api');
-                                                                                            IcmmSettingsProvider.setInitialDomain('CRISMA');
+                                                                                            $provide.constant('CRISMA_DOMAIN', 'CRISMA');
+//                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                                                                                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
                                                                                         }
                                                                                     ]
                                                                                     );</script>
