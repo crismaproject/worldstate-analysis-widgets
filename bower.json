@@ -25,7 +25,7 @@
     "jquery-ui": "1.10.4",
     "ng-table": "0.3.3",
     "bootstrap": "3.3.0",
-    "icmm_js": "1.1.1",
+    "icmm_js": "1.1.2",
     "dynatree": "1.2.5",
     "crisma-worldstate-tree-widget-angular": "1.0.8",
     "d3": "3.3.6",
@@ -44,7 +44,7 @@
   "resolutions": {
     "bootstrap": "3.3.0",
     "d3": "3.3.6",
-    "icmm_js": "1.1.1",
+    "icmm_js": "1.1.2",
     "angular": "1.2.25"
   }
 }
