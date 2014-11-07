@@ -34,20 +34,54 @@ angular.module(
             };
 
             $scope.addCriteriaFunction = function () {
-                var i, criteriaFunctions = [];
+                var i, j, criteriaFunctions = [], maxIndicator, minIndicator, iccArr, iccData, group, indicatorProp, indicatorVal;
                 if ($scope.listItemsDisabled) {
                     return;
                 }
                 for (i = 0; i < $scope.indicators.length; i++) {
+                    // we want to pre initialize with the maximum and the minim value...
+                    maxIndicator = 0;
+                    minIndicator = false;
+                    if ($scope.worldstates && $scope.worldstates.length > 0) {
+                        iccArr = Worldstates.utils.stripIccData($scope.worldstates, false);
+                        for (j = 0; j < iccArr.length; j++) {
+                            iccData = iccArr[j].data;
+                            for (group in iccData) {
+                                if (iccData.hasOwnProperty(group)) {
+                                    if (group !== 'displayName' && group !== 'iconResource') {
+                                        for (indicatorProp in iccData[group]) {
+                                            if (iccData[group].hasOwnProperty(indicatorProp)) {
+                                                if (indicatorProp !== 'displayName' && indicatorProp !== 'iconResource') {
+                                                    if (iccData[group][indicatorProp].displayName === $scope.indicators[i].displayName) {
+//                                                        indicatorVal = iccData[group][indicatorProp].value;
+                                                        indicatorVal = parseFloat(iccData[group][indicatorProp].value);
+                                                        maxIndicator = indicatorVal > maxIndicator ? indicatorVal : maxIndicator;
+                                                        if (!minIndicator) {
+                                                            minIndicator = indicatorVal;
+                                                        } else {
+                                                            minIndicator = indicatorVal < minIndicator ? indicatorVal : minIndicator;
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     criteriaFunctions.push({
                         indicator: $scope.indicators[i].displayName,
                         lowerBoundary: {
                             criteriaValue: 0,
-                            indicatorValue: 0
+                            indicatorValue: maxIndicator || 0
+//                            indicatorValue: minIndicator || 0
                         },
                         upperBoundary: {
                             criteriaValue: 100,
-                            indicatorValue: 0
+                            indicatorValue: minIndicator || 0
+//                            indicatorValue: maxIndicator || 0
                         },
                         intervals: []
                     });
