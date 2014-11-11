@@ -347,7 +347,7 @@
                                                      ng-if="container.worldstates.length > 0 && !container.selectedCriteriaFunction">
                                                     <div class="alert alert-warning" role="alert"><b>Warning:</b> No criteria function selected</div>
                                                 </div>
-                                                <div class="col-lg-3 col-md-4"
+                                                <div class="col-lg-3 col-md-4 col-sm-6"
                                                      style="margin-top:25px;"
                                                      ng-if="container.worldstates.length > 0 && container.selectedCriteriaFunction"
                                                      ng-repeat="chartModel in container.chartModels">
@@ -552,6 +552,7 @@
                                                                                             $provide.constant('CRISMA_DOMAIN', 'CRISMA');
 //                                                                                    $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
                                                                                             $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+//                                                                                            $provide.constant('CRISMA_ICMM_API', 'sadfg');
                                                                                         }
                                                                                     ]
                                                                                     );</script>
