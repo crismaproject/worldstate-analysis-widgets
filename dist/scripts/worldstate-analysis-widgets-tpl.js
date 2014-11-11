@@ -225,13 +225,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
 
   $templateCache.put('templates/fileContextProviderTemplate.html',
     "<div class=\"row\">\n" +
-    "    <div ng-show=\"!fileAPIAvailable\" class=\"col-lg-12\">\n" +
+    "    <div ng-show=\"!fileAPIAvailable\" class=\"col-lg-12 col-md-12 col-sm-12\">\n" +
     "        <div class=\"alert alert-danger\">\n" +
     "            HTML 5 File APi is not available in your Browser. Please use a Browser that supports this.\n" +
     "            see also http://caniuse.com/#search=file%20api\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "    <div ng-show=\"fileAPIAvailable\" class=\"col-lg-12\">\n" +
+    "    <div ng-show=\"fileAPIAvailable\" class=\"col-lg-12 col-md-12 col-sm-12\">\n" +
     "        <div class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
     "                <div class=\"panel-group\">\n" +
@@ -239,8 +239,8 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                        <div class=\"panel-heading\" role=\"tab\" >\n" +
     "                            <h4 class=\"panel-title\">\n" +
     "                                <a ng-click=\"indicatorFileCollapsed = !indicatorFileCollapsed\">\n" +
-    "                                    <i ng-if=\"!indicatorFileCollapsed\" class=\"glyphicon glyphicon-circle-arrow-up\"></i>\n" +
-    "                                    <i ng-if=\"indicatorFileCollapsed\" class=\"glyphicon glyphicon-circle-arrow-down\"></i>\n" +
+    "                                    <i ng-if=\"!indicatorFileCollapsed\" class=\"glyphicon glyphicon-chevron-up\"></i>\n" +
+    "                                    <i ng-if=\"indicatorFileCollapsed\" class=\"glyphicon glyphicon-chevron-down\"></i>\n" +
     "                                    Indicator files\n" +
     "                                </a>\n" +
     "                                <span style=\"font-size: 14px\" \n" +
@@ -319,7 +319,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            </div>\n" +
     "        </div>\n" +
     "        <div ng-show=\"fileLoadError\" class=\"row\">\n" +
-    "            <div class=\"col-lg-12\">\n" +
+    "            <div class=\"col-lg-12 col-md-12 col-sm-12\">\n" +
     "                <div class=\"alert alert-danger\">\n" +
     "                    {{errorMessage}}\n" +
     "                </div>\n" +
@@ -331,13 +331,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"row\" style=\"margin-bottom: 20px;\">\n" +
-    "            <div class=\"col-lg-2 col-md-2\">\n" +
-    "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
+    "            <div class=\"col-lg-2 col-md-2 col-sm-2\">\n" +
+    "                <span class=\"btn btn-default btn-file\"  ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                    Choose a file\n" +
     "                    <input type=\"file\" ng-disabled=\"noIndicatorsLoaded\" file-input=\"cfConfigFile\">\n" +
     "                </span>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-10 col-md-10\">\n" +
+    "            <div class=\"col-lg-10 col-md-10 col-sm-10\">\n" +
     "                <div ng-if=\"noIndicatorsLoaded\" \n" +
     "                     class=\"alert alert-warning\">\n" +
     "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
@@ -361,13 +361,13 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "\n" +
     "        </div>\n" +
     "        <div class=\"row\">\n" +
-    "            <div class=\"col-lg-2 col-md-2\">\n" +
+    "            <div class=\"col-lg-2 col-md-2 col-sm-2\">\n" +
     "                <span class=\"btn btn-default btn-file\" ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                    Choose a file\n" +
     "                    <input type=\"file\" file-input=\"dsConfigFile\" ng-disabled=\"noIndicatorsLoaded\">\n" +
     "                </span>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-10 col-md-10\">\n" +
+    "            <div class=\"col-lg-10 col-md-10 col-sm-10\">\n" +
     "                <div ng-if=\"noIndicatorsLoaded\" \n" +
     "                     class=\"alert alert-warning\">\n" +
     "                    <i class=\"glyphicon glyphicon-info-sign\"></i> \n" +
@@ -530,7 +530,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "<div class=\"row\">\n" +
     "    <div class=\"col-lg-12 col-md-12\">\n" +
     "        <div class=\"row\">\n" +
-    "            <div class=\"col-lg-2 col-md-2\" style=\"padding-right:5px;width:12.5%\">\n" +
+    "            <div class=\"col-lg-2 col-md-2 col-sm-2\" style=\"padding-right:5px;width:12.5%\">\n" +
     "<!--                we use the previous-interval binding to bind the upperBoundary\n" +
     "                to this element. this is necessary to correctly set the labels. \n" +
     "                see also \n" +
@@ -545,7 +545,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                    </indicator-band-item>\n" +
     "                </div>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-9 col-md-9\">\n" +
+    "            <div class=\"col-lg-9 col-md-9 col-sm-9\">\n" +
     "                <div class=\"row\">\n" +
     "                    <div class=\"progress\">\n" +
     "                        <indicator-band-item \n" +
@@ -575,7 +575,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "                    </div>\n" +
     "                </div>\n" +
     "            </div>\n" +
-    "            <div class=\"col-lg-2 col-md-2\"  style=\"padding-left:5px;width: 12.5%\">\n" +
+    "            <div class=\"col-lg-2 col-md-2 col-sm-2\"  style=\"padding-left:5px;width: 12.5%\">\n" +
     "                <!-- we use the previous-interval binding to bind the lowerBoundary\n" +
     "                to this element. this is necessary to correctly set the labels. \n" +
     "                see also \n" +
@@ -613,7 +613,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        </div>\n" +
     "    </div>\n" +
     "    <div class=\"row\" ng-if=\"worldstates && worldstates.length > 0\">\n" +
-    "        <div class=\"col-lg-4 col-md-6\"  ng-repeat=\"chartModel in chartModels\">\n" +
+    "        <div class=\"col-lg-4 col-md-6 col-sm-6\"  ng-repeat=\"chartModel in chartModels\">\n" +
     "            <div class=\"row\">\n" +
     "                <div class=\"col-lg-12\" style=\"text-align: center\">\n" +
     "                    <label>{{chartModel[0].key}}</label>\n" +
