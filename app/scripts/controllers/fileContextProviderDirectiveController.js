@@ -228,7 +228,6 @@ angular.module(
                             console.error(msg);
                             showIndicatorFileLoadingError(msg);
                             return;
-                            return;
                         }
 
                         // we need an id to distinc the icc objects. eg. the ranking table use this id
@@ -384,7 +383,6 @@ angular.module(
              */
             $scope.$watch('iccObjects', function (newVal, oldVal) {
                 var i, file, reader;
-                $scope.fileLoadError = false;
                 if (!angular.equals(newVal, oldVal) && newVal) {
                     showFileLoading();
 
@@ -407,7 +405,7 @@ angular.module(
                 }
             });
 
-            $scope.$watch('cfConfigFile', function (newVal, oldVal) {
+            $scope.$watch('cfConfigFile', function () {
                 var file;
                 $scope.cfFileLoadError = false;
                 $scope.loadedCfFile = false;
@@ -430,7 +428,7 @@ angular.module(
 
             }, true);
 
-            $scope.$watch('dsConfigFile', function (newVal, oldVal) {
+            $scope.$watch('dsConfigFile', function () {
                 var file;
                 $scope.dsFileLoadError = false;
                 $scope.loadedDsfFile = false;
