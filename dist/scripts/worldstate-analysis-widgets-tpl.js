@@ -321,7 +321,7 @@ angular.module('eu.crismaproject.worldstateAnalysis.directives').run(['$template
     "        <div ng-show=\"fileLoadError\" class=\"row\">\n" +
     "            <div class=\"col-lg-12\">\n" +
     "                <div class=\"alert alert-danger\">\n" +
-    "                    Something went wrong loading file: {{errorFile.name}}\n" +
+    "                    {{errorMessage}}\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
